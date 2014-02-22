@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jetty.util.ajax.JSON;
+import org.lolin1.models.Champion;
 import org.lolin1.utils.Utils;
 
 public abstract class DataUpdater {
@@ -28,7 +29,8 @@ public abstract class DataUpdater {
 
 	@SuppressWarnings("unchecked")
 	private static void performUpdate(String realm, String locale) {
-		List<String> championIds = new ArrayList<>();
+		List<String> championKeys = new ArrayList<>();
+		List<Champion> champions = new ArrayList<>();
 		Map<String, Map<String, Map<String, String>>> allChampions = (Map<String, Map<String, Map<String, String>>>) JSON
 				.parse(Utils.performRiotGet(DataUpdater.ALL_CHAMPIONS_URL
 						.replace(DataUpdater.REALM_PLACE_HOLDER, realm)
@@ -36,19 +38,20 @@ public abstract class DataUpdater {
 		for (String key : allChampions.get("data").keySet()) {
 			for (String inner : allChampions.get("data").get(key).keySet()) {
 				if (inner.contentEquals("key")) {
-					championIds.add(allChampions.get("data").get(key)
+					championKeys.add(allChampions.get("data").get(key)
 							.get("key"));
 					break;
 				}
 			}
 		}
-		for (String id : championIds) {
-			String championJson = Utils
+		for (String key : championKeys) {
+			String championDescriptor = Utils
 					.performRiotGet(DataUpdater.SINGLE_CHAMPION_URL
 							.replace(DataUpdater.REALM_PLACE_HOLDER, realm)
 							.replace(DataUpdater.LOCALE_PLACE_HOLDER, locale)
-							.replace(DataUpdater.CHAMPION_KEY_PLACE_HOLDER, id));
-			System.out.println(championJson);
+							.replace(DataUpdater.CHAMPION_KEY_PLACE_HOLDER, key));
+			champions.add(new Champion(championDescriptor));
+			// TODO Download images
 			System.exit(-1);// TODO Remove this
 		}
 	}

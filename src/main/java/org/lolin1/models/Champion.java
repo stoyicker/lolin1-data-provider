@@ -1,23 +1,44 @@
 package org.lolin1.models;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.StringTokenizer;
+
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.eclipse.jetty.util.ajax.JSON;
 
 public class Champion {
 
-	private class PassiveSpell extends Spell {
+	private class ActiveSpell extends PassiveSpell {
+		/**
+		 * Passive spells are not considered by Riot to have a cooldown nor a
+		 * range
+		 */
+		private String cooldown, range;
 
-		private PassiveSpell() {
+		public ActiveSpell(JSONObject jsonObject) {
+			// TODO Create the ActiveSpell object
 		}
 	}
 
-	private class Spell {
-		protected final String imageName, detail, name;
-		private final String cooldown, range; // Passive spells are not
-												// considered by Riot to have a
-												// cooldown nor a range
+	private class PassiveSpell {
 
-		private Spell() {
+		protected String imageName, detail, name;
 
+		@SuppressWarnings("unchecked")
+		private PassiveSpell(HashMap<String, Object> passiveDescriptor) {
+			this.detail = (String) passiveDescriptor.get("description");
+			this.name = (String) passiveDescriptor.get("name");
+			this.imageName = ((HashMap<String, String>) passiveDescriptor
+					.get("image")).get("full");
+		}
+
+		private PassiveSpell(String _name, String _detail, String _imageName) {
+			this.name = _name;
+			this.detail = _detail;
+			this.imageName = _imageName;
 		}
 
 		@Override
@@ -42,16 +63,56 @@ public class Champion {
 		}
 	}
 
-	private final String key, name, title, attackrange, mpperlevel, mp,
-			attackdamage, hp, hpperlevel, attackdamageperlevel, armor,
-			mpregenperlevel, hpregen, critperlevel, spellblockperlevel,
-			mpregen, attackspeedperlevel, spellblock, movespeed,
-			attackspeedoffset, crit, hpregenperlevel, armorperlevel, lore;
+	private String key, name, title, attackrange, mpperlevel, mp, attackdamage,
+			hp, hpperlevel, attackdamageperlevel, armor, mpregenperlevel,
+			hpregen, critperlevel, spellblockperlevel, mpregen,
+			attackspeedperlevel, spellblock, movespeed, attackspeedoffset,
+			crit, hpregenperlevel, armorperlevel, lore;
 	private final String[] tags;
-	private final Spell[] spells;
+	private final ActiveSpell[] spells;
 	private final PassiveSpell passive;
 
-	public Champion() {
+	@SuppressWarnings("unchecked")
+	public Champion(String descriptor) {
+		HashMap<String, Object> parsedDescriptor = (HashMap<String, Object>) JSON
+				.parse(descriptor);
+
+		Field[] fields = this.getClass().getDeclaredFields();
+		for (Field x : fields) {
+			if (x.getType() == String.class) {
+				x.setAccessible(Boolean.TRUE);
+				try {
+					x.set(this, parsedDescriptor.get(x.getName()));
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		String _tags = JSON.toString(parsedDescriptor.get("tags"))
+				.replace("[", "").replace("]", "").replace("\"", "\"");
+		StringTokenizer tagsTokenizer = new StringTokenizer(_tags, ",");
+		this.tags = new String[tagsTokenizer.countTokens()];
+		for (int i = 0; i < this.tags.length; i++) {
+			this.tags[i] = tagsTokenizer.nextToken();
+		}
+		this.passive = new PassiveSpell(
+				(HashMap<String, Object>) parsedDescriptor.get("passive"));
+		String _parsedSpells = JSON.toString(parsedDescriptor.get("spells"));
+		JSONArray spellsArray = null;
+		try {
+			spellsArray = new JSONArray(_parsedSpells);
+		} catch (JSONException e) {
+			e.printStackTrace(System.err);
+		}
+		this.spells = new ActiveSpell[spellsArray.length()];
+		for (int i = 0; i < this.spells.length; i++) {
+			try {
+				this.spells[i] = new ActiveSpell(spellsArray.getJSONObject(i));
+			} catch (JSONException e) {
+				e.printStackTrace(System.err);
+			}
+		}
+		System.exit(-1);
 	}
 
 	@Override
