@@ -27,12 +27,12 @@ public abstract class DataUpdater {
 			VERSION_KEY = "dd";
 
 	@SuppressWarnings("unchecked")
-	private static void performUpdate() {
+	private static void performUpdate(String realm, String locale) {
 		List<String> championIds = new ArrayList<>();
 		Map<String, Map<String, Map<String, String>>> allChampions = (Map<String, Map<String, Map<String, String>>>) JSON
 				.parse(Utils.performRiotGet(DataUpdater.ALL_CHAMPIONS_URL
-						.replace(DataUpdater.REALM_PLACE_HOLDER, "euw")
-						.replace(DataUpdater.LOCALE_PLACE_HOLDER, "es_ES")));
+						.replace(DataUpdater.REALM_PLACE_HOLDER, realm)
+						.replace(DataUpdater.LOCALE_PLACE_HOLDER, locale)));
 		for (String key : allChampions.get("data").keySet()) {
 			for (String inner : allChampions.get("data").get(key).keySet()) {
 				if (inner.contentEquals("key")) {
@@ -41,6 +41,15 @@ public abstract class DataUpdater {
 					break;
 				}
 			}
+		}
+		for (String id : championIds) {
+			String championJson = Utils
+					.performRiotGet(DataUpdater.SINGLE_CHAMPION_URL
+							.replace(DataUpdater.REALM_PLACE_HOLDER, realm)
+							.replace(DataUpdater.LOCALE_PLACE_HOLDER, locale)
+							.replace(DataUpdater.CHAMPION_KEY_PLACE_HOLDER, id));
+			System.out.println(championJson);
+			System.exit(-1);// TODO Remove this
 		}
 	}
 
@@ -57,11 +66,18 @@ public abstract class DataUpdater {
 	}
 
 	public static void updateData() {
-		for (String x : DataAccessObject.getSupportedRealms()) {
-			if (!DataAccessObject.getVersion(x).contentEquals(
-					DataUpdater.retrieveDragonMagicVersion(x))) {
-				DataUpdater.performUpdate();
+		for (String realm : DataAccessObject.getSupportedRealms().keySet()) {
+			String newVersion;
+			if (!DataAccessObject.getVersion(realm)
+					.contentEquals(
+							(newVersion = DataUpdater
+									.retrieveDragonMagicVersion(realm)))) {
+				for (String locale : DataAccessObject.getSupportedRealms().get(
+						realm)) {
+					DataUpdater.performUpdate(realm, locale);
+				}
 			}
+			DataAccessObject.setVersion(realm, newVersion);
 		}
 		System.exit(-1);
 	}

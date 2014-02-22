@@ -15,8 +15,7 @@ public abstract class DataAccessObject {
 	private static Map<String, String> VERSION_MAP = new HashMap<String, String>();
 	private static final Object champsLock = new Object(),
 			versionLock = new Object();
-	private static final String[] supportedRealms = new String[] { "euw",
-			"eune", "na", "tr", "br" };
+	private static final Map<String, String[]> SUPPORTED_REALMS = new HashMap<>();
 
 	private static String formatChampionListAsJSON(List<Champion> champions) {
 		StringBuilder ret = new StringBuilder("{[");
@@ -59,17 +58,30 @@ public abstract class DataAccessObject {
 		}
 	}
 
-	public static String[] getSupportedRealms() {
-		return DataAccessObject.supportedRealms;
+	public static Map<String, String[]> getSupportedRealms() {
+		return DataAccessObject.SUPPORTED_REALMS;
 	}
 
 	public static final String getVersion(String realm) {
 		return DataAccessObject.VERSION_MAP.get(realm);
 	}
 
-	public static final void initVersionsToEmpty() {
-		for (String realm : DataAccessObject.getSupportedRealms()) {
-			DataAccessObject.VERSION_MAP.put(realm, "");
+	public static final void initDAO() {
+		// Upon server start there's no data on dynamic memory, load the realms
+		// and their corresponding locale codes
+		DataAccessObject.SUPPORTED_REALMS.put("euw", new String[] { "en_US",
+				"de_DE", "es_ES", "fr_FR", "it_IT" });
+		DataAccessObject.SUPPORTED_REALMS.put("eune", new String[] { "en_US",
+				"el_GR", "pl_PL", "ro_RO" });
+		DataAccessObject.SUPPORTED_REALMS.put("na", new String[] { "en_US" });
+		DataAccessObject.SUPPORTED_REALMS.put("tr", new String[] { "tr_TR" });
+		DataAccessObject.SUPPORTED_REALMS.put("br", new String[] { "pt_PT" });
+
+		for (String realm : DataAccessObject.getSupportedRealms().keySet()) {
+			DataAccessObject.VERSION_MAP.put(realm, "");// As well, put blank
+														// version to
+														// force downloading
+														// such data
 		}
 	}
 

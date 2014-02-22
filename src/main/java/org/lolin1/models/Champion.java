@@ -1,19 +1,12 @@
 package org.lolin1.models;
 
 import java.lang.reflect.Field;
-import java.util.Map;
 
 public class Champion {
 
 	private class PassiveSpell extends Spell {
 
-		@Override
-		public String toString() {
-			StringBuilder ret = new StringBuilder("\"passive\":{");
-			ret.append("\"detail\":\"").append(this.detail)
-					.append("\",\"name\":\"").append(this.name).append("\"");
-			ret.append("}");
-			return ret.toString();
+		private PassiveSpell() {
 		}
 	}
 
@@ -30,7 +23,7 @@ public class Champion {
 		@Override
 		public String toString() {
 			StringBuilder ret = new StringBuilder("{");
-			Field[] fields = this.getClass().getDeclaredFields();
+			Field[] fields = this.getClass().getFields();
 			for (int i = 0; i < fields.length;) {
 				Field x = fields[i];
 				x.setAccessible(Boolean.TRUE);
@@ -58,11 +51,7 @@ public class Champion {
 	private final Spell[] spells;
 	private final PassiveSpell passive;
 
-	public Champion(Map<String, String> descriptor) {
-		for (String x : descriptor.keySet()) {
-			System.out.println("Key " + x + " mapped to value "
-					+ descriptor.get(x));
-		}
+	public Champion() {
 	}
 
 	@Override
