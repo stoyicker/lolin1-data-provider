@@ -1,6 +1,7 @@
 package org.lolin1.data;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -12,17 +13,25 @@ public abstract class DataAccessObject {
 	private final static String RESPONSE_UNSUPPORTED = "{\"status\":\"unsupported\"}",
 			RESPONSE_ERROR = "{\"status\":\"error\"}";
 	private static Map<String, String> VERSION_MAP = new HashMap<String, String>();
+	private static final Object champsLock = new Object(),
+			versionLock = new Object();
 	private static final String[] supportedRealms = new String[] { "euw",
 			"eune", "na", "tr", "br" };
 
 	private static String formatChampionListAsJSON(List<Champion> champions) {
-		// TODO formatChampionListAsJSON
-		return null;
+		StringBuilder ret = new StringBuilder("{[");
+		for (Iterator<Champion> it = champions.iterator(); it.hasNext();) {
+			ret.append(it.next().toString());
+			if (it.hasNext()) {
+				ret.append(",");
+			}
+		}
+		return ret.append("]}").toString();
 	}
 
 	public static final String getJSONChampions(String realm, String locale) {
 		String ret;
-		synchronized (DataAccessObject.class) {
+		synchronized (DataAccessObject.champsLock) {
 			ChampionManager championManager = ChampionManager
 					.getChampionManager();
 			if (championManager.isPairSupported(locale, realm)) {
@@ -39,13 +48,15 @@ public abstract class DataAccessObject {
 
 	public static final String getJSONVersion(String realm) {
 		StringBuffer ret;
-		if (!DataAccessObject.VERSION_MAP.containsKey(realm)) {
-			ret = new StringBuffer(DataAccessObject.RESPONSE_ERROR);
-		} else {
-			ret = new StringBuffer("{\"status\":\"ok\", \"version\":\""
-					+ DataAccessObject.VERSION_MAP.get(realm) + "\"}");
+		synchronized (DataAccessObject.versionLock) {
+			if (!DataAccessObject.VERSION_MAP.containsKey(realm)) {
+				ret = new StringBuffer(DataAccessObject.RESPONSE_ERROR);
+			} else {
+				ret = new StringBuffer("{\"status\":\"ok\", \"version\":\""
+						+ DataAccessObject.VERSION_MAP.get(realm) + "\"}");
+			}
+			return ret.toString();
 		}
-		return ret.toString();
 	}
 
 	public static String[] getSupportedRealms() {
@@ -57,6 +68,8 @@ public abstract class DataAccessObject {
 	}
 
 	public static final void setVersion(String realm, String newVersion) {
-		DataAccessObject.VERSION_MAP.put(realm, newVersion);
+		synchronized (DataAccessObject.versionLock) {
+			DataAccessObject.VERSION_MAP.put(realm, newVersion);
+		}
 	}
 }
