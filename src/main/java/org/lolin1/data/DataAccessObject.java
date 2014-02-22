@@ -67,6 +67,12 @@ public abstract class DataAccessObject {
 		return DataAccessObject.VERSION_MAP.get(realm);
 	}
 
+	public static final void initVersionsToEmpty() {
+		for (String realm : DataAccessObject.getSupportedRealms()) {
+			DataAccessObject.VERSION_MAP.put(realm, "");
+		}
+	}
+
 	public static final void setVersion(String realm, String newVersion) {
 		synchronized (DataAccessObject.versionLock) {
 			DataAccessObject.VERSION_MAP.put(realm, newVersion);

@@ -1,5 +1,7 @@
 package org.lolin1.data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jetty.util.ajax.JSON;
@@ -7,10 +9,40 @@ import org.lolin1.utils.Utils;
 
 public abstract class DataUpdater {
 
-	private static final String REALM_PLACE_HOLDER = "PUTREALMINLOWERCASEHERE",
+	private static final String REALM_PLACE_HOLDER = "LOWERCASE_REALM_HERE",
+			CHAMPION_KEY_PLACE_HOLDER = "CHAMPION_NUMERIC_KEY_HERE",
+			LOCALE_PLACE_HOLDER = "LOCALE_MIXED_CASE_HERE",
 			REALM_FILE_URL = "https://prod.api.pvp.net/api/lol/static-data/"
 					+ DataUpdater.REALM_PLACE_HOLDER + "/v1/realm",
+			ALL_CHAMPIONS_URL = "https://prod.api.pvp.net/api/lol/static-data/"
+					+ DataUpdater.REALM_PLACE_HOLDER + "/v1/champion?locale="
+					+ DataUpdater.LOCALE_PLACE_HOLDER + "&champData=info",
+			SINGLE_CHAMPION_URL = "https://prod.api.pvp.net/api/lol/static-data/"
+					+ DataUpdater.REALM_PLACE_HOLDER
+					+ "/v1/champion/"
+					+ DataUpdater.CHAMPION_KEY_PLACE_HOLDER
+					+ "?locale="
+					+ DataUpdater.LOCALE_PLACE_HOLDER
+					+ "&champData=lore,tags,stats,spells,passive",
 			VERSION_KEY = "dd";
+
+	@SuppressWarnings("unchecked")
+	private static void performUpdate() {
+		List<String> championIds = new ArrayList<>();
+		Map<String, Map<String, Map<String, String>>> allChampions = (Map<String, Map<String, Map<String, String>>>) JSON
+				.parse(Utils.performRiotGet(DataUpdater.ALL_CHAMPIONS_URL
+						.replace(DataUpdater.REALM_PLACE_HOLDER, "euw")
+						.replace(DataUpdater.LOCALE_PLACE_HOLDER, "es_ES")));
+		for (String key : allChampions.get("data").keySet()) {
+			for (String inner : allChampions.get("data").get(key).keySet()) {
+				if (inner.contentEquals("key")) {
+					championIds.add(allChampions.get("data").get(key)
+							.get("key"));
+					break;
+				}
+			}
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	private static String retrieveDragonMagicVersion(String realm) {
@@ -25,11 +57,11 @@ public abstract class DataUpdater {
 	}
 
 	public static void updateData() {
-		// TODO FOR EACH REALM: If the map is empty or the version is different,
-		// then update that realm
 		for (String x : DataAccessObject.getSupportedRealms()) {
-			System.out.println("Version of realm " + x + ": "
-					+ DataUpdater.retrieveDragonMagicVersion(x));
+			if (!DataAccessObject.getVersion(x).contentEquals(
+					DataUpdater.retrieveDragonMagicVersion(x))) {
+				DataUpdater.performUpdate();
+			}
 		}
 		System.exit(-1);
 	}
