@@ -31,13 +31,30 @@ public class Champion {
 
 		Field[] fields = this.getClass().getDeclaredFields();
 		for (Field x : fields) {
-			if (x.getType() == String.class) {
+			if (x.getName().contentEquals("key")
+					|| x.getName().contentEquals("name")
+					|| x.getName().contentEquals("title")) {
+				String fieldName = x.getName();
 				x.setAccessible(Boolean.TRUE);
 				try {
-					x.set(this, parsedDescriptor.get(x.getName()));
+					x.set(this, parsedDescriptor.get(fieldName).toString());
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace(System.err);
 				}
+				x.setAccessible(Boolean.FALSE);
+			} else if (x.getType() == String.class) {
+				x.setAccessible(Boolean.TRUE);
+				try {
+					x.set(this,
+							((HashMap<String, Object>) parsedDescriptor
+									.get("stats")).get(x.getName()) + ""); // Force
+																			// conversion
+																			// to
+																			// String
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace(System.err);
+				}
+				x.setAccessible(Boolean.FALSE);
 			}
 		}
 		String _tags = JSON.toString(parsedDescriptor.get("tags"))
@@ -71,7 +88,7 @@ public class Champion {
 	public String toString() {
 		StringBuilder ret = new StringBuilder("{");
 		Field[] fields = this.getClass().getDeclaredFields();
-		for (int i = 0; i < fields.length;) {
+		for (int i = 0; i < fields.length; i++) {
 			Field x = fields[i];
 			if (!x.getName().contentEquals("tags")
 					&& !x.getName().contentEquals("spells")) {
@@ -82,9 +99,10 @@ public class Champion {
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace(System.err);
 				}
-			}
-			if (++i < fields.length) {
-				ret.append(",");
+				x.setAccessible(Boolean.FALSE);
+				if ((i + 1) < fields.length) {
+					ret.append(",");
+				}
 			}
 		}
 		ret.append("\"tags\":[");
