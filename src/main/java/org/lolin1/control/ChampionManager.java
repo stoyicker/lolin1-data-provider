@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.lolin1.models.Champion;
+import org.lolin1.models.champion.Champion;
 
 public class ChampionManager {
 

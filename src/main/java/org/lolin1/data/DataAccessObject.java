@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.lolin1.control.ChampionManager;
-import org.lolin1.models.Champion;
+import org.lolin1.models.champion.Champion;
 
 public abstract class DataAccessObject {
 

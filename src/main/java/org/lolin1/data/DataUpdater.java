@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jetty.util.ajax.JSON;
-import org.lolin1.models.Champion;
+import org.lolin1.models.champion.Champion;
 import org.lolin1.utils.Utils;
 
 public abstract class DataUpdater {
