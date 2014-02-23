@@ -65,7 +65,6 @@ public class Champion {
 				e.printStackTrace(System.err);
 			}
 		}
-		System.exit(-1);
 	}
 
 	@Override
