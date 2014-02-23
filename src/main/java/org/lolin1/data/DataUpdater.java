@@ -50,9 +50,7 @@ public abstract class DataUpdater {
 							.replace(DataUpdater.REALM_PLACE_HOLDER, realm)
 							.replace(DataUpdater.LOCALE_PLACE_HOLDER, locale)
 							.replace(DataUpdater.CHAMPION_KEY_PLACE_HOLDER, key));
-			Champion x;
-			champions.add(x = new Champion(championDescriptor));
-			System.out.println("Champion:\n" + x.toString());
+			champions.add(new Champion(championDescriptor));
 			// TODO Download images
 			System.exit(-1);// TODO Remove this
 		}

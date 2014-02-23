@@ -21,7 +21,8 @@ public class ActiveSpellFactory {
 			range = jsonObject.getString("rangeBurn");
 			cost = jsonObject.getString("resource").replace(
 					"\\{\\{ cost \\}\\}", jsonObject.getString("costBurn"));
-			tooltip = jsonObject.getString("tooltip");
+			tooltip = jsonObject.getString("tooltip")
+					.replaceAll("\"", "\\\\\"");
 			varsArray = jsonObject.getJSONArray("vars");
 			effectsArray = jsonObject.getJSONArray("effectBurn");
 		} catch (JSONException e) {

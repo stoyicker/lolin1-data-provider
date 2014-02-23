@@ -60,9 +60,6 @@ public class Champion {
 		}
 		String _tags = JSON.toString(parsedDescriptor.get("tags"))
 				.replace("[", "").replace("]", "").replace("\"", "");
-		System.out.println("Original tags: "
-				+ JSON.toString(parsedDescriptor.get("tags")));
-		System.out.println("New tags: " + _tags);
 		StringTokenizer tagsTokenizer = new StringTokenizer(_tags, ",");
 		this.tags = new String[tagsTokenizer.countTokens()];
 		for (int i = 0; i < this.tags.length; i++) {
@@ -119,12 +116,13 @@ public class Champion {
 		}
 		ret.append("],");
 		ret.append("\"passive\":" + this.passive.toString()).append(",");
-		// for (int i = 0; i < this.spells.length;) {
-		// ret.append(this.spells[i].toString());
-		// if (++i < this.tags.length) {
-		// ret.append(",");
-		// }
-		// }
-		return ret.append("}").toString();
+		ret.append("\"spells\":[");
+		for (int i = 0; i < this.spells.length;) {
+			ret.append(this.spells[i].toString());
+			if (++i < this.spells.length) {
+				ret.append(",");
+			}
+		}
+		return ret.append("]}").toString();
 	}
 }

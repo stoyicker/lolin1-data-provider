@@ -1,6 +1,8 @@
 package org.lolin1.models.champion.spells;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class PassiveSpell {
@@ -25,15 +27,15 @@ public class PassiveSpell {
 
 	@Override
 	public String toString() {
-		System.out.println(this.name);
-		System.out.println(this.detail);
-		System.out.println(this.imageName);
-
 		StringBuilder ret = new StringBuilder("{");
-		Field[] fields = this.getClass().getDeclaredFields();
-		System.out.println(fields.length);
-		for (int i = 0; i < fields.length;) {
-			Field x = fields[i];
+		ArrayList<Field> fields = new ArrayList<>(Arrays.asList(this.getClass()
+				.getDeclaredFields()));
+		if (this.getClass().getSuperclass() != null) {
+			fields.addAll(Arrays.asList(this.getClass().getSuperclass()
+					.getDeclaredFields()));
+		}
+		for (int i = 0; i < fields.size();) {
+			Field x = fields.get(i);
 			x.setAccessible(Boolean.TRUE);
 			try {
 				ret.append("\"" + x.getName() + "\":\"" + x.get(this) + "\"");
@@ -41,7 +43,7 @@ public class PassiveSpell {
 				e.printStackTrace(System.err);
 			}
 			x.setAccessible(Boolean.FALSE);
-			if (++i < fields.length) {
+			if (++i < fields.size()) {
 				ret.append(",");
 			}
 		}
