@@ -25,8 +25,13 @@ public class PassiveSpell {
 
 	@Override
 	public String toString() {
+		System.out.println(this.name);
+		System.out.println(this.detail);
+		System.out.println(this.imageName);
+
 		StringBuilder ret = new StringBuilder("{");
-		Field[] fields = this.getClass().getFields();
+		Field[] fields = this.getClass().getDeclaredFields();
+		System.out.println(fields.length);
 		for (int i = 0; i < fields.length;) {
 			Field x = fields[i];
 			x.setAccessible(Boolean.TRUE);

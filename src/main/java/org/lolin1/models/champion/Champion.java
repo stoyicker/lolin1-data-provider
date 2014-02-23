@@ -33,7 +33,8 @@ public class Champion {
 		for (Field x : fields) {
 			if (x.getName().contentEquals("key")
 					|| x.getName().contentEquals("name")
-					|| x.getName().contentEquals("title")) {
+					|| x.getName().contentEquals("title")
+					|| x.getName().contentEquals("lore")) {
 				String fieldName = x.getName();
 				x.setAccessible(Boolean.TRUE);
 				try {
@@ -58,7 +59,10 @@ public class Champion {
 			}
 		}
 		String _tags = JSON.toString(parsedDescriptor.get("tags"))
-				.replace("[", "").replace("]", "").replace("\"", "\"");
+				.replace("[", "").replace("]", "").replace("\"", "");
+		System.out.println("Original tags: "
+				+ JSON.toString(parsedDescriptor.get("tags")));
+		System.out.println("New tags: " + _tags);
 		StringTokenizer tagsTokenizer = new StringTokenizer(_tags, ",");
 		this.tags = new String[tagsTokenizer.countTokens()];
 		for (int i = 0; i < this.tags.length; i++) {
@@ -91,7 +95,8 @@ public class Champion {
 		for (int i = 0; i < fields.length; i++) {
 			Field x = fields[i];
 			if (!x.getName().contentEquals("tags")
-					&& !x.getName().contentEquals("spells")) {
+					&& !x.getName().contentEquals("spells")
+					&& !x.getName().contentEquals("passive")) {
 				x.setAccessible(Boolean.TRUE);
 				try {
 					ret.append("\"" + x.getName() + "\":\"" + x.get(this)
@@ -113,13 +118,13 @@ public class Champion {
 			}
 		}
 		ret.append("],");
-		ret.append(this.passive.toString()).append(",");
-		for (int i = 0; i < this.spells.length;) {
-			ret.append(this.spells[i].toString());
-			if (++i < this.tags.length) {
-				ret.append(",");
-			}
-		}
+		ret.append("\"passive\":" + this.passive.toString()).append(",");
+		// for (int i = 0; i < this.spells.length;) {
+		// ret.append(this.spells[i].toString());
+		// if (++i < this.tags.length) {
+		// ret.append(",");
+		// }
+		// }
 		return ret.append("}").toString();
 	}
 }
