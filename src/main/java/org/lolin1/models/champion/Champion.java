@@ -96,6 +96,10 @@ public class Champion {
 		return this.imageName;
 	}
 
+	public String getPassiveImageName() {
+		return this.passive.getImageName();
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder ret = new StringBuilder("{");

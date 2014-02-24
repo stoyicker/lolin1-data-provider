@@ -93,6 +93,14 @@ public abstract class Utils {
 				Utils.BUSTS_DIR_NAME, championImageName));
 	}
 
+	public static void downloadChampionPassiveImage(Champion champion,
+			String imagesUrl) {
+		String passiveImageName = champion.getPassiveImageName();
+		Utils.downloadFile(imagesUrl + Utils.PASSIVES_DIR_NAME + "/"
+				+ passiveImageName, Paths.get(Utils.IMAGES_DIR_NAME,
+				Utils.PASSIVES_DIR_NAME, passiveImageName));
+	}
+
 	/**
 	 * Note that, while this method is quite efficient, it's limited to files
 	 * <16 MB.
@@ -104,7 +112,7 @@ public abstract class Utils {
 		URL website = null;
 		System.out.println(url);
 		try {
-			website = new URL(url);
+			website = new URL(url.replaceAll(" ", "%20"));
 		} catch (MalformedURLException e) {
 			e.printStackTrace(System.err);
 		}

@@ -40,11 +40,9 @@ public abstract class DataUpdater {
 			champions.add(thisChampion = new Champion(
 					(HashMap<String, Object>) map.get(key)));
 			Utils.downloadChampionBustImage(thisChampion, IMAGES_URL);
+			Utils.downloadChampionPassiveImage(thisChampion, IMAGES_URL);
 			// TODO
-			// Utils.downloadChampionPassiveImage(thisChampion,
-			// DataUpdater.IMAGES_URL);
-			// Utils.downloadChampionSpellImages(thisChampion,
-			// DataUpdater.IMAGES_URL);
+			// Utils.downloadChampionSpellImages(thisChampion,IMAGES_URL);
 		}
 		System.exit(0);
 	}

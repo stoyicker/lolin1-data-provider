@@ -25,6 +25,10 @@ public class PassiveSpell {
 		this.imageName = _imageName;
 	}
 
+	public String getImageName() {
+		return this.imageName;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder ret = new StringBuilder("{");
