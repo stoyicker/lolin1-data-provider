@@ -21,14 +21,18 @@ public abstract class DataUpdater {
 					+ "&champData=lore,tags,stats,spells,passive,image",
 			VERSION_KEY = "dd", CDN_KEY = "cdn";
 	private static String CDN;
+	private static Boolean UPDATING = Boolean.FALSE;
+
+	protected static boolean isUpdating() {
+		return DataUpdater.UPDATING;
+	}
 
 	@SuppressWarnings("unchecked")
 	private static void performUpdate(String realm, String locale,
 			String newVersion) {
+		DataUpdater.UPDATING = Boolean.TRUE;
 		Utils.createImagesDirectory();
 		String IMAGES_URL = DataUpdater.CDN + "/" + newVersion + "/img/";
-		// TODO Update IMAGES_URL and new version, and replace in images_url the
-		// new version
 		List<Champion> champions = new ArrayList<>();
 		Map<String, Object> map = (Map<String, Object>) ((Map<String, Object>) JSON
 				.parse(Utils.performRiotGet(DataUpdater.ALL_CHAMPIONS_URL
@@ -42,7 +46,9 @@ public abstract class DataUpdater {
 			Utils.downloadChampionBustImage(thisChampion, IMAGES_URL);
 			Utils.downloadChampionPassiveImage(thisChampion, IMAGES_URL);
 			Utils.downloadChampionSpellImages(thisChampion, IMAGES_URL);
+			// TODO Replace current champion list with 'champions' List
 		}
+		DataUpdater.UPDATING = Boolean.FALSE;
 		System.exit(0);
 	}
 

@@ -13,8 +13,6 @@ public abstract class DataAccessObject {
 	private final static String RESPONSE_UNSUPPORTED = "{\"status\":\"unsupported\"}",
 			RESPONSE_ERROR = "{\"status\":\"error\"}";
 	private static Map<String, String> VERSION_MAP = new HashMap<String, String>();
-	private static final Object champsLock = new Object(),
-			versionLock = new Object();
 	private static final Map<String, String[]> SUPPORTED_REALMS = new HashMap<>();
 
 	private static String formatChampionListAsJSON(List<Champion> champions) {
@@ -30,7 +28,7 @@ public abstract class DataAccessObject {
 
 	public static final String getJSONChampions(String realm, String locale) {
 		String ret;
-		synchronized (DataAccessObject.champsLock) {
+		if (!DataUpdater.isUpdating()) {
 			ChampionManager championManager = ChampionManager
 					.getChampionManager();
 			if (championManager.isPairSupported(locale, realm)) {
@@ -40,22 +38,26 @@ public abstract class DataAccessObject {
 			} else {
 				ret = DataAccessObject.RESPONSE_UNSUPPORTED;
 			}
-
-			return ret;
+		} else {
+			ret = DataAccessObject.RESPONSE_ERROR;
 		}
+
+		return ret;
 	}
 
 	public static final String getJSONVersion(String realm) {
 		StringBuffer ret;
-		synchronized (DataAccessObject.versionLock) {
+		if (!DataUpdater.isUpdating()) {
 			if (!DataAccessObject.VERSION_MAP.containsKey(realm)) {
 				ret = new StringBuffer(DataAccessObject.RESPONSE_ERROR);
 			} else {
 				ret = new StringBuffer("{\"status\":\"ok\", \"version\":\""
 						+ DataAccessObject.VERSION_MAP.get(realm) + "\"}");
 			}
-			return ret.toString();
+		} else {
+			ret = new StringBuffer(DataAccessObject.RESPONSE_ERROR);
 		}
+		return ret.toString();
 	}
 
 	public static Map<String, String[]> getSupportedRealms() {
@@ -86,8 +88,6 @@ public abstract class DataAccessObject {
 	}
 
 	public static final void setVersion(String realm, String newVersion) {
-		synchronized (DataAccessObject.versionLock) {
-			DataAccessObject.VERSION_MAP.put(realm, newVersion);
-		}
+		DataAccessObject.VERSION_MAP.put(realm, newVersion);
 	}
 }
