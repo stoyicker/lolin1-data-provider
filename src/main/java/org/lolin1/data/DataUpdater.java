@@ -19,11 +19,16 @@ public abstract class DataUpdater {
 					+ DataUpdater.REALM_PLACE_HOLDER + "/v1/champion?locale="
 					+ DataUpdater.LOCALE_PLACE_HOLDER
 					+ "&champData=lore,tags,stats,spells,passive,image",
-			VERSION_KEY = "dd";
+			VERSION_KEY = "dd", CDN_KEY = "cdn";
+	private static String CDN;
 
 	@SuppressWarnings("unchecked")
-	private static void performUpdate(String realm, String locale) {
+	private static void performUpdate(String realm, String locale,
+			String newVersion) {
 		Utils.createImagesDirectory();
+		String IMAGES_URL = DataUpdater.CDN + "/" + newVersion + "/img/";
+		// TODO Update IMAGES_URL and new version, and replace in images_url the
+		// new version
 		List<Champion> champions = new ArrayList<>();
 		Map<String, Object> map = (Map<String, Object>) ((Map<String, Object>) JSON
 				.parse(Utils.performRiotGet(DataUpdater.ALL_CHAMPIONS_URL
@@ -34,11 +39,14 @@ public abstract class DataUpdater {
 			Champion thisChampion = null;
 			champions.add(thisChampion = new Champion(
 					(HashMap<String, Object>) map.get(key)));
-			System.out.println(thisChampion.toString());
-			// TODO Download its images
+			Utils.downloadChampionBustImage(thisChampion, IMAGES_URL);
+			// TODO
+			// Utils.downloadChampionPassiveImage(thisChampion,
+			// DataUpdater.IMAGES_URL);
+			// Utils.downloadChampionSpellImages(thisChampion,
+			// DataUpdater.IMAGES_URL);
 		}
 		System.exit(0);
-		// TODO Set new version
 	}
 
 	@SuppressWarnings("unchecked")
@@ -49,6 +57,7 @@ public abstract class DataUpdater {
 		Map<String, String> realmJson = (Map<String, String>) JSON
 				.parse(wholeFile);
 		String version = realmJson.get(DataUpdater.VERSION_KEY);
+		DataUpdater.CDN = realmJson.get(DataUpdater.CDN_KEY);
 		ret = (version == null) ? "" : version;
 		return ret;
 	}
@@ -62,10 +71,10 @@ public abstract class DataUpdater {
 									.retrieveDragonMagicVersion(realm)))) {
 				for (String locale : DataAccessObject.getSupportedRealms().get(
 						realm)) {
-					DataUpdater.performUpdate(realm, locale);
+					DataUpdater.performUpdate(realm, locale, newVersion);
 				}
+				DataAccessObject.setVersion(realm, newVersion);
 			}
-			DataAccessObject.setVersion(realm, newVersion);
 		}
 	}
 }

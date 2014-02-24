@@ -24,10 +24,10 @@ public class ActiveSpellFactory {
 		} catch (JSONException e) {
 			e.printStackTrace(System.err);
 		}
+
 		// It's key to manage the exceptions in different try-catch blocks to
 		// make sure that one variable not being found doesn't forbid the others
 		// from being parsed
-
 		try {
 			cost = jsonObject.getString("resource").replace(
 					"\\{\\{ cost \\}\\}", jsonObject.getString("costBurn"));
