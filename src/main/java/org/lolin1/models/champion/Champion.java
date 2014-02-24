@@ -25,9 +25,7 @@ public class Champion {
 	private final PassiveSpell passive;
 
 	@SuppressWarnings("unchecked")
-	public Champion(String descriptor) {
-		HashMap<String, Object> parsedDescriptor = (HashMap<String, Object>) JSON
-				.parse(descriptor);
+	public Champion(HashMap<String, Object> parsedDescriptor) {
 
 		Field[] fields = this.getClass().getDeclaredFields();
 		for (Field x : fields) {

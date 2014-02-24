@@ -1,6 +1,7 @@
 package org.lolin1.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,59 +12,32 @@ import org.lolin1.utils.Utils;
 public abstract class DataUpdater {
 
 	private static final String REALM_PLACE_HOLDER = "LOWERCASE_REALM_HERE",
-			CHAMPION_KEY_PLACE_HOLDER = "CHAMPION_NUMERIC_KEY_HERE",
 			LOCALE_PLACE_HOLDER = "LOCALE_MIXED_CASE_HERE",
 			REALM_FILE_URL = "https://prod.api.pvp.net/api/lol/static-data/"
 					+ DataUpdater.REALM_PLACE_HOLDER + "/v1/realm",
 			ALL_CHAMPIONS_URL = "https://prod.api.pvp.net/api/lol/static-data/"
 					+ DataUpdater.REALM_PLACE_HOLDER + "/v1/champion?locale="
-					+ DataUpdater.LOCALE_PLACE_HOLDER + "&champData=info",
-			SINGLE_CHAMPION_URL = "https://prod.api.pvp.net/api/lol/static-data/"
-					+ DataUpdater.REALM_PLACE_HOLDER
-					+ "/v1/champion/"
-					+ DataUpdater.CHAMPION_KEY_PLACE_HOLDER
-					+ "?locale="
 					+ DataUpdater.LOCALE_PLACE_HOLDER
-					+ "&champData=lore,tags,stats,spells,passive,image", // TODO
-																			// Use
-			// the
-			// v1/champion/?
-			// url to
-			// retrieve
-			// all
-			// instead
+					+ "&champData=lore,tags,stats,spells,passive,image",
 			VERSION_KEY = "dd";
 
 	@SuppressWarnings("unchecked")
 	private static void performUpdate(String realm, String locale) {
 		Utils.createImagesDirectory();
-		List<String> championKeys = new ArrayList<>();
 		List<Champion> champions = new ArrayList<>();
-		Map<String, Map<String, Map<String, String>>> allChampions = (Map<String, Map<String, Map<String, String>>>) JSON
+		Map<String, Object> map = (Map<String, Object>) ((Map<String, Object>) JSON
 				.parse(Utils.performRiotGet(DataUpdater.ALL_CHAMPIONS_URL
 						.replace(DataUpdater.REALM_PLACE_HOLDER, realm)
-						.replace(DataUpdater.LOCALE_PLACE_HOLDER, locale)));
-		for (String key : allChampions.get("data").keySet()) {
-			for (String inner : allChampions.get("data").get(key).keySet()) {
-				if (inner.contentEquals("key")) {
-					championKeys.add(allChampions.get("data").get(key)
-							.get("key"));
-					break;
-				}
-			}
-		}
-		for (String key : championKeys) {
-			String championDescriptor = Utils
-					.performRiotGet(DataUpdater.SINGLE_CHAMPION_URL
-							.replace(DataUpdater.REALM_PLACE_HOLDER, realm)
-							.replace(DataUpdater.LOCALE_PLACE_HOLDER, locale)
-							.replace(DataUpdater.CHAMPION_KEY_PLACE_HOLDER, key));
-			Champion thisChampion;
-			champions.add(thisChampion = new Champion(championDescriptor));
-			// TODO Download images
+						.replace(DataUpdater.LOCALE_PLACE_HOLDER, locale))))
+				.get("data");
+		for (String key : map.keySet()) {
+			Champion thisChampion = null;
+			champions.add(thisChampion = new Champion(
+					(HashMap<String, Object>) map.get(key)));
 			System.out.println(thisChampion.toString());
-			System.exit(-1);// TODO Remove this
+			// TODO Download its images
 		}
+		System.exit(0);
 		// TODO Set new version
 	}
 
