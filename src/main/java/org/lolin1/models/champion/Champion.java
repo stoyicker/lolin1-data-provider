@@ -100,6 +100,16 @@ public class Champion {
 		return this.passive.getImageName();
 	}
 
+	public String[] getSpellImageNames() {
+		String[] ret = new String[this.spells.length];
+
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = this.spells[i].getImageName();
+		}
+
+		return ret;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder ret = new StringBuilder("{");

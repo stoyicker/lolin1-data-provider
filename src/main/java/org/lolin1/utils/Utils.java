@@ -101,6 +101,16 @@ public abstract class Utils {
 				Utils.PASSIVES_DIR_NAME, passiveImageName));
 	}
 
+	public static void downloadChampionSpellImages(Champion champion,
+			String imagesUrl) {
+		String[] spellImageNames = champion.getSpellImageNames();
+		for (String spellImageName : spellImageNames) {
+			Utils.downloadFile(imagesUrl + Utils.SPELLS_DIR_NAME + "/"
+					+ spellImageName, Paths.get(Utils.IMAGES_DIR_NAME,
+					Utils.SPELLS_DIR_NAME, spellImageName));
+		}
+	}
+
 	/**
 	 * Note that, while this method is quite efficient, it's limited to files
 	 * <16 MB.
@@ -110,7 +120,6 @@ public abstract class Utils {
 	 */
 	private static void downloadFile(String url, Path pathToFileToSaveTo) {
 		URL website = null;
-		System.out.println(url);
 		try {
 			website = new URL(url.replaceAll(" ", "%20"));
 		} catch (MalformedURLException e) {
