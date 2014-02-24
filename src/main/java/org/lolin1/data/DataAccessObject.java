@@ -87,7 +87,7 @@ public abstract class DataAccessObject {
 		}
 	}
 
-	public static final void setVersion(String realm, String newVersion) {
+	protected static final void setVersion(String realm, String newVersion) {
 		DataAccessObject.VERSION_MAP.put(realm, newVersion);
 	}
 }

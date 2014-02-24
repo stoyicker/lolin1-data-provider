@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jetty.util.ajax.JSON;
+import org.lolin1.control.ChampionManager;
 import org.lolin1.models.champion.Champion;
 import org.lolin1.utils.Utils;
 
@@ -46,8 +47,10 @@ public abstract class DataUpdater {
 			Utils.downloadChampionBustImage(thisChampion, IMAGES_URL);
 			Utils.downloadChampionPassiveImage(thisChampion, IMAGES_URL);
 			Utils.downloadChampionSpellImages(thisChampion, IMAGES_URL);
-			// TODO Replace current champion list with 'champions' List
+			ChampionManager.getChampionManager().setChampions(locale, realm,
+					champions);
 		}
+		DataAccessObject.setVersion(realm, newVersion);
 		DataUpdater.UPDATING = Boolean.FALSE;
 		System.exit(0);
 	}

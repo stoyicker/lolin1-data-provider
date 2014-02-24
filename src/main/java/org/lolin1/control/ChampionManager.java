@@ -9,6 +9,8 @@ import org.lolin1.models.champion.Champion;
 public class ChampionManager {
 
 	private class Pair {
+		@SuppressWarnings("unused")
+		// They're used to index the ChampionManager.CHAMPIONS map
 		private final String partOne, partTwo;
 
 		private Pair(String _one, String _two) {
@@ -37,5 +39,10 @@ public class ChampionManager {
 
 	public boolean isPairSupported(String locale, String realm) {
 		return ChampionManager.CHAMPIONS.containsKey(new Pair(locale, realm));
+	}
+
+	public void setChampions(String locale, String realm,
+			List<Champion> champions) {
+		ChampionManager.CHAMPIONS.put(new Pair(locale, realm), champions);
 	}
 }
