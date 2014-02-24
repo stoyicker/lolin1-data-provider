@@ -38,11 +38,4 @@ public class ChampionManager {
 	public boolean isPairSupported(String locale, String realm) {
 		return ChampionManager.CHAMPIONS.containsKey(new Pair(locale, realm));
 	}
-
-	public void reloadChampions(String locale, String realm) {
-		// TODO Fetch the common one
-		// For each one in the common one, build the object with the extra
-		// information and add it to a list
-		// When the list is done, put the changes
-	}
 }

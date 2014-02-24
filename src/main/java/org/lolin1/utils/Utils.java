@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -21,7 +24,17 @@ public abstract class Utils {
 																					// deployment
 																					// for
 																					// "YOUR_API_KEY_HERE"
-			API_PARAM_NAME = "api_key";
+			API_PARAM_NAME = "api_key", IMAGES_DIR_NAME = "images";
+
+	public static final void createImagesDirectory() {
+		try {
+			Files.createDirectory(Paths.get(Utils.IMAGES_DIR_NAME));
+		} catch (FileAlreadyExistsException ex) {
+			// It's fine
+		} catch (IOException e) {
+			e.printStackTrace(System.err);
+		}
+	}
 
 	public static final synchronized String performRiotGet(String url) {
 		StringBuilder ret = new StringBuilder();

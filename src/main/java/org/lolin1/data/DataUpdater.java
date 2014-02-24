@@ -24,11 +24,19 @@ public abstract class DataUpdater {
 					+ DataUpdater.CHAMPION_KEY_PLACE_HOLDER
 					+ "?locale="
 					+ DataUpdater.LOCALE_PLACE_HOLDER
-					+ "&champData=lore,tags,stats,spells,passive",
+					+ "&champData=lore,tags,stats,spells,passive,image", // TODO
+																			// Use
+			// the
+			// v1/champion/?
+			// url to
+			// retrieve
+			// all
+			// instead
 			VERSION_KEY = "dd";
 
 	@SuppressWarnings("unchecked")
 	private static void performUpdate(String realm, String locale) {
+		Utils.createImagesDirectory();
 		List<String> championKeys = new ArrayList<>();
 		List<Champion> champions = new ArrayList<>();
 		Map<String, Map<String, Map<String, String>>> allChampions = (Map<String, Map<String, Map<String, String>>>) JSON
@@ -50,10 +58,13 @@ public abstract class DataUpdater {
 							.replace(DataUpdater.REALM_PLACE_HOLDER, realm)
 							.replace(DataUpdater.LOCALE_PLACE_HOLDER, locale)
 							.replace(DataUpdater.CHAMPION_KEY_PLACE_HOLDER, key));
-			champions.add(new Champion(championDescriptor));
+			Champion thisChampion;
+			champions.add(thisChampion = new Champion(championDescriptor));
 			// TODO Download images
+			System.out.println(thisChampion.toString());
 			System.exit(-1);// TODO Remove this
 		}
+		// TODO Set new version
 	}
 
 	@SuppressWarnings("unchecked")

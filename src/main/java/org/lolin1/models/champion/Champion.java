@@ -19,7 +19,7 @@ public class Champion {
 			hp, hpperlevel, attackdamageperlevel, armor, mpregenperlevel,
 			hpregen, critperlevel, spellblockperlevel, mpregen,
 			attackspeedperlevel, spellblock, movespeed, attackspeedoffset,
-			crit, hpregenperlevel, armorperlevel, lore;
+			crit, hpregenperlevel, armorperlevel, lore, imageName;
 	private final String[] tags;
 	private final ActiveSpell[] spells;
 	private final PassiveSpell passive;
@@ -45,15 +45,24 @@ public class Champion {
 				x.setAccessible(Boolean.FALSE);
 			} else if (x.getType() == String.class) {
 				x.setAccessible(Boolean.TRUE);
-				try {
-					x.set(this,
-							((HashMap<String, Object>) parsedDescriptor
-									.get("stats")).get(x.getName()) + ""); // Force
-																			// conversion
-																			// to
-																			// String
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					e.printStackTrace(System.err);
+				if (x.getName().contentEquals("imageName")) {
+					try {
+						x.set(this, ((HashMap<String, Object>) parsedDescriptor
+								.get("image")).get("full"));
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						e.printStackTrace(System.err);
+					}
+				} else {
+					try {
+						x.set(this,
+								((HashMap<String, Object>) parsedDescriptor
+										.get("stats")).get(x.getName()) + ""); // Force
+																				// conversion
+																				// to
+																				// String
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						e.printStackTrace(System.err);
+					}
 				}
 				x.setAccessible(Boolean.FALSE);
 			}
