@@ -45,8 +45,11 @@ public abstract class DataUpdater {
 			champions.add(thisChampion = new Champion(
 					(HashMap<String, Object>) map.get(key)));
 			Utils.downloadChampionBustImage(thisChampion, IMAGES_URL);
+			// TODO Store hash of the bust image (use new thread)
 			Utils.downloadChampionPassiveImage(thisChampion, IMAGES_URL);
+			// TODO Store hash of the passive image (use new thread)
 			Utils.downloadChampionSpellImages(thisChampion, IMAGES_URL);
+			// TODO Store hash of the spell image (use new thread)
 			ChampionManager.getChampionManager().setChampions(locale, realm,
 					champions);
 		}
