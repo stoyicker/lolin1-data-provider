@@ -1,11 +1,13 @@
 package org.lolin1.control;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.lolin1.data.DataAccessObject;
 import org.lolin1.models.champion.Champion;
+import org.lolin1.utils.Utils;
 
 public final class Controller {
 
@@ -42,6 +44,10 @@ public final class Controller {
 
 	public List<Champion> getChampions(String locale, String realm) {
 		return Controller.CHAMPIONS.get(new Pair(locale, realm));
+	}
+
+	public File getImage(int imageType, String name) {
+		return Utils.getFile(imageType, name);
 	}
 
 	public String getImageHash(int imageType, String name) {

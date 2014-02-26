@@ -1,5 +1,8 @@
 package org.lolin1.services;
 
+import java.io.File;
+
+import javax.activation.MimetypesFileTypeMap;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -29,7 +32,23 @@ public final class Services {
 	@Produces("image/png")
 	public final Response getImage(@PathParam("type") String type,
 			@PathParam("name") String name) {
-
+		int imageType;
+		switch (type.toUpperCase()) {
+		case "BUST":
+			imageType = Controller.IMAGE_TYPE_BUST;
+			break;
+		case "PASSIVE":
+			imageType = Controller.IMAGE_TYPE_PASSIVE;
+			break;
+		case "SPELL":
+			imageType = Controller.IMAGE_TYPE_SPELL;
+			break;
+		default:
+			return Response.status(404).build();
+		}
+		File img = Controller.getController().getImage(imageType, name);
+		return Response.ok(img, new MimetypesFileTypeMap().getContentType(img))
+				.build();
 	}
 
 	@GET

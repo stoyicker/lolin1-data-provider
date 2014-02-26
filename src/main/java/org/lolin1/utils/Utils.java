@@ -19,6 +19,7 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.lolin1.control.Controller;
 import org.lolin1.models.champion.Champion;
 
 public abstract class Utils {
@@ -142,6 +143,21 @@ public abstract class Utils {
 		}
 
 		return new File(pathToFileToSaveTo.toString());
+	}
+
+	public static File getFile(int imageType, String name) {
+		switch (imageType) {
+		case Controller.IMAGE_TYPE_SPELL:
+			return new File(Paths.get(Utils.IMAGES_DIR_NAME,
+					Utils.BUSTS_DIR_NAME, name).toString());
+		case Controller.IMAGE_TYPE_PASSIVE:
+			return new File(Paths.get(Utils.IMAGES_DIR_NAME,
+					Utils.PASSIVES_DIR_NAME, name).toString());
+		case Controller.IMAGE_TYPE_BUST:
+			return new File(Paths.get(Utils.IMAGES_DIR_NAME,
+					Utils.SPELLS_DIR_NAME, name).toString());
+		}
+		return null;// Should never happen
 	}
 
 	public static String getFileMD5(File file) {
