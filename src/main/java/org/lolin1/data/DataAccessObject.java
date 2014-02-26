@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.lolin1.control.ChampionManager;
+import org.lolin1.control.Controller;
 import org.lolin1.models.champion.Champion;
 
 public abstract class DataAccessObject {
@@ -29,10 +29,10 @@ public abstract class DataAccessObject {
 	public static final String getJSONChampions(String realm, String locale) {
 		String ret;
 		if (!DataUpdater.isUpdating()) {
-			ChampionManager championManager = ChampionManager
+			Controller controller = Controller
 					.getChampionManager();
-			if (championManager.isPairSupported(locale, realm)) {
-				List<Champion> champions = championManager.getChampions(locale,
+			if (controller.isPairSupported(locale, realm)) {
+				List<Champion> champions = controller.getChampions(locale,
 						realm);
 				ret = DataAccessObject.formatChampionListAsJSON(champions);
 			} else {

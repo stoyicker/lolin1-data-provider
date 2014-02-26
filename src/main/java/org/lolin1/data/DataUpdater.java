@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jetty.util.ajax.JSON;
-import org.lolin1.control.ChampionManager;
+import org.lolin1.control.Controller;
 import org.lolin1.models.champion.Champion;
 import org.lolin1.utils.Utils;
 
@@ -50,7 +50,7 @@ public abstract class DataUpdater {
 			// TODO Store hash of the passive image (use new thread)
 			Utils.downloadChampionSpellImages(thisChampion, IMAGES_URL);
 			// TODO Store hash of the spell image (use new thread)
-			ChampionManager.getChampionManager().setChampions(locale, realm,
+			Controller.getChampionManager().setChampions(locale, realm,
 					champions);
 		}
 		DataAccessObject.setVersion(realm, newVersion);
