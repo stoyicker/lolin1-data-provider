@@ -2,6 +2,7 @@ package org.lolin1.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,6 +14,8 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -85,30 +88,34 @@ public abstract class Utils {
 		return false;
 	}
 
-	public static void downloadChampionBustImage(Champion champion,
+	public static File downloadChampionBustImage(Champion champion,
 			String imagesUrl) {
 		String championImageName = champion.getImageName();
-		Utils.downloadFile(imagesUrl + Utils.BUSTS_DIR_NAME + "/"
+		return Utils.downloadFile(imagesUrl + Utils.BUSTS_DIR_NAME + "/"
 				+ championImageName, Paths.get(Utils.IMAGES_DIR_NAME,
 				Utils.BUSTS_DIR_NAME, championImageName));
 	}
 
-	public static void downloadChampionPassiveImage(Champion champion,
+	public static File downloadChampionPassiveImage(Champion champion,
 			String imagesUrl) {
 		String passiveImageName = champion.getPassiveImageName();
-		Utils.downloadFile(imagesUrl + Utils.PASSIVES_DIR_NAME + "/"
+		return Utils.downloadFile(imagesUrl + Utils.PASSIVES_DIR_NAME + "/"
 				+ passiveImageName, Paths.get(Utils.IMAGES_DIR_NAME,
 				Utils.PASSIVES_DIR_NAME, passiveImageName));
 	}
 
-	public static void downloadChampionSpellImages(Champion champion,
+	public static File[] downloadChampionSpellImages(Champion champion,
 			String imagesUrl) {
 		String[] spellImageNames = champion.getSpellImageNames();
+		File[] ret = new File[spellImageNames.length];
+		int i = 0;
 		for (String spellImageName : spellImageNames) {
-			Utils.downloadFile(imagesUrl + Utils.SPELLS_DIR_NAME + "/"
+			ret[i] = Utils.downloadFile(imagesUrl + Utils.SPELLS_DIR_NAME + "/"
 					+ spellImageName, Paths.get(Utils.IMAGES_DIR_NAME,
 					Utils.SPELLS_DIR_NAME, spellImageName));
+			i++;
 		}
+		return ret;
 	}
 
 	/**
@@ -118,7 +125,7 @@ public abstract class Utils {
 	 * @param url
 	 * @param pathToFileToSaveTo
 	 */
-	private static void downloadFile(String url, Path pathToFileToSaveTo) {
+	private static File downloadFile(String url, Path pathToFileToSaveTo) {
 		URL website = null;
 		try {
 			website = new URL(url.replaceAll(" ", "%20"));
@@ -133,6 +140,39 @@ public abstract class Utils {
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
 		}
+
+		return new File(pathToFileToSaveTo.toString());
+	}
+
+	public static String getFileMD5(File file) {
+		String ret = null;
+		MessageDigest messageDigest = null;
+		byte[] auxArray = new byte[1024], digestedBytes = null;
+		try {
+			messageDigest = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace(System.err);
+		}
+		try (FileInputStream fileInputStream = new FileInputStream(file)) {
+			int readBytes;
+			while ((readBytes = fileInputStream.read(auxArray)) != -1) {
+				messageDigest.update(auxArray, 0, readBytes);
+			}
+			digestedBytes = messageDigest.digest();
+		} catch (IOException ex) {
+			// Should never happen
+			ex.printStackTrace(System.err);
+		}
+
+		StringBuffer stringBuffer = new StringBuffer();
+		for (byte digestedByte : digestedBytes) {
+			stringBuffer.append(Integer.toString((digestedByte & 0xff) + 0x100,
+					16).substring(1));
+		}
+
+		ret = stringBuffer.toString();
+
+		return ret;
 	}
 
 	public static final synchronized String performRiotGet(String url) {

@@ -29,7 +29,7 @@ public final class Controller {
 
 	private final static Map<Pair, List<Champion>> CHAMPIONS = new HashMap<>();
 
-	public static Controller getChampionManager() {
+	public static Controller getController() {
 		if (Controller.singleton == null) {
 			Controller.singleton = new Controller();
 		}
@@ -53,7 +53,6 @@ public final class Controller {
 	}
 
 	public void setImageHash(int imageType, String imageName, String hash) {
-		// TODO setImageHash
 		switch (imageType) {
 		case IMAGE_TYPE_BUST:
 			this.BUST_HASHES.put(imageName, hash);

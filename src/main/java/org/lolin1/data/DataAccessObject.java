@@ -30,7 +30,7 @@ public abstract class DataAccessObject {
 		String ret;
 		if (!DataUpdater.isUpdating()) {
 			Controller controller = Controller
-					.getChampionManager();
+					.getController();
 			if (controller.isPairSupported(locale, realm)) {
 				List<Champion> champions = controller.getChampions(locale,
 						realm);

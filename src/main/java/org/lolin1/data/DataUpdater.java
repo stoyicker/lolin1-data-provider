@@ -1,9 +1,14 @@
 package org.lolin1.data;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jetty.util.ajax.JSON;
 import org.lolin1.control.Controller;
@@ -41,17 +46,56 @@ public abstract class DataUpdater {
 						.replace(DataUpdater.LOCALE_PLACE_HOLDER, locale))))
 				.get("data");
 		for (String key : map.keySet()) {
-			Champion thisChampion = null;
-			champions.add(thisChampion = new Champion(
-					(HashMap<String, Object>) map.get(key)));
-			Utils.downloadChampionBustImage(thisChampion, IMAGES_URL);
-			// TODO Store hash of the bust image (use new thread)
-			Utils.downloadChampionPassiveImage(thisChampion, IMAGES_URL);
-			// TODO Store hash of the passive image (use new thread)
-			Utils.downloadChampionSpellImages(thisChampion, IMAGES_URL);
-			// TODO Store hash of the spell image (use new thread)
-			Controller.getChampionManager().setChampions(locale, realm,
-					champions);
+			final Champion thisChampion = new Champion(
+					(HashMap<String, Object>) map.get(key));
+			champions.add(thisChampion);
+			ExecutorService executor = Executors.newFixedThreadPool(6);
+			final File bustImage = Utils.downloadChampionBustImage(
+					thisChampion, IMAGES_URL);
+			executor.submit(new Runnable() {
+
+				@Override
+				public void run() {
+					Controller.getController().setImageHash(
+							Controller.IMAGE_TYPE_BUST,
+							thisChampion.getImageName(),
+							Utils.getFileMD5(bustImage));
+				}
+			});
+			final File passiveImage = Utils.downloadChampionPassiveImage(
+					thisChampion, IMAGES_URL);
+			executor.submit(new Runnable() {
+
+				@Override
+				public void run() {
+					Controller.getController().setImageHash(
+							Controller.IMAGE_TYPE_PASSIVE,
+							thisChampion.getPassiveImageName(),
+							Utils.getFileMD5(passiveImage));
+				}
+			});
+			final File[] spellImages = Utils.downloadChampionSpellImages(
+					thisChampion, IMAGES_URL);
+			for (final File x : spellImages) {
+				executor.submit(new Runnable() {
+
+					@Override
+					public void run() {
+						Controller.getController().setImageHash(
+								Controller.IMAGE_TYPE_SPELL,
+								thisChampion.getSpellImageNames()[Arrays
+										.asList(spellImages).indexOf(x)],
+								Utils.getFileMD5(x));
+					}
+				});
+			}
+			Controller.getController().setChampions(locale, realm, champions);
+			executor.shutdown();
+			try {
+				executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				e.printStackTrace(System.err);
+			}
 		}
 		DataAccessObject.setVersion(realm, newVersion);
 		DataUpdater.UPDATING = Boolean.FALSE;
