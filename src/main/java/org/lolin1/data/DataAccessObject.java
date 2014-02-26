@@ -39,7 +39,7 @@ public abstract class DataAccessObject {
 				ret = DataAccessObject.RESPONSE_UNSUPPORTED;
 			}
 		} else {
-			ret = DataAccessObject.RESPONSE_ERROR;
+			ret = DataAccessObject.getResponseError();
 		}
 
 		return ret;
@@ -49,13 +49,13 @@ public abstract class DataAccessObject {
 		StringBuffer ret;
 		if (!DataUpdater.isUpdating()) {
 			if (!DataAccessObject.VERSION_MAP.containsKey(realm)) {
-				ret = new StringBuffer(DataAccessObject.RESPONSE_ERROR);
+				ret = new StringBuffer(DataAccessObject.getResponseError());
 			} else {
 				ret = new StringBuffer("{\"status\":\"ok\", \"version\":\""
 						+ DataAccessObject.VERSION_MAP.get(realm) + "\"}");
 			}
 		} else {
-			ret = new StringBuffer(DataAccessObject.RESPONSE_ERROR);
+			ret = new StringBuffer(DataAccessObject.getResponseError());
 		}
 		return ret.toString();
 	}
@@ -89,5 +89,9 @@ public abstract class DataAccessObject {
 
 	protected static final void setVersion(String realm, String newVersion) {
 		DataAccessObject.VERSION_MAP.put(realm, newVersion);
+	}
+
+	public static String getResponseError() {
+		return RESPONSE_ERROR;
 	}
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lolin1.data.DataAccessObject;
 import org.lolin1.models.champion.Champion;
 
 public final class Controller {
@@ -41,6 +42,18 @@ public final class Controller {
 
 	public List<Champion> getChampions(String locale, String realm) {
 		return Controller.CHAMPIONS.get(new Pair(locale, realm));
+	}
+
+	public String getImageHash(int imageType, String name) {
+		switch (imageType) {
+		case IMAGE_TYPE_BUST:
+			return this.BUST_HASHES.get(name);
+		case IMAGE_TYPE_PASSIVE:
+			return this.PASSIVE_HASHES.get(name);
+		case IMAGE_TYPE_SPELL:
+			return this.SPELL_HASHES.get(name);
+		}
+		return DataAccessObject.getResponseError(); // Should never happen
 	}
 
 	public boolean isPairSupported(String locale, String realm) {
