@@ -89,8 +89,8 @@ public abstract class DataUpdater {
 					}
 				});
 			}
-			Controller.getController().setChampions(locale, realm, champions);
 			executor.shutdown();
+			Controller.getController().setChampions(locale, realm, champions);
 			try {
 				executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
 			} catch (InterruptedException e) {
