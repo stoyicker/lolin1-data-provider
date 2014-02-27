@@ -119,9 +119,6 @@ public abstract class Utils {
 		return ret;
 	}
 
-	// TODO What happens when the update is trying to be performed but there's
-	// no connection?
-
 	/**
 	 * Note that, while this method is quite efficient, it's limited to files
 	 * <16 MB.

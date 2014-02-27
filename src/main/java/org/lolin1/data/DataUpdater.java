@@ -26,7 +26,11 @@ public abstract class DataUpdater {
 					+ DataUpdater.LOCALE_PLACE_HOLDER
 					+ "&champData=lore,tags,stats,spells,passive,image",
 			INFO_WRAPPER = "n", VERSION_KEY = "champion", CDN_KEY = "cdn";
-	private static String CDN;
+	private static String CDN = "ddragon.leagueoflegends.com/cdn";// Give an
+																	// initial
+																	// value for
+																	// reliability
+																	// purposes
 	private static Boolean UPDATING = Boolean.FALSE;
 
 	protected static boolean isUpdating() {
@@ -114,9 +118,18 @@ public abstract class DataUpdater {
 						DataUpdater.REALM_PLACE_HOLDER, realm.toLowerCase()));
 		Map<String, Object> realmJson = (Map<String, Object>) JSON
 				.parse(wholeFile);
-		String version = ((HashMap<String, String>) realmJson
-				.get(DataUpdater.INFO_WRAPPER)).get(DataUpdater.VERSION_KEY);
-		DataUpdater.CDN = realmJson.get(DataUpdater.CDN_KEY).toString();
+		String version;
+		try {
+			version = ((HashMap<String, String>) realmJson
+					.get(DataUpdater.INFO_WRAPPER))
+					.get(DataUpdater.VERSION_KEY);
+		} catch (NullPointerException ex) {
+			// There was trouble with the connection
+			version = null;
+		}
+		if (version != null) {
+			DataUpdater.CDN = realmJson.get(DataUpdater.CDN_KEY).toString();
+		}
 		ret = (version == null) ? "" : version;
 		return ret;
 	}
