@@ -7,7 +7,7 @@ import javax.ws.rs.Produces;
 
 import org.lolin1.data.DataAccessObject;
 
-@Path("/champions/version")
+@Path("/champions/version/{realm}")
 @Produces("application/json")
 public final class VersionService {
 

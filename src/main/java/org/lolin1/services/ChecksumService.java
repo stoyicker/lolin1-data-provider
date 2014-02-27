@@ -7,9 +7,10 @@ import javax.ws.rs.Produces;
 
 import org.lolin1.control.Controller;
 import org.lolin1.data.DataAccessObject;
+import org.lolin1.utils.Utils;
 
-@Path("/champions/imageChecksum")
-@Produces("text/plain")
+@Path("/champions/imageChecksum/{type}/{name}")
+@Produces("application/json")
 public class ChecksumService {
 
 	@GET
@@ -29,6 +30,8 @@ public class ChecksumService {
 		default:
 			return DataAccessObject.getResponseError();
 		}
-		return Controller.getController().getImageHash(imageType, name);
+
+		return Utils.toSystemJSON("checksum", Controller.getController()
+				.getImageHash(imageType, name));
 	}
 }

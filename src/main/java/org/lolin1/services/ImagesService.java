@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import org.lolin1.control.Controller;
 import org.lolin1.data.DataAccessObject;
 
-@Path("/champions/image")
+@Path("/champions/image/{realm}/{type}/{name}")
 @Produces("image/png")
 public class ImagesService {
 

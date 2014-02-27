@@ -33,6 +33,8 @@ public final class Controller {
 
 	private final static Map<Pair, List<Champion>> CHAMPIONS = new HashMap<>();
 
+	private static final String IMAGE_FILE_EXTENSION = ".png";
+
 	public static Controller getController() {
 		if (Controller.singleton == null) {
 			Controller.singleton = new Controller();
@@ -56,14 +58,15 @@ public final class Controller {
 	}
 
 	public String getImageHash(int imageType, String name) {
+		String namePlusExtension = name + Controller.getImageFileExtension();
 		if (!DataUpdater.isUpdating()) {
 			switch (imageType) {
 			case IMAGE_TYPE_BUST:
-				return this.BUST_HASHES.get(name);
+				return this.BUST_HASHES.get(namePlusExtension);
 			case IMAGE_TYPE_PASSIVE:
-				return this.PASSIVE_HASHES.get(name);
+				return this.PASSIVE_HASHES.get(namePlusExtension);
 			case IMAGE_TYPE_SPELL:
-				return this.SPELL_HASHES.get(name);
+				return this.SPELL_HASHES.get(namePlusExtension);
 			default:
 				return DataAccessObject.getResponseError(); // Should never
 															// happen
@@ -94,5 +97,9 @@ public final class Controller {
 			throw new IllegalArgumentException(
 					"Controller.setImageHash: imageType must be one of Controller.IMAGE_TYPE_BUST, Controller.IMAGE_TYPE_PASSIVE and Controller.IMAGE_TYPE_SPELL");
 		}
+	}
+
+	public static String getImageFileExtension() {
+		return IMAGE_FILE_EXTENSION;
 	}
 }

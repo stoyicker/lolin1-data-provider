@@ -26,6 +26,7 @@ public abstract class DataUpdater {
 					+ DataUpdater.LOCALE_PLACE_HOLDER
 					+ "&champData=lore,tags,stats,spells,passive,image",
 			INFO_WRAPPER = "n", VERSION_KEY = "champion", CDN_KEY = "cdn";
+	private static final long RETRY_DELAY_MILLIS = 300000;
 	private static String CDN = "ddragon.leagueoflegends.com/cdn";// Give an
 																	// initial
 																	// value for
@@ -49,12 +50,25 @@ public abstract class DataUpdater {
 		DataUpdater.UPDATING = Boolean.TRUE;
 		Utils.createImagesDirectory(realm);
 		String IMAGES_URL = DataUpdater.CDN + "/" + newVersion + "/img/";
-		List<Champion> champions = new ArrayList<>();
-		Map<String, Object> map = (Map<String, Object>) ((Map<String, Object>) JSON
-				.parse(Utils.performRiotGet(DataUpdater.ALL_CHAMPIONS_URL
-						.replace(DataUpdater.REALM_PLACE_HOLDER, realm)
-						.replace(DataUpdater.LOCALE_PLACE_HOLDER, locale))))
-				.get("data");
+		List<Champion> champions;
+		Map<String, Object> map;
+		try {
+			champions = new ArrayList<>();
+			map = (Map<String, Object>) ((Map<String, Object>) JSON.parse(Utils
+					.performRiotGet(DataUpdater.ALL_CHAMPIONS_URL.replace(
+							DataUpdater.REALM_PLACE_HOLDER, realm).replace(
+							DataUpdater.LOCALE_PLACE_HOLDER, locale))))
+					.get("data");
+		} catch (NullPointerException ex) {
+			// No internet, so wait and retry
+			try {
+				Thread.sleep(DataUpdater.RETRY_DELAY_MILLIS);
+			} catch (InterruptedException e) {
+				e.printStackTrace(System.err);
+			}
+			DataUpdater.performUpdate(realm, locale, newVersion);
+			return;
+		}
 		for (String key : map.keySet()) {
 			final Champion thisChampion = new Champion(
 					(HashMap<String, Object>) map.get(key));
@@ -124,8 +138,13 @@ public abstract class DataUpdater {
 					.get(DataUpdater.INFO_WRAPPER))
 					.get(DataUpdater.VERSION_KEY);
 		} catch (NullPointerException ex) {
-			// There was trouble with the connection
-			version = null;
+			// There was trouble with the connection, so wait and retry
+			try {
+				Thread.sleep(DataUpdater.RETRY_DELAY_MILLIS);
+			} catch (InterruptedException e) {
+				e.printStackTrace(System.err);
+			}
+			return DataUpdater.retrieveDragonMagicVersion(realm);
 		}
 		if (version != null) {
 			DataUpdater.CDN = realmJson.get(DataUpdater.CDN_KEY).toString();

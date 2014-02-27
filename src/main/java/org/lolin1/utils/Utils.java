@@ -147,15 +147,18 @@ public abstract class Utils {
 
 	public static File getFile(String realm, int imageType, String name) {
 		switch (imageType) {
-		case Controller.IMAGE_TYPE_SPELL:
-			return new File(Paths.get(Utils.IMAGES_DIR_NAME, realm,
-					Utils.BUSTS_DIR_NAME, name).toString());
-		case Controller.IMAGE_TYPE_PASSIVE:
-			return new File(Paths.get(Utils.IMAGES_DIR_NAME, realm,
-					Utils.PASSIVES_DIR_NAME, name).toString());
 		case Controller.IMAGE_TYPE_BUST:
 			return new File(Paths.get(Utils.IMAGES_DIR_NAME, realm,
-					Utils.SPELLS_DIR_NAME, name).toString());
+					Utils.BUSTS_DIR_NAME,
+					name + Controller.getImageFileExtension()).toString());
+		case Controller.IMAGE_TYPE_PASSIVE:
+			return new File(Paths.get(Utils.IMAGES_DIR_NAME, realm,
+					Utils.PASSIVES_DIR_NAME,
+					name + Controller.getImageFileExtension()).toString());
+		case Controller.IMAGE_TYPE_SPELL:
+			return new File(Paths.get(Utils.IMAGES_DIR_NAME, realm,
+					Utils.SPELLS_DIR_NAME,
+					name + Controller.getImageFileExtension()).toString());
 		}
 		return null;// Should never happen
 	}
@@ -228,6 +231,13 @@ public abstract class Utils {
 			e.printStackTrace(System.err);
 		}
 
+		return ret.toString();
+	}
+
+	public static String toSystemJSON(String contentType, String content) {
+		StringBuilder ret = new StringBuilder("{\"status\":\"ok\"");
+		ret.append(",\"" + contentType + "\":\"" + content + "\"");
+		ret.append("}");
 		return ret.toString();
 	}
 }
