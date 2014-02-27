@@ -12,9 +12,9 @@ import javax.ws.rs.core.Response;
 import org.lolin1.control.Controller;
 import org.lolin1.data.DataAccessObject;
 
-@Path("/champions")
 public final class Services {
 
+	@Path("/champions/getChampions")
 	@GET
 	@Produces("application/json")
 	public final String getChampions(@PathParam("realm") String realm,
@@ -22,12 +22,15 @@ public final class Services {
 		return DataAccessObject.getJSONChampions(realm, locale);
 	}
 
+	@Path("/champions/getVersion")
 	@GET
 	@Produces("application/json")
-	public final String getDragonMagicVersion(@PathParam("realm") String realm) {
-		return DataAccessObject.getJSONVersion(realm);
+	public final String getChampionsFileVersion(@PathParam("realm") String realm) {
+		return DataAccessObject.getJSONVersion(
+				DataAccessObject.getVersionKeyChampions(), realm);
 	}
 
+	@Path("/champions/getImage")
 	@GET
 	@Produces("image/png")
 	public final Response getImage(@PathParam("type") String type,
@@ -51,6 +54,10 @@ public final class Services {
 				.build();
 	}
 
+	// TODO Solve the "I download the images even if they already exist" problem
+	// TODO Make it work
+
+	@Path("/champions/getImageMD5")
 	@GET
 	@Produces("text/plain")
 	public final String getImageMD5(@PathParam("type") String type,

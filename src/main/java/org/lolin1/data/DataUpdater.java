@@ -25,7 +25,7 @@ public abstract class DataUpdater {
 					+ DataUpdater.REALM_PLACE_HOLDER + "/v1/champion?locale="
 					+ DataUpdater.LOCALE_PLACE_HOLDER
 					+ "&champData=lore,tags,stats,spells,passive,image",
-			VERSION_KEY = "dd", CDN_KEY = "cdn";
+			INFO_WRAPPER = "n", VERSION_KEY = "champion", CDN_KEY = "cdn";
 	private static String CDN;
 	private static Boolean UPDATING = Boolean.FALSE;
 
@@ -97,9 +97,8 @@ public abstract class DataUpdater {
 				e.printStackTrace(System.err);
 			}
 		}
-		DataAccessObject.setVersion(realm, newVersion);
+		DataAccessObject.setChampionsVersion(realm, newVersion);
 		DataUpdater.UPDATING = Boolean.FALSE;
-		System.exit(0);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -107,10 +106,11 @@ public abstract class DataUpdater {
 		String ret = "", wholeFile = Utils
 				.performRiotGet(DataUpdater.REALM_FILE_URL.replace(
 						DataUpdater.REALM_PLACE_HOLDER, realm.toLowerCase()));
-		Map<String, String> realmJson = (Map<String, String>) JSON
+		Map<String, Object> realmJson = (Map<String, Object>) JSON
 				.parse(wholeFile);
-		String version = realmJson.get(DataUpdater.VERSION_KEY);
-		DataUpdater.CDN = realmJson.get(DataUpdater.CDN_KEY);
+		String version = ((HashMap<String, String>) realmJson
+				.get(DataUpdater.INFO_WRAPPER)).get(DataUpdater.VERSION_KEY);
+		DataUpdater.CDN = realmJson.get(DataUpdater.CDN_KEY).toString();
 		ret = (version == null) ? "" : version;
 		return ret;
 	}
@@ -126,7 +126,7 @@ public abstract class DataUpdater {
 						realm)) {
 					DataUpdater.performUpdate(realm, locale, newVersion);
 				}
-				DataAccessObject.setVersion(realm, newVersion);
+				DataAccessObject.setChampionsVersion(realm, newVersion);
 			}
 		}
 	}

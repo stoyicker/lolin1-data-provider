@@ -12,8 +12,9 @@ public abstract class DataAccessObject {
 
 	private final static String RESPONSE_UNSUPPORTED = "{\"status\":\"unsupported\"}",
 			RESPONSE_ERROR = "{\"status\":\"error\"}";
-	private static Map<String, String> VERSION_MAP = new HashMap<String, String>();
+	private static Map<String, String> CHAMPIONS_VERSION_MAP = new HashMap<>();
 	private static final Map<String, String[]> SUPPORTED_REALMS = new HashMap<>();
+	private static final String VERSION_KEY_CHAMPIONS = "CHAMPIONS";
 
 	private static String formatChampionListAsJSON(List<Champion> champions) {
 		StringBuilder ret = new StringBuilder("{[");
@@ -29,8 +30,7 @@ public abstract class DataAccessObject {
 	public static final String getJSONChampions(String realm, String locale) {
 		String ret;
 		if (!DataUpdater.isUpdating()) {
-			Controller controller = Controller
-					.getController();
+			Controller controller = Controller.getController();
 			if (controller.isPairSupported(locale, realm)) {
 				List<Champion> champions = controller.getChampions(locale,
 						realm);
@@ -45,14 +45,15 @@ public abstract class DataAccessObject {
 		return ret;
 	}
 
-	public static final String getJSONVersion(String realm) {
+	public static final String getJSONVersion(String itemKey, String realm) {
 		StringBuffer ret;
 		if (!DataUpdater.isUpdating()) {
-			if (!DataAccessObject.VERSION_MAP.containsKey(realm)) {
+			if (!DataAccessObject.CHAMPIONS_VERSION_MAP.containsKey(realm)) {
 				ret = new StringBuffer(DataAccessObject.getResponseError());
 			} else {
 				ret = new StringBuffer("{\"status\":\"ok\", \"version\":\""
-						+ DataAccessObject.VERSION_MAP.get(realm) + "\"}");
+						+ DataAccessObject.CHAMPIONS_VERSION_MAP.get(realm)
+						+ "\"}");
 			}
 		} else {
 			ret = new StringBuffer(DataAccessObject.getResponseError());
@@ -60,12 +61,20 @@ public abstract class DataAccessObject {
 		return ret.toString();
 	}
 
+	public static String getResponseError() {
+		return DataAccessObject.RESPONSE_ERROR;
+	}
+
 	public static Map<String, String[]> getSupportedRealms() {
 		return DataAccessObject.SUPPORTED_REALMS;
 	}
 
 	public static final String getVersion(String realm) {
-		return DataAccessObject.VERSION_MAP.get(realm);
+		return DataAccessObject.CHAMPIONS_VERSION_MAP.get(realm);
+	}
+
+	public static String getVersionKeyChampions() {
+		return DataAccessObject.VERSION_KEY_CHAMPIONS;
 	}
 
 	public static final void initDAO() {
@@ -80,18 +89,13 @@ public abstract class DataAccessObject {
 		DataAccessObject.SUPPORTED_REALMS.put("br", new String[] { "pt_PT" });
 
 		for (String realm : DataAccessObject.getSupportedRealms().keySet()) {
-			DataAccessObject.VERSION_MAP.put(realm, "");// As well, put blank
-														// version to
-														// force downloading
-														// such data
+			// As well, put a blank version to force the download of such data
+			DataAccessObject.CHAMPIONS_VERSION_MAP.put(realm, "");
 		}
 	}
 
-	protected static final void setVersion(String realm, String newVersion) {
-		DataAccessObject.VERSION_MAP.put(realm, newVersion);
-	}
-
-	public static String getResponseError() {
-		return RESPONSE_ERROR;
+	protected static final void setChampionsVersion(String realm,
+			String newVersion) {
+		DataAccessObject.CHAMPIONS_VERSION_MAP.put(realm, newVersion);
 	}
 }

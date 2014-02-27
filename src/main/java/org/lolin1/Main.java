@@ -51,6 +51,7 @@ public class Main {
 		server.setHandler(root);
 
 		server.start();
+		System.out.println("Server is ready");
 		server.join();
 	}
 
