@@ -33,7 +33,7 @@ public abstract class DataUpdater {
 																	// purposes
 	private static Boolean UPDATING = Boolean.FALSE;
 
-	protected static boolean isUpdating() {
+	public static boolean isUpdating() {
 		return DataUpdater.UPDATING;
 	}
 

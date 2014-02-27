@@ -14,7 +14,6 @@ public abstract class DataAccessObject {
 			RESPONSE_ERROR = "{\"status\":\"error\"}";
 	private static Map<String, String> CHAMPIONS_VERSION_MAP = new HashMap<>();
 	private static final Map<String, String[]> SUPPORTED_REALMS = new HashMap<>();
-	private static final String VERSION_KEY_CHAMPIONS = "CHAMPIONS";
 
 	private static String formatChampionListAsJSON(List<Champion> champions) {
 		StringBuilder ret = new StringBuilder("{[");
@@ -45,7 +44,7 @@ public abstract class DataAccessObject {
 		return ret;
 	}
 
-	public static final String getJSONVersion(String itemKey, String realm) {
+	public static final String getJSONVersion(String realm) {
 		StringBuffer ret;
 		if (!DataUpdater.isUpdating()) {
 			if (!DataAccessObject.CHAMPIONS_VERSION_MAP.containsKey(realm)) {
@@ -71,10 +70,6 @@ public abstract class DataAccessObject {
 
 	public static final String getVersion(String realm) {
 		return DataAccessObject.CHAMPIONS_VERSION_MAP.get(realm);
-	}
-
-	public static String getVersionKeyChampions() {
-		return DataAccessObject.VERSION_KEY_CHAMPIONS;
 	}
 
 	public static final void initDAO() {
