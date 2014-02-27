@@ -62,7 +62,7 @@ public abstract class DataUpdater {
 		} catch (NullPointerException ex) {
 			// No internet, so wait and retry
 			try {
-				Thread.sleep(DataUpdater.RETRY_DELAY_MILLIS);
+				Thread.sleep(DataUpdater.getRetryDelayMillis());
 			} catch (InterruptedException e) {
 				e.printStackTrace(System.err);
 			}
@@ -140,7 +140,7 @@ public abstract class DataUpdater {
 		} catch (NullPointerException ex) {
 			// There was trouble with the connection, so wait and retry
 			try {
-				Thread.sleep(DataUpdater.RETRY_DELAY_MILLIS);
+				Thread.sleep(DataUpdater.getRetryDelayMillis());
 			} catch (InterruptedException e) {
 				e.printStackTrace(System.err);
 			}
@@ -167,5 +167,9 @@ public abstract class DataUpdater {
 				DataAccessObject.setChampionsVersion(realm, newVersion);
 			}
 		}
+	}
+
+	public static long getRetryDelayMillis() {
+		return RETRY_DELAY_MILLIS;
 	}
 }

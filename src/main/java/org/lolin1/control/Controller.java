@@ -42,6 +42,10 @@ public final class Controller {
 		return Controller.singleton;
 	}
 
+	public static String getImageFileExtension() {
+		return Controller.IMAGE_FILE_EXTENSION;
+	}
+
 	private Controller() {
 	}
 
@@ -58,7 +62,8 @@ public final class Controller {
 	}
 
 	public String getImageHash(int imageType, String name) {
-		String namePlusExtension = name + Controller.getImageFileExtension();
+		String namePlusExtension = (name + Controller.getImageFileExtension())
+				.toLowerCase();
 		if (!DataUpdater.isUpdating()) {
 			switch (imageType) {
 			case IMAGE_TYPE_BUST:
@@ -88,18 +93,14 @@ public final class Controller {
 	public void setImageHash(int imageType, String imageName, String hash) {
 		switch (imageType) {
 		case IMAGE_TYPE_BUST:
-			this.BUST_HASHES.put(imageName, hash);
+			this.BUST_HASHES.put(imageName.toLowerCase(), hash);
 		case IMAGE_TYPE_PASSIVE:
-			this.PASSIVE_HASHES.put(imageName, hash);
+			this.PASSIVE_HASHES.put(imageName.toLowerCase(), hash);
 		case IMAGE_TYPE_SPELL:
-			this.SPELL_HASHES.put(imageName, hash);
+			this.SPELL_HASHES.put(imageName.toLowerCase(), hash);
 		default:
 			throw new IllegalArgumentException(
 					"Controller.setImageHash: imageType must be one of Controller.IMAGE_TYPE_BUST, Controller.IMAGE_TYPE_PASSIVE and Controller.IMAGE_TYPE_SPELL");
 		}
-	}
-
-	public static String getImageFileExtension() {
-		return IMAGE_FILE_EXTENSION;
 	}
 }

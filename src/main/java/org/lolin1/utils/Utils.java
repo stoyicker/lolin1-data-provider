@@ -20,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.lolin1.control.Controller;
+import org.lolin1.data.DataUpdater;
 import org.lolin1.models.champion.Champion;
 
 public abstract class Utils {
@@ -229,6 +230,12 @@ public abstract class Utils {
 			}
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
+			try {
+				Thread.sleep(DataUpdater.getRetryDelayMillis());
+			} catch (InterruptedException e1) {
+				e1.printStackTrace(System.err);
+			}
+			return Utils.performRiotGet(url);
 		}
 
 		return ret.toString();

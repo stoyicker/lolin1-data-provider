@@ -47,24 +47,14 @@ public abstract class DataAccessObject {
 	public static final String getJSONVersion(String realm) {
 		StringBuffer ret;
 		if (!DataUpdater.isUpdating()) {
-			System.out
-					.println("Method getJSONVersion - DataUpdater is not updating");
 			if (!DataAccessObject.CHAMPIONS_VERSION_MAP.containsKey(realm)) {
-				System.out
-						.println("Method getJSONVersion - CHAMPIONS_VERSION_MAP doesn't contain realm "
-								+ realm);
 				ret = new StringBuffer(DataAccessObject.getResponseError());
 			} else {
-				System.out
-						.println("Method getJSONVersion - CHAMPIONS_VERSION_MAP contains realm "
-								+ realm);
 				ret = new StringBuffer("{\"status\":\"ok\", \"version\":\""
 						+ DataAccessObject.CHAMPIONS_VERSION_MAP.get(realm)
 						+ "\"}");
 			}
 		} else {
-			System.out
-					.println("Method getJSONVersion - DataUpdater is updating");
 			ret = new StringBuffer(DataAccessObject.getResponseError());
 		}
 		return ret.toString();
