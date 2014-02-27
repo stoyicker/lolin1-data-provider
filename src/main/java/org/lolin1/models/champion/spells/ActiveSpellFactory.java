@@ -9,25 +9,43 @@ import org.codehaus.jettison.json.JSONObject;
 
 public class ActiveSpellFactory {
 
+	private static final String DUMMY_ERROR_MESSAGE = "The Riot API is still a little bit buggy...";
+
 	public static ActiveSpell createActiveSpell(JSONObject jsonObject) {
 		ActiveSpell ret;
 		String name = null, imageName = null, cooldown = null, range = null, cost = null, tooltip = null;
 		JSONArray varsArray = null, effectsArray = null;
-		try {
-			name = jsonObject.getString("name");
-			tooltip = jsonObject.getString("tooltip")
-					.replaceAll("\"", "\\\\\"");
-			imageName = ((JSONObject) jsonObject.get("image"))
-					.getString("full");
-			cooldown = jsonObject.getString("cooldownBurn");
-			range = jsonObject.getString("rangeBurn");
-		} catch (JSONException e) {
-			e.printStackTrace(System.err);
-		}
-
 		// It's key to manage the exceptions in different try-catch blocks to
 		// make sure that one variable not being found doesn't forbid the others
 		// from being parsed
+		try {
+			name = jsonObject.getString("name");
+		} catch (JSONException e) {
+			name = ActiveSpellFactory.DUMMY_ERROR_MESSAGE;
+			e.printStackTrace(System.err);
+		}
+		try {
+			tooltip = jsonObject.getString("tooltip")
+					.replaceAll("\"", "\\\\\"");
+		} catch (JSONException e) {
+			tooltip = ActiveSpellFactory.DUMMY_ERROR_MESSAGE;
+		}
+		try {
+			imageName = ((JSONObject) jsonObject.get("image"))
+					.getString("full");
+		} catch (JSONException e) {
+			imageName = ActiveSpellFactory.DUMMY_ERROR_MESSAGE;
+		}
+		try {
+			cooldown = jsonObject.getString("cooldownBurn");
+		} catch (JSONException e) {
+			cooldown = ActiveSpellFactory.DUMMY_ERROR_MESSAGE;
+		}
+		try {
+			range = jsonObject.getString("rangeBurn");
+		} catch (JSONException e) {
+			range = ActiveSpellFactory.DUMMY_ERROR_MESSAGE;
+		}
 		try {
 			cost = jsonObject.getString("resource").replace(
 					"\\{\\{ cost \\}\\}", jsonObject.getString("costBurn"));
