@@ -33,8 +33,8 @@ public final class Services {
 	@Path("/champions/getImage")
 	@GET
 	@Produces("image/png")
-	public final Response getImage(@PathParam("type") String type,
-			@PathParam("name") String name) {
+	public final Response getImage(@PathParam("realm") String realm,
+			@PathParam("type") String type, @PathParam("name") String name) {
 		int imageType;
 		switch (type.toUpperCase()) {
 		case "BUST":
@@ -49,12 +49,11 @@ public final class Services {
 		default:
 			return Response.status(404).build();
 		}
-		File img = Controller.getController().getImage(imageType, name);
+		File img = Controller.getController().getImage(realm, imageType, name);
 		return Response.ok(img, new MimetypesFileTypeMap().getContentType(img))
 				.build();
 	}
 
-	// TODO Solve the "I download the images even if they already exist" problem
 	// TODO Make it work
 
 	@Path("/champions/getImageMD5")

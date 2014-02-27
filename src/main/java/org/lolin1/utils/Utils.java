@@ -41,14 +41,14 @@ public abstract class Utils {
 			SPELLS_DIR_NAME = "spell",
 			PASSIVES_DIR_NAME = "passive";
 
-	public static final void createImagesDirectory() {
+	public static final void createImagesDirectory(String realm) {
 		try {
-			Utils.delete(Utils.IMAGES_DIR_NAME);
-			Files.createDirectories(Paths.get(Utils.IMAGES_DIR_NAME,
+			Utils.delete(Paths.get(Utils.IMAGES_DIR_NAME, realm).toString());
+			Files.createDirectories(Paths.get(Utils.IMAGES_DIR_NAME, realm,
 					Utils.BUSTS_DIR_NAME));
-			Files.createDirectories(Paths.get(Utils.IMAGES_DIR_NAME,
+			Files.createDirectories(Paths.get(Utils.IMAGES_DIR_NAME, realm,
 					Utils.SPELLS_DIR_NAME));
-			Files.createDirectories(Paths.get(Utils.IMAGES_DIR_NAME,
+			Files.createDirectories(Paths.get(Utils.IMAGES_DIR_NAME, realm,
 					Utils.PASSIVES_DIR_NAME));
 		} catch (FileAlreadyExistsException ex) {
 			// It's fine, just avoid retrying because probably everything is
@@ -89,30 +89,30 @@ public abstract class Utils {
 		return false;
 	}
 
-	public static File downloadChampionBustImage(Champion champion,
-			String imagesUrl) {
+	public static File downloadChampionBustImage(String realm,
+			Champion champion, String imagesUrl) {
 		String championImageName = champion.getImageName();
 		return Utils.downloadFile(imagesUrl + Utils.BUSTS_DIR_NAME + "/"
-				+ championImageName, Paths.get(Utils.IMAGES_DIR_NAME,
+				+ championImageName, Paths.get(Utils.IMAGES_DIR_NAME, realm,
 				Utils.BUSTS_DIR_NAME, championImageName));
 	}
 
-	public static File downloadChampionPassiveImage(Champion champion,
-			String imagesUrl) {
+	public static File downloadChampionPassiveImage(String realm,
+			Champion champion, String imagesUrl) {
 		String passiveImageName = champion.getPassiveImageName();
 		return Utils.downloadFile(imagesUrl + Utils.PASSIVES_DIR_NAME + "/"
-				+ passiveImageName, Paths.get(Utils.IMAGES_DIR_NAME,
+				+ passiveImageName, Paths.get(Utils.IMAGES_DIR_NAME, realm,
 				Utils.PASSIVES_DIR_NAME, passiveImageName));
 	}
 
-	public static File[] downloadChampionSpellImages(Champion champion,
-			String imagesUrl) {
+	public static File[] downloadChampionSpellImages(String realm,
+			Champion champion, String imagesUrl) {
 		String[] spellImageNames = champion.getSpellImageNames();
 		File[] ret = new File[spellImageNames.length];
 		int i = 0;
 		for (String spellImageName : spellImageNames) {
 			ret[i] = Utils.downloadFile(imagesUrl + Utils.SPELLS_DIR_NAME + "/"
-					+ spellImageName, Paths.get(Utils.IMAGES_DIR_NAME,
+					+ spellImageName, Paths.get(Utils.IMAGES_DIR_NAME, realm,
 					Utils.SPELLS_DIR_NAME, spellImageName));
 			i++;
 		}
@@ -148,16 +148,16 @@ public abstract class Utils {
 		return new File(pathToFileToSaveTo.toString());
 	}
 
-	public static File getFile(int imageType, String name) {
+	public static File getFile(String realm, int imageType, String name) {
 		switch (imageType) {
 		case Controller.IMAGE_TYPE_SPELL:
-			return new File(Paths.get(Utils.IMAGES_DIR_NAME,
+			return new File(Paths.get(Utils.IMAGES_DIR_NAME, realm,
 					Utils.BUSTS_DIR_NAME, name).toString());
 		case Controller.IMAGE_TYPE_PASSIVE:
-			return new File(Paths.get(Utils.IMAGES_DIR_NAME,
+			return new File(Paths.get(Utils.IMAGES_DIR_NAME, realm,
 					Utils.PASSIVES_DIR_NAME, name).toString());
 		case Controller.IMAGE_TYPE_BUST:
-			return new File(Paths.get(Utils.IMAGES_DIR_NAME,
+			return new File(Paths.get(Utils.IMAGES_DIR_NAME, realm,
 					Utils.SPELLS_DIR_NAME, name).toString());
 		}
 		return null;// Should never happen

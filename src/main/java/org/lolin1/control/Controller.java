@@ -46,8 +46,8 @@ public final class Controller {
 		return Controller.CHAMPIONS.get(new Pair(locale, realm));
 	}
 
-	public File getImage(int imageType, String name) {
-		return Utils.getFile(imageType, name);
+	public File getImage(String realm, int imageType, String name) {
+		return Utils.getFile(realm, imageType, name);
 	}
 
 	public String getImageHash(int imageType, String name) {

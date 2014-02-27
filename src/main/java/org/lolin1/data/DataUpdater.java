@@ -34,10 +34,16 @@ public abstract class DataUpdater {
 	}
 
 	@SuppressWarnings("unchecked")
+	/**
+	 * 
+	 * @param realm {@link String} Riot sometimes deploys different images (or same one with different names) depending on the realm...BECAUSE YES!
+	 * @param locale
+	 * @param newVersion
+	 */
 	private static void performUpdate(String realm, String locale,
 			String newVersion) {
 		DataUpdater.UPDATING = Boolean.TRUE;
-		Utils.createImagesDirectory();
+		Utils.createImagesDirectory(realm);
 		String IMAGES_URL = DataUpdater.CDN + "/" + newVersion + "/img/";
 		List<Champion> champions = new ArrayList<>();
 		Map<String, Object> map = (Map<String, Object>) ((Map<String, Object>) JSON
@@ -50,7 +56,7 @@ public abstract class DataUpdater {
 					(HashMap<String, Object>) map.get(key));
 			champions.add(thisChampion);
 			ExecutorService executor = Executors.newFixedThreadPool(6);
-			final File bustImage = Utils.downloadChampionBustImage(
+			final File bustImage = Utils.downloadChampionBustImage(realm,
 					thisChampion, IMAGES_URL);
 			executor.submit(new Runnable() {
 
@@ -62,7 +68,7 @@ public abstract class DataUpdater {
 							Utils.getFileMD5(bustImage));
 				}
 			});
-			final File passiveImage = Utils.downloadChampionPassiveImage(
+			final File passiveImage = Utils.downloadChampionPassiveImage(realm,
 					thisChampion, IMAGES_URL);
 			executor.submit(new Runnable() {
 
@@ -74,7 +80,7 @@ public abstract class DataUpdater {
 							Utils.getFileMD5(passiveImage));
 				}
 			});
-			final File[] spellImages = Utils.downloadChampionSpellImages(
+			final File[] spellImages = Utils.downloadChampionSpellImages(realm,
 					thisChampion, IMAGES_URL);
 			for (final File x : spellImages) {
 				executor.submit(new Runnable() {
