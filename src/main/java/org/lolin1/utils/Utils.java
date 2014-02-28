@@ -141,6 +141,7 @@ public abstract class Utils {
 			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
+			return Utils.downloadFile(url, pathToFileToSaveTo);
 		}
 
 		return new File(pathToFileToSaveTo.toString());

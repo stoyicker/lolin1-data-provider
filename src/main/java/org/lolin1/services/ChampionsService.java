@@ -7,7 +7,7 @@ import javax.ws.rs.Produces;
 
 import org.lolin1.data.DataAccessObject;
 
-@Path("/champions/champions/{realm}/{locale}")
+@Path("/champions/list/{realm}/{locale}")
 @Produces("application/json")
 public class ChampionsService {
 	@GET

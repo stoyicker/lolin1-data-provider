@@ -13,13 +13,36 @@ import org.lolin1.utils.Utils;
 public final class Controller {
 
 	private class Pair {
-		@SuppressWarnings("unused")
-		// They're used to index the Controller.CHAMPIONS map
 		private final String partOne, partTwo;
 
 		private Pair(String _one, String _two) {
 			this.partOne = _one;
 			this.partTwo = _two;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) {
+				return Boolean.TRUE;
+			}
+			if (!(o instanceof Pair)) {
+				return Boolean.FALSE;
+			}
+			Pair target = (Pair) o;
+			return this.partOne.contentEquals(target.partOne)
+					&& this.partTwo.contentEquals(target.partTwo);
+		}
+
+		@Override
+		public int hashCode() {
+			int sum = 0, i = 1;
+			StringBuilder everything = new StringBuilder(this.partOne);
+			everything.append(this.partTwo);
+			for (char x : everything.toString().toCharArray()) {
+				sum += Character.getNumericValue(x) * i;
+				i++;
+			}
+			return sum;
 		}
 	}
 
@@ -89,6 +112,8 @@ public final class Controller {
 			List<Champion> champions) {
 		Controller.CHAMPIONS.put(new Pair(locale, realm), champions);
 	}
+
+	// TODO Put the portal for visitors
 
 	public void setImageHash(int imageType, String imageName, String hash) {
 		switch (imageType) {

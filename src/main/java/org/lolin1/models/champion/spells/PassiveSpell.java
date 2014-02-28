@@ -13,15 +13,21 @@ public class PassiveSpell {
 
 	@SuppressWarnings("unchecked")
 	public PassiveSpell(HashMap<String, Object> passiveDescriptor) {
-		this((String) passiveDescriptor.get("name"), (String) passiveDescriptor
-				.get("description"),
+		this(passiveDescriptor.get("name").toString(), passiveDescriptor.get(
+				"description").toString(),
 				((HashMap<String, String>) passiveDescriptor.get("image"))
 						.get("full"));
 	}
 
 	protected PassiveSpell(String _name, String _detail, String _imageName) {
 		this.name = _name;
-		this.detail = _detail;
+		if (!(this instanceof ActiveSpell)) {
+			String newOne = _detail.replaceAll("=\"", "=\\\\\"").replaceAll(
+					"\">", "\\\\\">");
+			this.detail = newOne;
+		} else {
+			this.detail = _detail;
+		}
 		this.imageName = _imageName;
 	}
 

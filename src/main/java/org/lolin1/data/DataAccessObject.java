@@ -16,15 +16,17 @@ public abstract class DataAccessObject {
 	private static final Map<String, String[]> SUPPORTED_REALMS = new HashMap<>();
 
 	private static String formatChampionListAsJSON(List<Champion> champions) {
-		StringBuilder ret = new StringBuilder("{[");
+		StringBuilder ret = new StringBuilder("[");
 		for (Iterator<Champion> it = champions.iterator(); it.hasNext();) {
 			ret.append(it.next().toString());
 			if (it.hasNext()) {
 				ret.append(",");
 			}
 		}
-		return ret.append("]}").toString();
+		return ret.append("]").toString();
 	}
+
+	// TODO Move the services to a services.champions package
 
 	public static final String getJSONChampions(String realm, String locale) {
 		String ret;

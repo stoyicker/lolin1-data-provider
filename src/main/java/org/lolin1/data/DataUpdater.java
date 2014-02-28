@@ -34,6 +34,10 @@ public abstract class DataUpdater {
 																	// purposes
 	private static Boolean UPDATING = Boolean.FALSE;
 
+	public static long getRetryDelayMillis() {
+		return DataUpdater.RETRY_DELAY_MILLIS;
+	}
+
 	public static boolean isUpdating() {
 		return DataUpdater.UPDATING;
 	}
@@ -167,9 +171,5 @@ public abstract class DataUpdater {
 				DataAccessObject.setChampionsVersion(realm, newVersion);
 			}
 		}
-	}
-
-	public static long getRetryDelayMillis() {
-		return RETRY_DELAY_MILLIS;
 	}
 }
