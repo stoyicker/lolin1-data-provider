@@ -1,4 +1,4 @@
-package org.lolin1.services;
+package org.lolin1.services.champions;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
