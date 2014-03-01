@@ -1,9 +1,23 @@
+/**
+ * This file is part of lolin1-data-provider.
+
+    lolin1-data-provider is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    lolin1-data-provider is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with lolin1-data-provider.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.lolin1;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.lolin1.data.DataAccessObject;
-import org.lolin1.data.DataUpdater;
 
 /**
  * 
@@ -20,8 +34,8 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		String webappDirLocation = "src/main/webapp/";
 
-		DataAccessObject.initDAO();
-		DataUpdater.updateData();
+		// DataAccessObject.initDAO(); TODO Uncomment this two lines
+		// DataUpdater.updateData();
 
 		// The port that we should run on can be set into an environment
 		// variable
