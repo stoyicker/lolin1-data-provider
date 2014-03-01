@@ -166,9 +166,16 @@ public abstract class Utils {
 	public static File getFile(String realm, int imageType, String name) {
 		switch (imageType) {
 		case Controller.IMAGE_TYPE_BUST:
-			return new File(Paths.get(Utils.IMAGES_DIR_NAME, realm,
-					Utils.BUSTS_DIR_NAME,
-					name + Controller.getImageFileExtension()).toString());
+			return new File(Paths
+					.get(Utils.IMAGES_DIR_NAME,
+							realm,
+							Utils.BUSTS_DIR_NAME,
+							name
+									+ (name.endsWith(Controller
+											.getImageFileExtension()) ? ""
+											: Controller
+													.getImageFileExtension()))
+					.toString());
 		case Controller.IMAGE_TYPE_PASSIVE:
 			return new File(Paths.get(Utils.IMAGES_DIR_NAME, realm,
 					Utils.PASSIVES_DIR_NAME,
