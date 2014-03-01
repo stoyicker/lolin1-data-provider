@@ -1,6 +1,7 @@
 <!doctype html>
 
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>LoLin1 Data Provider</title>
@@ -10,42 +11,32 @@
 
     <link href="//netdna.bootstrapcdn.com/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="//cdnjs.cloudflare.com/ajax/libs/prettify/r224/prettify.css" rel="stylesheet">
-
-    <!--
-    IMPORTANT:
-    This is Heroku specific styling. Remove to customize.
-    -->
     <link href="http://heroku.github.com/template-app-bootstrap/heroku.css" rel="stylesheet">
     <style type="text/css">
         .instructions {
             display: none;
         }
-
         .instructions li {
             margin-bottom: 10px;
         }
-
         .instructions h2 {
             margin: 18px 0;
         }
-
         .instructions blockquote {
             margin-top: 10px;
         }
-
         .screenshot {
             margin-top: 10px;
             display: block;
         }
-
         .screenshot a {
             padding: 0;
             line-height: 1;
             display: inline-block;
             text-decoration: none;
         }
-
-        .screenshot img, .tool-choice img {
+        .screenshot img,
+        .tool-choice img {
             border: 1px solid #ddd;
             -webkit-border-radius: 4px;
             -moz-border-radius: 4px;
@@ -55,129 +46,314 @@
             box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
         }
     </style>
-    <!-- /// -->
     <script type="text/javascript">
         <!--
-        function appname() {
-            return location.hostname.substring(0, location.hostname.indexOf("."));
-        }
-
-        function openRestClient(startUrl) {
-            $('#rest-url').val(startUrl);
-            $('#rest-result-container').hide();
-            $('#version-tab').click();
-        }
-
-        function sendGetRequest() {
+        function sendVersionRequest() {
             $.ajax({
-                url:$('#rest-url').val(),
-                dataType:'json',
-                context:document.body,
-                success:function (data, textStatus, jqXHR) {
-                    showRestResults('Success', 'alert-success', JSON.stringify(data, undefined, 2));
+                url: '/champions/version/' + document.getElementById("version-input").value,
+                dataType: 'json',
+                context: document.body,
+                success: function (data, textStatus, jqXHR) {
+                    showVersionResults('Success', 'alert-success', JSON.stringify(data, undefined, 2));
                 },
-                error:function (qXHR, textStatus, errorThrown) {
+                error: function (qXHR, textStatus, errorThrown) {
                     if (errorThrown instanceof SyntaxError) {
                         errorThrown = errorThrown.message;
                     }
 
-                    showRestResults(textStatus, 'alert-error', errorThrown);
+                    showVersionResults(textStatus, 'alert-error', errorThrown);
                 }
             });
         }
 
-        function showRestResults(headerText, headerClass, bodyText) {
-            $('#rest-result-header-text').text(headerText);
-            $('#rest-result-header').removeClass('alert-error').removeClass('alert-success');
-            $('#rest-result-header').addClass(headerClass);
+        function showVersionResults(headerText, headerClass, bodyText) {
+            $('#version-result-header-text').text(headerText);
+            $('#version-result-header').removeClass('alert-error').removeClass('alert-success');
+            $('#version-result-header').addClass(headerClass);
 
-            $('#rest-result-body').text(bodyText);
+            $('#version-result-body').text(bodyText);
             prettyPrint();
 
-            $('#rest-result-container').show();
+            $('#version-result-container').show();
+        }
+
+        function sendListRequest() {
+            $.ajax({
+                url: '/champions/list/' + document.getElementById("list-input").value,
+                dataType: 'json',
+                context: document.body,
+                success: function (data, textStatus, jqXHR) {
+                    showListResults('Success', 'alert-success', JSON.stringify(data, undefined, 2));
+                },
+                error: function (qXHR, textStatus, errorThrown) {
+                    if (errorThrown instanceof SyntaxError) {
+                        errorThrown = errorThrown.message;
+                    }
+
+                    showListResults(textStatus, 'alert-error', errorThrown);
+                }
+            });
+        }
+
+        function showListResults(headerText, headerClass, bodyText) {
+            $('#list-result-header-text').text(headerText);
+            $('#list-result-header').removeClass('alert-error').removeClass('alert-success');
+            $('#list-result-header').addClass(headerClass);
+
+            $('#list-result-body').text(bodyText);
+            prettyPrint();
+
+            $('#list-result-container').show();
+        }
+
+        function sendImageRequest() {
+            $(document).load('/champions/image/' + document.getElementById("image-input").value, function (response, status, xhr) {
+                if (status == "error")
+                    showImageResults(status, 'alert-error', xhr)
+                else {
+                    $('#image-result-header-text').text('Success');
+                    $('#image-result-header').removeClass('alert-error').removeClass('alert-success');
+                    $('#image-result-header').addClass('alert-success');
+                    $('<img src="/champions/image/' + document.getElementById("image-input").value + '">').appendTo('#image-result-body');
+                    $('#image-result-container').show();
+                }
+            });
+        }
+
+        function showImageResults(headerText, headerClass, xhr) {
+            $('#image-result-header-text').text(headerText);
+            $('#image-result-header').removeClass('alert-error').removeClass('alert-success');
+            $('#image-result-header').addClass(headerClass);
+
+            $('#image-result-body').text(xhr.statusText);
+            prettyPrint();
+
+            $('#image-result-container').show();
+        }
+
+        function sendImageChecksumRequest() {
+            $.ajax({
+                url: '/champions/imageChecksum/' + document.getElementById("imageChecksum-input").value,
+                dataType: 'json',
+                context: document.body,
+                success: function (data, textStatus, jqXHR) {
+                    showImageChecksumResults('Success', 'alert-success', JSON.stringify(data, undefined, 2));
+                },
+                error: function (qXHR, textStatus, errorThrown) {
+                    if (errorThrown instanceof SyntaxError) {
+                        errorThrown = errorThrown.message;
+                    }
+
+                    showImageChecksumResults(textStatus, 'alert-error', errorThrown);
+                }
+            });
+        }
+
+        function showImageChecksumResults(headerText, headerClass, bodyText) {
+            $('#imageChecksum-result-header-text').text(headerText);
+            $('#imageChecksum-result-header').removeClass('alert-error').removeClass('alert-success');
+            $('#imageChecksum-result-header').addClass(headerClass);
+
+            $('#imageChecksum-result-body').text(bodyText);
+            prettyPrint();
+
+            $('#imageChecksum-result-container').show();
         }
 
         function prettyPrintOnce() {
             prettyPrint();
             $('.prettyprint.once').removeClass('prettyprint');
         }
-        // -->
+         // -->
     </script>
 </head>
 
+
 <body onload="prettyPrintOnce();">
 
-<div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-        <div class="container">
-            <a href="/" class="brand">LoLin1 Data Provider</a>
-            <a href="/" class="brand" id="heroku">by <strong>Jorge</strong></a>
-            <!-- /// -->
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a href="/" class="brand"><strong>LoLin1 Data Provider</strong></a>
+                <a href="http://linkedin.com/in/jorgediazbenitosoriano" class="brand" id="heroku">by <font color="0000FF"><strong>Jorge</strong></font></a>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="container" id="getting-started">
-<div class="row">
-<div class="span8 offset2">
+    <div class="container" id="getting-started">
+        <div class="row">
+            <div class="span8 offset2">
 
-<div class="page-header">
-    <h1>LoLin1 Data Provider</h1>
-</div>
-
-<div style="margin-bottom: 20px">
-    This is the JAX-RS REST API that LoLin1 uses as a bridge to bypass the Riot API usage restrictions.
-</div>
-
-<ul id="tab" class="nav nav-tabs">
-    <li><a id="version-tab" href="#version" data-toggle="tab">Version</a></li>
-    <li><a id="champions-tab" href="#list" data-toggle="tab">Champions data</a></li>
-    <li><a id="image-tab" href="#image" data-toggle="tab">List champion data</a></li>
-    <li><a id="imageChecksum-tab" href="#imageChecksum" data-toggle="tab">Image checksum</a></li>
-</ul>
-
-<div class="tab-content">
-
-<div id="champions" class="tab-pane">
-    <h1>List information for all champions</h1>
-
-    <div id="rest-client-widget" style="margin: 10px">
-        <form class="form-horizontal" class="row-fluid">
-            <fieldset>
-                <label class="control-label search-query" for="rest-url"><strong>URL</strong></label>
-                <input id="rest-url" type="text" value="/services/time">
-                <button type="submit" class="btn btn-primary" onclick="sendGetRequest(); return false;">GET</button>
-            </fieldset>
-        </form>
-
-        <div id="rest-result-container" class="row hide">
-            <div class="row">
-                <div id="rest-result-header" class="offset2 span1 alert">
-                    <a id="rest-result-close-btn" class="close" data-dismiss="alert"
-                       onclick="$('#rest-result-container').hide();">×</a>
-                    <span id="rest-result-header-text"></span>
+                <div class="page-header">
+                    <h1>LoLin1 Data Provider</h1>
                 </div>
-            </div>
-            <div class="row">
-                <pre id="rest-result-body" class="offset2 span4 prettyprint language-json"></pre>
+
+                <div style="margin-bottom: 20px">
+                    This is the JAX-RS REST API that the <a href="http://github.com/Stoyicker/LoLin1">LoLin1 app for Android</a> uses as a bridge to bypass the Riot API usage restrictions. This project is completely open-source: you can find it at <a href="http://github.com/Stoyicker/lolin1-data-provider">GitHub</a>.
+                </div>
+
+                <ul id="tab" class="nav nav-tabs">
+                    <li class="active">
+                        <a id="version-tab" href="#version" data-toggle="tab">Version</a>
+                    </li>
+                    <li>
+                        <a id="list-tab" href="#list" data-toggle="tab">Champions data</a>
+                    </li>
+                    <li>
+                        <a id="image-tab" href="#image" data-toggle="tab">Image</a>
+                    </li>
+                    <li>
+                        <a id="imageChecksum-tab" href="#imageChecksum" data-toggle="tab">Image checksum</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div id="version" class="tab-pane active">
+                        <h1>Retrieve version</h1>
+                        Replace <code>REALM</code> by one of
+                        <br>euw eune na tr br
+                        <div id="rest-client-widget" style="margin: 10px">
+                            <form class="form-horizontal" class="row-fluid">
+                                <fieldset>
+                                    <label class="control-label search-query" for="version-input"><strong>/champions/version/</strong>
+                                    </label>
+                                    <br>
+                                    <br>
+                                    <input id="version-input" type="text" value="REALM">
+                                    <button type="submit" class="btn btn-primary" onclick="sendVersionRequest(); return false;">
+                                        GET
+                                    </button>
+                                </fieldset>
+                            </form>
+                            <div id="version-result-container" class="row hide">
+                                <div class="row">
+                                    <div id="version-result-header" class="offset2 span0 alert">
+                                        <span id="version-result-header-text"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <pre id="version-result-body" class="offset2 span0 prettyprint language-json"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="list" class="tab-pane">
+                        <h1>List information for all champions</h1>
+                        Replace <code>REALM</code> by one of
+                        <br>euw eune na tr br
+                        <br>Replace <code>LOCALE</code> by a valid one
+                        <br>Below is shown the map of supported ones:
+                        <br>
+                        <code>euw</code> en_US de_DE es_ES fr_FR it_IT
+                        <br>
+                        <code>eune</code> en_US el_GR pl_PL ro_RO
+                        <br>
+                        <code>na</code> en_US
+                        <br>
+                        <code>tr</code> tr_TR
+                        <br>
+                        <code>br</code> pt_PT
+                        <br>
+                        <div id="rest-client-widget" style="margin: 10px">
+                            <form class="form-horizontal" class="row-fluid">
+                                <fieldset>
+                                    <label class="control-label search-query" for="list-input"><strong>/champions/list/</strong>
+                                    </label>
+                                    <br>
+                                    <br>
+                                    <input id="list-input" type="text" value="REALM/LOCALE">
+                                    <button type="submit" class="btn btn-primary" onclick="sendListRequest(); return false;">
+                                        GET
+                                    </button>
+                                </fieldset>
+                            </form>
+                            <div id="list-result-container" class="row hide">
+                                <div class="row">
+                                    <div id="list-result-header" class="offset2 span0 alert">
+                                        <span id="list-result-header-text"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <pre id="list-result-body" class="offset2 span0 prettyprint language-json"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="image" class="tab-pane">
+                        <h1>Get image of a passive or active spell, or champion</h1>
+                        Replace <code>REALM</code> by one of
+                        <br>euw eune na tr br
+                        <br>Replace <code>TYPE</code> by one of
+                        <br>bust (for champion images)
+                        <br>passive (for passive spell images)
+                        <br>spell (for active spell images)
+                        <br>Replace <code>NAME</code> by the name of the desired image
+                        <div id="rest-client-widget" style="margin: 10px">
+                            <form class="form-horizontal" class="row-fluid">
+                                <fieldset>
+                                    <label class="control-label search-query" for="image-input"><strong>/champions/image/</strong>
+                                        <br>
+                                        <br>
+                                    </label>
+                                    <input id="image-input" type="text" value="REALM/TYPE/NAME">
+                                    <button type="submit" class="btn btn-primary" onclick="sendImageRequest(); return false;">
+                                        GET
+                                    </button>
+                                </fieldset>
+                            </form>
+                            <div id="image-result-container" class="row hide">
+                                <div class="row">
+                                    <div id="image-result-header" class="offset2 span0 alert">
+                                        <span id="image-result-header-text"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <pre id="image-result-body" class="offset2 span0 prettyprint language-json"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="imageChecksum" class="tab-pane">
+                        <h1>Get checksum of an image</h1>
+                        Replace <code>TYPE</code> by one of
+                        <br>bust (for champion images)
+                        <br>passive (for passive spell images)
+                        <br>spell (for active spell images)
+                        <br>Replace <code>NAME</code> by the name of the target image
+                        <div id="rest-client-widget" style="margin: 10px">
+                            <form class="form-horizontal" class="row-fluid">
+                                <fieldset>
+                                    <label class="control-label search-query" for="imageChecksum-input"><strong>/champions/imageChecksum/</strong>
+                                    </label>
+                                    <br>
+                                    <br>
+                                    <input id="imageChecksum-input" type="text" value="TYPE/NAME">
+                                    <button type="submit" class="btn btn-primary" onclick="sendImageChecksumRequest(); return false;">
+                                        GET
+                                    </button>
+                                </fieldset>
+                            </form>
+                            <div id="imageChecksum-result-container" class="row hide">
+                                <div class="row">
+                                    <div id="imageChecksum-result-header" class="offset2 span0 alert">
+                                        <span id="imageChecksum-result-header-text"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <pre id="imageChecksum-result-body" class="offset2 span0 prettyprint language-json"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end tab content -->
             </div>
         </div>
     </div>
-</div>
-<!-- end Rest Client tab -->
 
-</div>
-<!-- end tab content -->
-</div>
-
-
-</div>
-
-
-</div>
-
-<script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
-<script src="//netdna.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/prettify/r224/prettify.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/prettify/r224/prettify.min.js"></script>
 </body>
+
 </html>
