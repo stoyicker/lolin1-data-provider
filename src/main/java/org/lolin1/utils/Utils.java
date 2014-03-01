@@ -41,21 +41,9 @@ import org.lolin1.models.champion.Champion;
 
 public abstract class Utils {
 
-	private static final String API_KEY = "c236fa80-b223-487d-8358-41a4e94276b6", // TODO
-																					// Replace
-																					// this
-																					// from
-																					// the
-																					// public
-																					// repo
-																					// upon
-																					// deployment
-																					// for
-																					// "YOUR_API_KEY_HERE"
-			API_PARAM_NAME = "api_key",
-			IMAGES_DIR_NAME = "img",
-			BUSTS_DIR_NAME = "champion",
-			SPELLS_DIR_NAME = "spell",
+	private static final String API_KEY = "YOUR_API_KEY_HERE",
+			API_PARAM_NAME = "api_key", IMAGES_DIR_NAME = "img",
+			BUSTS_DIR_NAME = "champion", SPELLS_DIR_NAME = "spell",
 			PASSIVES_DIR_NAME = "passive";
 
 	public static final void createImagesDirectory(String realm) {

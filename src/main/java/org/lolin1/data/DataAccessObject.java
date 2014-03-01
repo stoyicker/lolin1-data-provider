@@ -43,21 +43,23 @@ public abstract class DataAccessObject {
 	}
 
 	public static final String getJSONChampions(String realm, String locale) {
-		String ret;
+		StringBuffer ret;
 		if (!DataUpdater.isUpdating()) {
 			Controller controller = Controller.getController();
 			if (controller.isPairSupported(locale, realm)) {
 				List<Champion> champions = controller.getChampions(locale,
 						realm);
-				ret = DataAccessObject.formatChampionListAsJSON(champions);
+				ret = new StringBuffer("{\"status\":\"ok\", \"list\":");
+				ret.append(DataAccessObject.formatChampionListAsJSON(champions));
+				ret.append("}");
 			} else {
-				ret = DataAccessObject.RESPONSE_UNSUPPORTED;
+				ret = new StringBuffer(DataAccessObject.RESPONSE_UNSUPPORTED);
 			}
 		} else {
-			ret = DataAccessObject.getResponseError();
+			ret = new StringBuffer(DataAccessObject.getResponseError());
 		}
 
-		return ret;
+		return ret.toString();
 	}
 
 	public static final String getJSONVersion(String realm) {

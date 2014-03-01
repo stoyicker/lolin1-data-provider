@@ -50,7 +50,7 @@
         <!--
         function sendVersionRequest() {
             $.ajax({
-                url: '/champions/version/' + document.getElementById("version-input").value,
+                url: '/services/champions/version/' + document.getElementById("version-input").value,
                 dataType: 'json',
                 context: document.body,
                 success: function (data, textStatus, jqXHR) {
@@ -79,7 +79,7 @@
 
         function sendListRequest() {
             $.ajax({
-                url: '/champions/list/' + document.getElementById("list-input").value,
+                url: '/services/champions/list/' + document.getElementById("list-input").value,
                 dataType: 'json',
                 context: document.body,
                 success: function (data, textStatus, jqXHR) {
@@ -107,14 +107,14 @@
         }
 
         function sendImageRequest() {
-            $(document).load('/champions/image/' + document.getElementById("image-input").value, function (response, status, xhr) {
+            $(document).load('/services/champions/image/' + document.getElementById("image-input").value, function (response, status, xhr) {
                 if (status == "error")
                     showImageResults(status, 'alert-error', xhr)
                 else {
                     $('#image-result-header-text').text('Success');
                     $('#image-result-header').removeClass('alert-error').removeClass('alert-success');
                     $('#image-result-header').addClass('alert-success');
-                    $('<img src="/champions/image/' + document.getElementById("image-input").value + '">').appendTo('#image-result-body');
+                    $('<img src="/services/champions/image/' + document.getElementById("image-input").value + '">').appendTo('#image-result-body');
                     $('#image-result-container').show();
                 }
             });
@@ -133,7 +133,7 @@
 
         function sendImageChecksumRequest() {
             $.ajax({
-                url: '/champions/imageChecksum/' + document.getElementById("imageChecksum-input").value,
+                url: '/services/champions/imageChecksum/' + document.getElementById("imageChecksum-input").value,
                 dataType: 'json',
                 context: document.body,
                 success: function (data, textStatus, jqXHR) {
@@ -215,7 +215,7 @@
                         <div id="rest-client-widget" style="margin: 10px">
                             <form class="form-horizontal" class="row-fluid">
                                 <fieldset>
-                                    <label class="control-label search-query" for="version-input"><strong>/champions/version/</strong>
+                                    <label class="control-label search-query" for="version-input"><strong>/services/champions/version/</strong>
                                     </label>
                                     <br>
                                     <br>
@@ -257,7 +257,7 @@
                         <div id="rest-client-widget" style="margin: 10px">
                             <form class="form-horizontal" class="row-fluid">
                                 <fieldset>
-                                    <label class="control-label search-query" for="list-input"><strong>/champions/list/</strong>
+                                    <label class="control-label search-query" for="list-input"><strong>/services/champions/list/</strong>
                                     </label>
                                     <br>
                                     <br>
@@ -291,10 +291,10 @@
                         <div id="rest-client-widget" style="margin: 10px">
                             <form class="form-horizontal" class="row-fluid">
                                 <fieldset>
-                                    <label class="control-label search-query" for="image-input"><strong>/champions/image/</strong>
-                                        <br>
-                                        <br>
+                                    <label class="control-label search-query" for="image-input"><strong>/services/champions/image/</strong>
                                     </label>
+                                    <br>
+                                    <br>
                                     <input id="image-input" type="text" value="REALM/TYPE/NAME">
                                     <button type="submit" class="btn btn-primary" onclick="sendImageRequest(); return false;">
                                         GET
@@ -323,7 +323,7 @@
                         <div id="rest-client-widget" style="margin: 10px">
                             <form class="form-horizontal" class="row-fluid">
                                 <fieldset>
-                                    <label class="control-label search-query" for="imageChecksum-input"><strong>/champions/imageChecksum/</strong>
+                                    <label class="control-label search-query" for="imageChecksum-input"><strong>/services/champions/imageChecksum/</strong>
                                     </label>
                                     <br>
                                     <br>

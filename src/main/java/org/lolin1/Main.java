@@ -18,6 +18,8 @@ package org.lolin1;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.lolin1.data.DataAccessObject;
+import org.lolin1.data.DataUpdater;
 
 /**
  * 
@@ -34,8 +36,8 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		String webappDirLocation = "src/main/webapp/";
 
-		// DataAccessObject.initDAO(); TODO Uncomment this two lines
-		// DataUpdater.updateData();
+		DataAccessObject.initDAO();
+		DataUpdater.updateData();
 
 		// The port that we should run on can be set into an environment
 		// variable

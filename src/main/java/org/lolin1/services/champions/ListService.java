@@ -25,7 +25,7 @@ import org.lolin1.data.DataAccessObject;
 
 @Path("/champions/list/{realm}/{locale}")
 @Produces("application/json")
-public class ChampionsService {
+public class ListService {
 	@GET
 	public final String get(@PathParam("realm") String realm,
 			@PathParam("locale") String locale) {
