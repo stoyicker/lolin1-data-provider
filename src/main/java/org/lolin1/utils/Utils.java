@@ -37,7 +37,7 @@ import org.lolin1.data.DataUpdater;
 
 public abstract class Utils {
 
-	private static final String API_KEY = "c236fa80-b223-487d-8358-41a4e94276b6",
+	private static final String API_KEY = "YOUR_API_KEY_HERE",
 			API_PARAM_NAME = "api_key";
 
 	/**
@@ -177,19 +177,19 @@ public abstract class Utils {
 		}
 	}
 
-	public static void setMapFile(Path path, String hash) {
-		try (PrintWriter pw = new PrintWriter(new FileWriter(path.toString(),
-				Boolean.FALSE))) {
-			pw.write(hash);
-		} catch (IOException ex) {
-			ex.printStackTrace(System.err);
-		}
-	}
-
 	public static String toSystemJSON(String contentType, String content) {
 		StringBuilder ret = new StringBuilder("{\"status\":\"ok\"");
 		ret.append(",\"" + contentType + "\":\"" + content + "\"");
 		ret.append("}");
 		return ret.toString();
+	}
+
+	public static void writeFile(Path path, String contents) {
+		try (PrintWriter pw = new PrintWriter(new FileWriter(path.toString(),
+				Boolean.FALSE))) {
+			pw.write(contents);
+		} catch (IOException ex) {
+			ex.printStackTrace(System.err);
+		}
 	}
 }

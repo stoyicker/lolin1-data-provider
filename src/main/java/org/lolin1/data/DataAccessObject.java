@@ -16,13 +16,16 @@
  */
 package org.lolin1.data;
 
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.lolin1.control.Controller;
+import org.lolin1.control.ListManager;
 import org.lolin1.models.champion.Champion;
+import org.lolin1.utils.Utils;
 
 public abstract class DataAccessObject {
 
@@ -31,7 +34,9 @@ public abstract class DataAccessObject {
 	private static Map<String, String> CHAMPIONS_VERSION_MAP = new HashMap<>();
 	private static final Map<String, String[]> SUPPORTED_REALMS = new HashMap<>();
 
-	private static String formatChampionListAsJSON(List<Champion> champions) {
+	public final static String CHAMPIONS_DIR_NAME = "champs";
+
+	public static String formatChampionListAsJSON(List<Champion> champions) {
 		StringBuilder ret = new StringBuilder("[");
 		for (Iterator<Champion> it = champions.iterator(); it.hasNext();) {
 			ret.append(it.next().toString());
@@ -42,15 +47,24 @@ public abstract class DataAccessObject {
 		return ret.append("]").toString();
 	}
 
+	public static String getChampionsDirName() {
+		return DataAccessObject.CHAMPIONS_DIR_NAME;
+	}
+
 	public static final String getJSONChampions(String realm, String locale) {
 		StringBuffer ret;
-		Controller controller = Controller.getInstance();
-		if (controller.isPairSupported(locale, realm)) {
-			List<Champion> champions = controller.getChampions(locale, realm);
-			ret = new StringBuffer("{\"status\":\"ok\", \"list\":");
-			ret.append(DataAccessObject.formatChampionListAsJSON(champions));
-			ret.append("}");
-		} else {
+		try {
+			if (Arrays.asList(DataAccessObject.getSupportedRealms().get(realm))
+					.contains(locale)) {
+				String champions = Utils.readFile(Paths.get(
+						DataAccessObject.CHAMPIONS_DIR_NAME,
+						ListManager.getListsDirName(), realm, locale,
+						ListManager.getChampionsListFileName()));
+				ret = new StringBuffer(champions);
+			} else {
+				ret = new StringBuffer(DataAccessObject.RESPONSE_UNSUPPORTED);
+			}
+		} catch (NullPointerException ex) {
 			ret = new StringBuffer(DataAccessObject.RESPONSE_UNSUPPORTED);
 		}
 

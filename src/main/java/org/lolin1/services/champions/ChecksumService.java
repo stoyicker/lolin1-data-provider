@@ -24,9 +24,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.lolin1.control.Controller;
 import org.lolin1.control.HashManager;
 import org.lolin1.control.ImageManager;
+import org.lolin1.data.DataAccessObject;
 import org.lolin1.data.DataUpdater;
 import org.lolin1.utils.Utils;
 
@@ -56,7 +56,7 @@ public class ChecksumService {
 		}
 
 		String hash = HashManager.getInstance().getImageHash(
-				Paths.get(Controller.getChampionsDirName(),
+				Paths.get(DataAccessObject.getChampionsDirName(),
 						HashManager.getHashFolderName()).toString(), realm,
 				imageType, name);
 		if (hash != null) {

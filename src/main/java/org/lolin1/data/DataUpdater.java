@@ -27,9 +27,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jetty.util.ajax.JSON;
-import org.lolin1.control.Controller;
 import org.lolin1.control.HashManager;
 import org.lolin1.control.ImageManager;
+import org.lolin1.control.ListManager;
 import org.lolin1.models.champion.Champion;
 import org.lolin1.utils.Utils;
 
@@ -72,6 +72,7 @@ public abstract class DataUpdater {
 		DataUpdater.UPDATING = Boolean.TRUE;
 		ImageManager.getInstance().createChampionImagesDirectories(realm);
 		HashManager.getInstance().createChampionHashesDirectories(realm);
+		ListManager.getInstance().createChampionListsDirectory(realm);
 		String championImagesUrl = DataUpdater.CDN + "/" + newVersion + "/img/";
 		List<Champion> champions;
 		Map<String, Object> map;
@@ -105,7 +106,7 @@ public abstract class DataUpdater {
 				@Override
 				public void run() {
 					HashManager.getInstance().setImageHash(
-							Controller.getChampionsDirName(), realm,
+							DataAccessObject.getChampionsDirName(), realm,
 							ImageManager.IMAGE_TYPE_BUST,
 							thisChampion.getImageName(),
 							HashManager.getInstance().getFileHash(bustImage));
@@ -120,7 +121,7 @@ public abstract class DataUpdater {
 				public void run() {
 					HashManager.getInstance()
 							.setImageHash(
-									Controller.getChampionsDirName(),
+									DataAccessObject.getChampionsDirName(),
 									realm,
 									ImageManager.IMAGE_TYPE_PASSIVE,
 									thisChampion.getPassiveImageName(),
@@ -137,7 +138,7 @@ public abstract class DataUpdater {
 					@Override
 					public void run() {
 						HashManager.getInstance().setImageHash(
-								Controller.getChampionsDirName(),
+								DataAccessObject.getChampionsDirName(),
 								realm,
 								ImageManager.IMAGE_TYPE_SPELL,
 								thisChampion.getSpellImageNames()[Arrays
@@ -147,7 +148,12 @@ public abstract class DataUpdater {
 				});
 			}
 			executor.shutdown();
-			Controller.getInstance().setChampions(locale, realm, champions);
+			StringBuffer data = new StringBuffer(
+					"{\"status\":\"ok\", \"list\":");
+			data.append(DataAccessObject.formatChampionListAsJSON(champions));
+			data.append("}");
+			ListManager.getInstance().setChampions(realm, locale,
+					data.toString());
 			try {
 				executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
 			} catch (InterruptedException e) {

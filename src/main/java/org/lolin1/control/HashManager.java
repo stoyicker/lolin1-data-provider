@@ -33,16 +33,16 @@ public class HashManager {
 	}
 
 	public void createChampionHashesDirectories(String realm) {
-		Utils.delete(Paths.get(Controller.getChampionsDirName(),
+		Utils.delete(Paths.get(DataAccessObject.getChampionsDirName(),
 				HashManager.getHashFolderName(), realm).toString());
 		try {
-			Files.createDirectories(Paths.get(Controller.getChampionsDirName(),
+			Files.createDirectories(Paths.get(DataAccessObject.getChampionsDirName(),
 					HashManager.getHashFolderName(), realm,
 					ImageManager.getBustsDirName()));
-			Files.createDirectories(Paths.get(Controller.getChampionsDirName(),
+			Files.createDirectories(Paths.get(DataAccessObject.getChampionsDirName(),
 					HashManager.getHashFolderName(), realm,
 					ImageManager.getPassivesDirName()));
-			Files.createDirectories(Paths.get(Controller.getChampionsDirName(),
+			Files.createDirectories(Paths.get(DataAccessObject.getChampionsDirName(),
 					HashManager.getHashFolderName(), realm,
 					ImageManager.getSpellsDirName()));
 		} catch (IOException e) {
@@ -116,17 +116,17 @@ public class HashManager {
 			String imageName, String hash) {
 		switch (imageType) {
 		case ImageManager.IMAGE_TYPE_BUST:
-			Utils.setMapFile(Paths.get(root, HashManager.getHashFolderName(),
+			Utils.writeFile(Paths.get(root, HashManager.getHashFolderName(),
 					realm, ImageManager.getBustsDirName(),
 					imageName.toLowerCase() + HashManager.HASH_TYPE_EXTENSION),
 					hash);
 		case ImageManager.IMAGE_TYPE_PASSIVE:
-			Utils.setMapFile(Paths.get(root, HashManager.getHashFolderName(),
+			Utils.writeFile(Paths.get(root, HashManager.getHashFolderName(),
 					realm, ImageManager.getPassivesDirName(),
 					imageName.toLowerCase() + HashManager.HASH_TYPE_EXTENSION),
 					hash);
 		case ImageManager.IMAGE_TYPE_SPELL:
-			Utils.setMapFile(Paths.get(root, HashManager.getHashFolderName(),
+			Utils.writeFile(Paths.get(root, HashManager.getHashFolderName(),
 					realm, ImageManager.getSpellsDirName(),
 					imageName.toLowerCase() + HashManager.HASH_TYPE_EXTENSION),
 					hash);

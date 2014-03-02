@@ -6,6 +6,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import org.lolin1.data.DataAccessObject;
 import org.lolin1.data.DataUpdater;
 import org.lolin1.models.champion.Champion;
 import org.lolin1.utils.Utils;
@@ -48,16 +49,16 @@ public class ImageManager {
 	}
 
 	public final void createChampionImagesDirectories(String realm) {
-		Utils.delete(Paths.get(Controller.getChampionsDirName(),
+		Utils.delete(Paths.get(DataAccessObject.getChampionsDirName(),
 				ImageManager.IMAGES_DIR_NAME, realm).toString());
 		try {
-			Files.createDirectories(Paths.get(Controller.getChampionsDirName(),
+			Files.createDirectories(Paths.get(DataAccessObject.getChampionsDirName(),
 					ImageManager.IMAGES_DIR_NAME, realm,
 					ImageManager.getBustsDirName()));
-			Files.createDirectories(Paths.get(Controller.getChampionsDirName(),
+			Files.createDirectories(Paths.get(DataAccessObject.getChampionsDirName(),
 					ImageManager.IMAGES_DIR_NAME, realm,
 					ImageManager.getSpellsDirName()));
-			Files.createDirectories(Paths.get(Controller.getChampionsDirName(),
+			Files.createDirectories(Paths.get(DataAccessObject.getChampionsDirName(),
 					ImageManager.IMAGES_DIR_NAME, realm,
 					ImageManager.getPassivesDirName()));
 		} catch (FileAlreadyExistsException ex) {
@@ -74,7 +75,7 @@ public class ImageManager {
 		String championImageName = champion.getImageName();
 		return Utils.downloadFile(imagesUrl + ImageManager.getBustsDirName()
 				+ "/" + championImageName, Paths.get(
-				Controller.getChampionsDirName(), ImageManager.IMAGES_DIR_NAME,
+				DataAccessObject.getChampionsDirName(), ImageManager.IMAGES_DIR_NAME,
 				realm, ImageManager.getBustsDirName(), championImageName));
 	}
 
@@ -83,7 +84,7 @@ public class ImageManager {
 		String passiveImageName = champion.getPassiveImageName();
 		return Utils.downloadFile(imagesUrl + ImageManager.getPassivesDirName()
 				+ "/" + passiveImageName, Paths.get(
-				Controller.getChampionsDirName(), ImageManager.IMAGES_DIR_NAME,
+				DataAccessObject.getChampionsDirName(), ImageManager.IMAGES_DIR_NAME,
 				realm, ImageManager.getPassivesDirName(), passiveImageName));
 	}
 
@@ -96,7 +97,7 @@ public class ImageManager {
 			ret[i] = Utils.downloadFile(
 					imagesUrl + ImageManager.getSpellsDirName() + "/"
 							+ spellImageName, Paths.get(
-							Controller.getChampionsDirName(),
+							DataAccessObject.getChampionsDirName(),
 							ImageManager.IMAGES_DIR_NAME, realm,
 							ImageManager.getSpellsDirName(), spellImageName));
 			i++;
@@ -110,7 +111,7 @@ public class ImageManager {
 			case ImageManager.IMAGE_TYPE_BUST:
 				return new File(
 						Paths.get(
-								Controller.getChampionsDirName(),
+								DataAccessObject.getChampionsDirName(),
 								ImageManager.IMAGES_DIR_NAME,
 								realm,
 								ImageManager.getBustsDirName(),
@@ -123,7 +124,7 @@ public class ImageManager {
 			case ImageManager.IMAGE_TYPE_PASSIVE:
 				return new File(
 						Paths.get(
-								Controller.getChampionsDirName(),
+								DataAccessObject.getChampionsDirName(),
 								ImageManager.IMAGES_DIR_NAME,
 								realm,
 								ImageManager.getPassivesDirName(),
@@ -136,7 +137,7 @@ public class ImageManager {
 			case ImageManager.IMAGE_TYPE_SPELL:
 				return new File(
 						Paths.get(
-								Controller.getChampionsDirName(),
+								DataAccessObject.getChampionsDirName(),
 								ImageManager.IMAGES_DIR_NAME,
 								realm,
 								ImageManager.getSpellsDirName(),
