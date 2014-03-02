@@ -20,15 +20,23 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 import org.lolin1.data.DataAccessObject;
+import org.lolin1.data.DataUpdater;
 
 @Path("/champions/list/{realm}/{locale}")
 @Produces("application/json")
 public class ListService {
 	@GET
-	public final String get(@PathParam("realm") String realm,
+	public final Response get(@PathParam("realm") String realm,
 			@PathParam("locale") String locale) {
-		return DataAccessObject.getJSONChampions(realm, locale);
+		if (DataUpdater.isUpdating()) {
+			return Response.status(409).build();
+		} else {
+			return Response
+					.ok(DataAccessObject.getJSONChampions(realm, locale))
+					.build();
+		}
 	}
 }

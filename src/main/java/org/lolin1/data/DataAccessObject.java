@@ -44,19 +44,14 @@ public abstract class DataAccessObject {
 
 	public static final String getJSONChampions(String realm, String locale) {
 		StringBuffer ret;
-		if (!DataUpdater.isUpdating()) {
-			Controller controller = Controller.getController();
-			if (controller.isPairSupported(locale, realm)) {
-				List<Champion> champions = controller.getChampions(locale,
-						realm);
-				ret = new StringBuffer("{\"status\":\"ok\", \"list\":");
-				ret.append(DataAccessObject.formatChampionListAsJSON(champions));
-				ret.append("}");
-			} else {
-				ret = new StringBuffer(DataAccessObject.RESPONSE_UNSUPPORTED);
-			}
+		Controller controller = Controller.getController();
+		if (controller.isPairSupported(locale, realm)) {
+			List<Champion> champions = controller.getChampions(locale, realm);
+			ret = new StringBuffer("{\"status\":\"ok\", \"list\":");
+			ret.append(DataAccessObject.formatChampionListAsJSON(champions));
+			ret.append("}");
 		} else {
-			ret = new StringBuffer(DataAccessObject.getResponseError());
+			ret = new StringBuffer(DataAccessObject.RESPONSE_UNSUPPORTED);
 		}
 
 		return ret.toString();
@@ -64,16 +59,11 @@ public abstract class DataAccessObject {
 
 	public static final String getJSONVersion(String realm) {
 		StringBuffer ret;
-		if (!DataUpdater.isUpdating()) {
-			if (!DataAccessObject.CHAMPIONS_VERSION_MAP.containsKey(realm)) {
-				ret = new StringBuffer(DataAccessObject.getResponseError());
-			} else {
-				ret = new StringBuffer("{\"status\":\"ok\", \"version\":\""
-						+ DataAccessObject.CHAMPIONS_VERSION_MAP.get(realm)
-						+ "\"}");
-			}
+		if (!DataAccessObject.CHAMPIONS_VERSION_MAP.containsKey(realm)) {
+			ret = new StringBuffer(DataAccessObject.RESPONSE_UNSUPPORTED);
 		} else {
-			ret = new StringBuffer(DataAccessObject.getResponseError());
+			ret = new StringBuffer("{\"status\":\"ok\", \"version\":\""
+					+ DataAccessObject.CHAMPIONS_VERSION_MAP.get(realm) + "\"}");
 		}
 		return ret.toString();
 	}

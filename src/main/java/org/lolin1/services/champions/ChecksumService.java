@@ -20,9 +20,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 import org.lolin1.control.Controller;
-import org.lolin1.data.DataAccessObject;
+import org.lolin1.data.DataUpdater;
 import org.lolin1.utils.Utils;
 
 @Path("/champions/imageChecksum/{type}/{name}")
@@ -30,8 +31,11 @@ import org.lolin1.utils.Utils;
 public class ChecksumService {
 
 	@GET
-	public final String get(@PathParam("type") String type,
+	public final Response get(@PathParam("type") String type,
 			@PathParam("name") String name) {
+		if (DataUpdater.isUpdating()) {
+			return Response.status(409).build();
+		}
 		int imageType;
 		switch (type.toUpperCase()) {
 		case "BUST":
@@ -44,10 +48,11 @@ public class ChecksumService {
 			imageType = Controller.IMAGE_TYPE_SPELL;
 			break;
 		default:
-			return DataAccessObject.getResponseError();
+			return Response.status(404).build();
 		}
 
-		return Utils.toSystemJSON("checksum", Controller.getController()
-				.getImageHash(imageType, name));
+		return Response.ok(
+				Utils.toSystemJSON("checksum", Controller.getController()
+						.getImageHash(imageType, name))).build();
 	}
 }

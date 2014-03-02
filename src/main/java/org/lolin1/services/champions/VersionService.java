@@ -20,15 +20,21 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 import org.lolin1.data.DataAccessObject;
+import org.lolin1.data.DataUpdater;
 
 @Path("/champions/version/{realm}")
 @Produces("application/json")
 public final class VersionService {
 
 	@GET
-	public final String get(@PathParam("realm") String realm) {
-		return DataAccessObject.getJSONVersion(realm);
+	public final Response get(@PathParam("realm") String realm) {
+		if (DataUpdater.isUpdating()) {
+			return Response.status(409).build();
+		} else {
+			return Response.ok(DataAccessObject.getJSONVersion(realm)).build();
+		}
 	}
 }

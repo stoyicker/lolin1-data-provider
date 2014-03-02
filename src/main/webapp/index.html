@@ -114,6 +114,7 @@
                     $('#image-result-header-text').text('Success');
                     $('#image-result-header').removeClass('alert-error').removeClass('alert-success');
                     $('#image-result-header').addClass('alert-success');
+                    $('#image-result-body').empty();
                     $('<img src="/services/champions/image/' + document.getElementById("image-input").value + '">').appendTo('#image-result-body');
                     $('#image-result-container').show();
                 }
