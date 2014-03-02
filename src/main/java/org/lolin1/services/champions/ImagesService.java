@@ -25,7 +25,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.lolin1.control.Controller;
+import org.lolin1.control.ImageManager;
 import org.lolin1.data.DataUpdater;
 
 @Path("/champions/image/{realm}/{type}/{name}")
@@ -41,18 +41,18 @@ public class ImagesService {
 		int imageType;
 		switch (type.toUpperCase()) {
 		case "BUST":
-			imageType = Controller.IMAGE_TYPE_BUST;
+			imageType = ImageManager.IMAGE_TYPE_BUST;
 			break;
 		case "PASSIVE":
-			imageType = Controller.IMAGE_TYPE_PASSIVE;
+			imageType = ImageManager.IMAGE_TYPE_PASSIVE;
 			break;
 		case "SPELL":
-			imageType = Controller.IMAGE_TYPE_SPELL;
+			imageType = ImageManager.IMAGE_TYPE_SPELL;
 			break;
 		default:
 			return Response.status(404).build();
 		}
-		File img = Controller.getController().getImage(realm, imageType, name);
+		File img = ImageManager.getInstance().getChampionImage(realm, imageType, name);
 		if (img != null) {
 			return Response.ok(img,
 					new MimetypesFileTypeMap().getContentType(img)).build();

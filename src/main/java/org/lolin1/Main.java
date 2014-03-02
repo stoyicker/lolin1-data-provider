@@ -53,7 +53,7 @@ public class Main {
 			}
 		};
 
-		DataAccessObject.initDAO();
+		DataAccessObject.initRealms();
 
 		scheduledExecutorService.scheduleAtFixedRate(updateTask, 0,
 				Main.UPDATE_INTERVAL_HOURS, TimeUnit.HOURS);

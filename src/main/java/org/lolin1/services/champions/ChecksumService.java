@@ -16,6 +16,8 @@
  */
 package org.lolin1.services.champions;
 
+import java.nio.file.Paths;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -23,36 +25,44 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.lolin1.control.Controller;
+import org.lolin1.control.HashManager;
+import org.lolin1.control.ImageManager;
 import org.lolin1.data.DataUpdater;
 import org.lolin1.utils.Utils;
 
-@Path("/champions/imageChecksum/{type}/{name}")
+@Path("/champions/imageChecksum/{realm}/{type}/{name}")
 @Produces("application/json")
 public class ChecksumService {
 
 	@GET
-	public final Response get(@PathParam("type") String type,
-			@PathParam("name") String name) {
+	public final Response get(@PathParam("realm") String realm,
+			@PathParam("type") String type, @PathParam("name") String name) {
 		if (DataUpdater.isUpdating()) {
 			return Response.status(409).build();
 		}
 		int imageType;
 		switch (type.toUpperCase()) {
 		case "BUST":
-			imageType = Controller.IMAGE_TYPE_BUST;
+			imageType = ImageManager.IMAGE_TYPE_BUST;
 			break;
 		case "PASSIVE":
-			imageType = Controller.IMAGE_TYPE_PASSIVE;
+			imageType = ImageManager.IMAGE_TYPE_PASSIVE;
 			break;
 		case "SPELL":
-			imageType = Controller.IMAGE_TYPE_SPELL;
+			imageType = ImageManager.IMAGE_TYPE_SPELL;
 			break;
 		default:
 			return Response.status(404).build();
 		}
 
-		return Response.ok(
-				Utils.toSystemJSON("checksum", Controller.getController()
-						.getImageHash(imageType, name))).build();
+		String hash = HashManager.getInstance().getImageHash(
+				Paths.get(Controller.getChampionsDirName(),
+						HashManager.getHashFolderName()).toString(), realm,
+				imageType, name);
+		if (hash != null) {
+			return Response.ok(Utils.toSystemJSON("checksum", hash)).build();
+		} else {
+			return Response.status(404).build();
+		}
 	}
 }

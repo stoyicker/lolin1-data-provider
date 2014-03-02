@@ -28,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jetty.util.ajax.JSON;
 import org.lolin1.control.Controller;
+import org.lolin1.control.HashManager;
+import org.lolin1.control.ImageManager;
 import org.lolin1.models.champion.Champion;
 import org.lolin1.utils.Utils;
 
@@ -65,11 +67,12 @@ public abstract class DataUpdater {
 	 * @param locale
 	 * @param newVersion
 	 */
-	private static void performUpdate(String realm, String locale,
+	private static void performUpdate(final String realm, String locale,
 			String newVersion) {
 		DataUpdater.UPDATING = Boolean.TRUE;
-		Utils.createImagesDirectory(realm);
-		String IMAGES_URL = DataUpdater.CDN + "/" + newVersion + "/img/";
+		ImageManager.getInstance().createChampionImagesDirectories(realm);
+		HashManager.getInstance().createChampionHashesDirectories(realm);
+		String championImagesUrl = DataUpdater.CDN + "/" + newVersion + "/img/";
 		List<Champion> champions;
 		Map<String, Object> map;
 		try {
@@ -94,47 +97,57 @@ public abstract class DataUpdater {
 					(HashMap<String, Object>) map.get(key));
 			champions.add(thisChampion);
 			ExecutorService executor = Executors.newFixedThreadPool(6);
-			final File bustImage = Utils.downloadChampionBustImage(realm,
-					thisChampion, IMAGES_URL);
+			final File bustImage = ImageManager.getInstance()
+					.downloadChampionBustImage(realm, thisChampion,
+							championImagesUrl);
 			executor.submit(new Runnable() {
 
 				@Override
 				public void run() {
-					Controller.getController().setImageHash(
-							Controller.IMAGE_TYPE_BUST,
+					HashManager.getInstance().setImageHash(
+							Controller.getChampionsDirName(), realm,
+							ImageManager.IMAGE_TYPE_BUST,
 							thisChampion.getImageName(),
-							Utils.getFileMD5(bustImage));
+							HashManager.getInstance().getFileHash(bustImage));
 				}
 			});
-			final File passiveImage = Utils.downloadChampionPassiveImage(realm,
-					thisChampion, IMAGES_URL);
+			final File passiveImage = ImageManager.getInstance()
+					.downloadChampionPassiveImage(realm, thisChampion,
+							championImagesUrl);
 			executor.submit(new Runnable() {
 
 				@Override
 				public void run() {
-					Controller.getController().setImageHash(
-							Controller.IMAGE_TYPE_PASSIVE,
-							thisChampion.getPassiveImageName(),
-							Utils.getFileMD5(passiveImage));
+					HashManager.getInstance()
+							.setImageHash(
+									Controller.getChampionsDirName(),
+									realm,
+									ImageManager.IMAGE_TYPE_PASSIVE,
+									thisChampion.getPassiveImageName(),
+									HashManager.getInstance().getFileHash(
+											passiveImage));
 				}
 			});
-			final File[] spellImages = Utils.downloadChampionSpellImages(realm,
-					thisChampion, IMAGES_URL);
+			final File[] spellImages = ImageManager.getInstance()
+					.downloadChampionSpellImages(realm, thisChampion,
+							championImagesUrl);
 			for (final File x : spellImages) {
 				executor.submit(new Runnable() {
 
 					@Override
 					public void run() {
-						Controller.getController().setImageHash(
-								Controller.IMAGE_TYPE_SPELL,
+						HashManager.getInstance().setImageHash(
+								Controller.getChampionsDirName(),
+								realm,
+								ImageManager.IMAGE_TYPE_SPELL,
 								thisChampion.getSpellImageNames()[Arrays
 										.asList(spellImages).indexOf(x)],
-								Utils.getFileMD5(x));
+								HashManager.getInstance().getFileHash(x));
 					}
 				});
 			}
 			executor.shutdown();
-			Controller.getController().setChampions(locale, realm, champions);
+			Controller.getInstance().setChampions(locale, realm, champions);
 			try {
 				executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
 			} catch (InterruptedException e) {

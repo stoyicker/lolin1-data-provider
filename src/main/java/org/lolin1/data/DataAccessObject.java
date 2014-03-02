@@ -44,7 +44,7 @@ public abstract class DataAccessObject {
 
 	public static final String getJSONChampions(String realm, String locale) {
 		StringBuffer ret;
-		Controller controller = Controller.getController();
+		Controller controller = Controller.getInstance();
 		if (controller.isPairSupported(locale, realm)) {
 			List<Champion> champions = controller.getChampions(locale, realm);
 			ret = new StringBuffer("{\"status\":\"ok\", \"list\":");
@@ -80,9 +80,7 @@ public abstract class DataAccessObject {
 		return DataAccessObject.CHAMPIONS_VERSION_MAP.get(realm);
 	}
 
-	public static final void initDAO() {
-		// Upon server start there's no data on dynamic memory, load the realms
-		// and their corresponding locale codes
+	public static final void initRealms() {
 		DataAccessObject.SUPPORTED_REALMS.put("euw", new String[] { "en_US",
 				"de_DE", "es_ES", "fr_FR", "it_IT" });
 		DataAccessObject.SUPPORTED_REALMS.put("eune", new String[] { "en_US",
@@ -92,7 +90,6 @@ public abstract class DataAccessObject {
 		DataAccessObject.SUPPORTED_REALMS.put("br", new String[] { "pt_PT" });
 
 		for (String realm : DataAccessObject.getSupportedRealms().keySet()) {
-			// As well, put a blank version to force the download of such data
 			DataAccessObject.CHAMPIONS_VERSION_MAP.put(realm, "");
 		}
 	}
