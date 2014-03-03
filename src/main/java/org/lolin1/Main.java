@@ -36,18 +36,9 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		String webappDirLocation = "src/main/webapp/";
 
-		Thread updateTask = new Thread() {
-
-			@Override
-			public void run() {
-				DataUpdater.updateData();
-			}
-		};
-
 		DataAccessObject.initRealms();
+		DataUpdater.updateData();
 
-		updateTask.start();
-		updateTask.join();
 		// The port that we should run on can be set into an environment
 		// variable
 		// Look for that variable and default to 8080 if it isn't there.
