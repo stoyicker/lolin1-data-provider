@@ -16,10 +16,6 @@
  */
 package org.lolin1;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.lolin1.data.DataAccessObject;
@@ -34,18 +30,13 @@ import org.lolin1.data.DataUpdater;
  */
 public class Main {
 
-	private static final int UPDATE_INTERVAL_HOURS = 6;
-
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
 		String webappDirLocation = "src/main/webapp/";
 
-		ScheduledExecutorService scheduledExecutorService = Executors
-				.newScheduledThreadPool(1);
-
-		Runnable updateTask = new Runnable() {
+		Thread updateTask = new Thread() {
 
 			@Override
 			public void run() {
@@ -55,8 +46,7 @@ public class Main {
 
 		DataAccessObject.initRealms();
 
-		scheduledExecutorService.scheduleAtFixedRate(updateTask, 0,
-				Main.UPDATE_INTERVAL_HOURS, TimeUnit.HOURS);
+		updateTask.start();
 
 		// The port that we should run on can be set into an environment
 		// variable
@@ -84,7 +74,7 @@ public class Main {
 		server.setHandler(root);
 
 		server.start();
-
+		updateTask.join();
 		server.join();
 	}
 }

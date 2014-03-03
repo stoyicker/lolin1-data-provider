@@ -37,7 +37,7 @@ import org.lolin1.data.DataUpdater;
 
 public abstract class Utils {
 
-	private static final String API_KEY = "YOUR_API_KEY_HERE",
+	private static final String API_KEY = "c236fa80-b223-487d-8358-41a4e94276b6",
 			API_PARAM_NAME = "api_key";
 
 	/**
