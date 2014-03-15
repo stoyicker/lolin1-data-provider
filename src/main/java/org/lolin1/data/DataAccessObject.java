@@ -31,7 +31,8 @@ public abstract class DataAccessObject {
 
 	private final static String RESPONSE_UNSUPPORTED = "{\"status\":\"unsupported\"}",
 			RESPONSE_ERROR = "{\"status\":\"error\"}";
-	private static Map<String, String> CHAMPIONS_VERSION_MAP = new HashMap<>();
+	private static Map<String, String> CHAMPIONS_VERSION_MAP = new HashMap<>(),
+			CDN_MAP = new HashMap<>();
 	private static final Map<String, String[]> SUPPORTED_REALMS = new HashMap<>();
 
 	public final static String CHAMPIONS_DIR_NAME = "champs";
@@ -47,8 +48,23 @@ public abstract class DataAccessObject {
 		return ret.append("]").toString();
 	}
 
+	public static String getCDN(String realm) {
+		return DataAccessObject.CDN_MAP.get(realm);
+	}
+
 	public static String getChampionsDirName() {
 		return DataAccessObject.CHAMPIONS_DIR_NAME;
+	}
+
+	public static final String getJSONCDN(String realm) {
+		StringBuffer ret;
+		if (!DataAccessObject.CHAMPIONS_VERSION_MAP.containsKey(realm)) {
+			ret = new StringBuffer(DataAccessObject.getResponseUnsupported());
+		} else {
+			ret = new StringBuffer("{\"status\":\"ok\", \"version\":\""
+					+ DataAccessObject.CDN_MAP.get(realm) + "\"}");
+		}
+		return ret.toString();
 	}
 
 	public static final String getJSONChampions(String realm, String locale) {
@@ -62,10 +78,10 @@ public abstract class DataAccessObject {
 						ListManager.getChampionsListFileName()));
 				ret = new StringBuffer(champions);
 			} else {
-				ret = new StringBuffer(DataAccessObject.RESPONSE_UNSUPPORTED);
+				ret = new StringBuffer(DataAccessObject.getResponseUnsupported());
 			}
 		} catch (NullPointerException ex) {
-			ret = new StringBuffer(DataAccessObject.RESPONSE_UNSUPPORTED);
+			ret = new StringBuffer(DataAccessObject.getResponseUnsupported());
 		}
 
 		return ret.toString();
@@ -74,7 +90,7 @@ public abstract class DataAccessObject {
 	public static final String getJSONVersion(String realm) {
 		StringBuffer ret;
 		if (!DataAccessObject.CHAMPIONS_VERSION_MAP.containsKey(realm)) {
-			ret = new StringBuffer(DataAccessObject.RESPONSE_UNSUPPORTED);
+			ret = new StringBuffer(DataAccessObject.getResponseUnsupported());
 		} else {
 			ret = new StringBuffer("{\"status\":\"ok\", \"version\":\""
 					+ DataAccessObject.CHAMPIONS_VERSION_MAP.get(realm) + "\"}");
@@ -105,11 +121,20 @@ public abstract class DataAccessObject {
 
 		for (String realm : DataAccessObject.getSupportedRealms().keySet()) {
 			DataAccessObject.CHAMPIONS_VERSION_MAP.put(realm, "");
+			DataAccessObject.CDN_MAP.put(realm, "");
 		}
+	}
+
+	public static void putCDN(String realm, String url) {
+		DataAccessObject.CDN_MAP.put(realm, url);
 	}
 
 	protected static final void setChampionsVersion(String realm,
 			String newVersion) {
 		DataAccessObject.CHAMPIONS_VERSION_MAP.put(realm, newVersion);
+	}
+
+	public static String getResponseUnsupported() {
+		return RESPONSE_UNSUPPORTED;
 	}
 }

@@ -31,6 +31,10 @@ public final class VersionService {
 
 	@GET
 	public final Response get(@PathParam("realm") String realm) {
+		if (realm.isEmpty()) {
+			return Response.ok(DataAccessObject.getResponseUnsupported())
+					.build();
+		}
 		if (DataUpdater.isUpdating()) {
 			return Response.status(409).build();
 		} else {

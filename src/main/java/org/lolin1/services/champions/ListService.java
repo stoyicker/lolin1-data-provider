@@ -31,6 +31,10 @@ public class ListService {
 	@GET
 	public final Response get(@PathParam("realm") String realm,
 			@PathParam("locale") String locale) {
+		if (realm.isEmpty() || locale.isEmpty()) {
+			return Response.ok(DataAccessObject.getResponseUnsupported())
+					.build();
+		}
 		if (DataUpdater.isUpdating()) {
 			return Response.status(409).build();
 		} else {

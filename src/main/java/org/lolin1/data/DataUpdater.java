@@ -16,19 +16,12 @@
  */
 package org.lolin1.data;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jetty.util.ajax.JSON;
-import org.lolin1.control.HashManager;
-import org.lolin1.control.ImageManager;
 import org.lolin1.control.ListManager;
 import org.lolin1.models.champion.Champion;
 import org.lolin1.utils.Utils;
@@ -45,11 +38,7 @@ public abstract class DataUpdater {
 					+ "&champData=lore,tags,stats,spells,passive,image",
 			INFO_WRAPPER = "n", VERSION_KEY = "champion", CDN_KEY = "cdn";
 	private static final long RETRY_DELAY_MILLIS = 300000;
-	private static String CDN = "ddragon.leagueoflegends.com/cdn";// Give an
-																	// initial
-																	// value for
-																	// reliability
-																	// purposes
+
 	private static Boolean UPDATING = Boolean.FALSE;
 
 	public static long getRetryDelayMillis() {
@@ -70,10 +59,7 @@ public abstract class DataUpdater {
 	private static void performUpdate(final String realm, String locale,
 			String newVersion) {
 		DataUpdater.UPDATING = Boolean.TRUE;
-		ImageManager.getInstance().createChampionImagesDirectories(realm);
-		HashManager.getInstance().createChampionHashesDirectories(realm);
 		ListManager.getInstance().createChampionListsDirectory(realm);
-		String championImagesUrl = DataUpdater.CDN + "/" + newVersion + "/img/";
 		List<Champion> champions;
 		Map<String, Object> map;
 		try {
@@ -97,68 +83,12 @@ public abstract class DataUpdater {
 			final Champion thisChampion = new Champion(
 					(HashMap<String, Object>) map.get(key));
 			champions.add(thisChampion);
-			ExecutorService executor = Executors.newFixedThreadPool(6);
-			final File bustImage = ImageManager.getInstance()
-					.downloadChampionBustImage(realm, thisChampion,
-							championImagesUrl);
-			executor.submit(new Runnable() {
-
-				@Override
-				public void run() {
-					HashManager.getInstance().setImageHash(
-							DataAccessObject.getChampionsDirName(), realm,
-							ImageManager.IMAGE_TYPE_BUST,
-							thisChampion.getImageName(),
-							HashManager.getInstance().getFileHash(bustImage));
-				}
-			});
-			final File passiveImage = ImageManager.getInstance()
-					.downloadChampionPassiveImage(realm, thisChampion,
-							championImagesUrl);
-			executor.submit(new Runnable() {
-
-				@Override
-				public void run() {
-					HashManager.getInstance()
-							.setImageHash(
-									DataAccessObject.getChampionsDirName(),
-									realm,
-									ImageManager.IMAGE_TYPE_PASSIVE,
-									thisChampion.getPassiveImageName(),
-									HashManager.getInstance().getFileHash(
-											passiveImage));
-				}
-			});
-			final File[] spellImages = ImageManager.getInstance()
-					.downloadChampionSpellImages(realm, thisChampion,
-							championImagesUrl);
-			for (final File x : spellImages) {
-				executor.submit(new Runnable() {
-
-					@Override
-					public void run() {
-						HashManager.getInstance().setImageHash(
-								DataAccessObject.getChampionsDirName(),
-								realm,
-								ImageManager.IMAGE_TYPE_SPELL,
-								thisChampion.getSpellImageNames()[Arrays
-										.asList(spellImages).indexOf(x)],
-								HashManager.getInstance().getFileHash(x));
-					}
-				});
-			}
-			executor.shutdown();
 			StringBuffer data = new StringBuffer(
 					"{\"status\":\"ok\", \"list\":");
 			data.append(DataAccessObject.formatChampionListAsJSON(champions));
 			data.append("}");
 			ListManager.getInstance().setChampions(realm, locale,
 					data.toString());
-			try {
-				executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-			} catch (InterruptedException e) {
-				e.printStackTrace(System.err);
-			}
 		}
 		DataAccessObject.setChampionsVersion(realm, newVersion);
 		DataUpdater.UPDATING = Boolean.FALSE;
@@ -186,7 +116,8 @@ public abstract class DataUpdater {
 			return DataUpdater.retrieveDragonMagicVersion(realm);
 		}
 		if (version != null) {
-			DataUpdater.CDN = realmJson.get(DataUpdater.CDN_KEY).toString();
+			DataAccessObject.putCDN(realm, realmJson.get(DataUpdater.CDN_KEY)
+					.toString());
 		}
 		ret = (version == null) ? "" : version;
 		return ret;

@@ -76,6 +76,35 @@
 
             $('#version-result-container').show();
         }
+        
+        function sendCDNRequest() {
+            $.ajax({
+                url: '/services/champions/cdn/' + document.getElementById("cdn-input").value,
+                dataType: 'json',
+                context: document.body,
+                success: function (data, textStatus, jqXHR) {
+                    showCDNResults('Success', 'alert-success', JSON.stringify(data, undefined, 2));
+                },
+                error: function (qXHR, textStatus, errorThrown) {
+                    if (errorThrown instanceof SyntaxError) {
+                        errorThrown = errorThrown.message;
+                    }
+
+                    showCDNResults(textStatus, 'alert-error', errorThrown);
+                }
+            });
+        }
+
+        function showCDNResults(headerText, headerClass, bodyText) {
+            $('#cdn-result-header-text').text(headerText);
+            $('#cdn-result-header').removeClass('alert-error').removeClass('alert-success');
+            $('#cdn-result-header').addClass(headerClass);
+
+            $('#cdn-result-body').text(bodyText);
+            prettyPrint();
+
+            $('#cdn-result-container').show();
+        }
 
         function sendListRequest() {
             $.ajax({
@@ -104,61 +133,6 @@
             prettyPrint();
 
             $('#list-result-container').show();
-        }
-
-        function sendImageRequest() {
-            $(document).load('/services/champions/image/' + document.getElementById("image-input").value, function (response, status, xhr) {
-                if (status == "error")
-                    showImageResults(status, 'alert-error', xhr)
-                else {
-                    $('#image-result-header-text').text('Success');
-                    $('#image-result-header').removeClass('alert-error').removeClass('alert-success');
-                    $('#image-result-header').addClass('alert-success');
-                    $('#image-result-body').empty();
-                    $('<img src="/services/champions/image/' + document.getElementById("image-input").value + '">').appendTo('#image-result-body');
-                    $('#image-result-container').show();
-                }
-            });
-        }
-
-        function showImageResults(headerText, headerClass, xhr) {
-            $('#image-result-header-text').text(headerText);
-            $('#image-result-header').removeClass('alert-error').removeClass('alert-success');
-            $('#image-result-header').addClass(headerClass);
-
-            $('#image-result-body').text(xhr.statusText);
-            prettyPrint();
-
-            $('#image-result-container').show();
-        }
-
-        function sendImageChecksumRequest() {
-            $.ajax({
-                url: '/services/champions/imageChecksum/' + document.getElementById("imageChecksum-input").value,
-                dataType: 'json',
-                context: document.body,
-                success: function (data, textStatus, jqXHR) {
-                    showImageChecksumResults('Success', 'alert-success', JSON.stringify(data, undefined, 2));
-                },
-                error: function (qXHR, textStatus, errorThrown) {
-                    if (errorThrown instanceof SyntaxError) {
-                        errorThrown = errorThrown.message;
-                    }
-
-                    showImageChecksumResults(textStatus, 'alert-error', errorThrown);
-                }
-            });
-        }
-
-        function showImageChecksumResults(headerText, headerClass, bodyText) {
-            $('#imageChecksum-result-header-text').text(headerText);
-            $('#imageChecksum-result-header').removeClass('alert-error').removeClass('alert-success');
-            $('#imageChecksum-result-header').addClass(headerClass);
-
-            $('#imageChecksum-result-body').text(bodyText);
-            prettyPrint();
-
-            $('#imageChecksum-result-container').show();
         }
 
         function prettyPrintOnce() {
@@ -201,16 +175,13 @@
                         <a id="list-tab" href="#list" data-toggle="tab">Champions data</a>
                     </li>
                     <li>
-                        <a id="image-tab" href="#image" data-toggle="tab">Image</a>
-                    </li>
-                    <li>
-                        <a id="imageChecksum-tab" href="#imageChecksum" data-toggle="tab">Image checksum</a>
+                        <a id="cdn-tab" href="#cdn" data-toggle="tab">CDN</a>
                     </li>
                 </ul>
 
                 <div class="tab-content">
                     <div id="version" class="tab-pane active">
-                        <h1>Retrieve version</h1>
+                        <h1>Retrieve version of the champion data</h1>
                         Replace <code>REALM</code> by one of
                         <br>euw eune na tr br
                         <div id="rest-client-widget" style="margin: 10px">
@@ -280,77 +251,37 @@
                             </div>
                         </div>
                     </div>
-                    <div id="image" class="tab-pane">
-                        <h1>Get image of a passive or active spell, or champion</h1>
+                    <div id="cdn" class="tab-pane">
+                        <h1>Get the CDN url of a realm</h1>
                         Replace <code>REALM</code> by one of
                         <br>euw eune na tr br
-                        <br>Replace <code>TYPE</code> by one of
-                        <br>bust (for champion images)
-                        <br>passive (for passive spell images)
-                        <br>spell (for active spell images)
-                        <br>Replace <code>NAME</code> by the name of the desired image
                         <div id="rest-client-widget" style="margin: 10px">
                             <form class="form-horizontal" class="row-fluid">
                                 <fieldset>
-                                    <label class="control-label search-query" for="image-input"><strong>/services/champions/image/</strong>
+                                    <label class="control-label search-query" for="cdn-input"><strong>/services/champions/cdn/</strong>
                                     </label>
                                     <br>
                                     <br>
-                                    <input id="image-input" type="text" value="REALM/TYPE/NAME">
-                                    <button type="submit" class="btn btn-primary" onclick="sendImageRequest(); return false;">
+                                    <input id="cdn-input" type="text" value="REALM">
+                                    <button type="submit" class="btn btn-primary" onclick="sendCDNRequest(); return false;">
                                         GET
                                     </button>
                                 </fieldset>
                             </form>
-                            <div id="image-result-container" class="row hide">
+                            <div id="cdn-result-container" class="row hide">
                                 <div class="row">
-                                    <div id="image-result-header" class="offset2 span0 alert">
-                                        <span id="image-result-header-text"></span>
+                                    <div id="cdn-result-header" class="offset2 span0 alert">
+                                        <span id="cdn-result-header-text"></span>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <pre id="image-result-body" class="offset2 span0 prettyprint language-json"></pre>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="imageChecksum" class="tab-pane">
-                        <h1>Get checksum of an image</h1>
-						Replace <code>REALM</code> by one of
-                        <br>euw eune na tr br<br>
-                        Replace <code>TYPE</code> by one of
-                        <br>bust (for champion images)
-                        <br>passive (for passive spell images)
-                        <br>spell (for active spell images)
-                        <br>Replace <code>NAME</code> by the name of the target image
-                        <div id="rest-client-widget" style="margin: 10px">
-                            <form class="form-horizontal" class="row-fluid">
-                                <fieldset>
-                                    <label class="control-label search-query" for="imageChecksum-input"><strong>/services/champions/imageChecksum/</strong>
-                                    </label>
-                                    <br>
-                                    <br>
-                                    <input id="imageChecksum-input" type="text" value="REALM/TYPE/NAME">
-                                    <button type="submit" class="btn btn-primary" onclick="sendImageChecksumRequest(); return false;">
-                                        GET
-                                    </button>
-                                </fieldset>
-                            </form>
-                            <div id="imageChecksum-result-container" class="row hide">
-                                <div class="row">
-                                    <div id="imageChecksum-result-header" class="offset2 span0 alert">
-                                        <span id="imageChecksum-result-header-text"></span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <pre id="imageChecksum-result-body" class="offset2 span0 prettyprint language-json"></pre>
+                                    <pre id="cdn-result-body" class="offset2 span0 prettyprint language-json"></pre>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- end tab content -->
-            </div>
+             </div>
         </div>
     </div>
 

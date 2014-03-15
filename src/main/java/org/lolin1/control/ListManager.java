@@ -34,8 +34,7 @@ public class ListManager {
 
 	public void createChampionListsDirectory(String realm) {
 		Utils.delete(Paths.get(DataAccessObject.getChampionsDirName(),
-				HashManager.getHashFolderName(), ListManager.getListsDirName(),
-				realm).toString());
+				ListManager.getListsDirName(), realm).toString());
 		try {
 			for (String locale : DataAccessObject.getSupportedRealms().get(
 					realm)) {
