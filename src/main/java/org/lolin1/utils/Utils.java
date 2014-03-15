@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -48,7 +49,7 @@ public abstract class Utils {
 							return false;
 						}
 					} else {
-						Utils.delete(pathToFile + "/" + target);
+						Utils.delete(Paths.get(pathToFile, target).toString());
 					}
 				}
 			} catch (NullPointerException ex) {

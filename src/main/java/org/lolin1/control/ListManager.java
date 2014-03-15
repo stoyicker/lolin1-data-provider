@@ -32,16 +32,13 @@ public class ListManager {
 	private ListManager() {
 	}
 
-	public void createChampionListsDirectory(String realm) {
+	public void createChampionListsDirectory(String realm, String locale) {
 		Utils.delete(Paths.get(DataAccessObject.getChampionsDirName(),
-				ListManager.getListsDirName(), realm).toString());
+				ListManager.getListsDirName(), realm, locale).toString());
 		try {
-			for (String locale : DataAccessObject.getSupportedRealms().get(
-					realm)) {
-				Files.createDirectories(Paths.get(
-						DataAccessObject.getChampionsDirName(),
-						ListManager.getListsDirName(), realm, locale));
-			}
+			Files.createDirectories(Paths.get(
+					DataAccessObject.getChampionsDirName(),
+					ListManager.getListsDirName(), realm, locale));
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
 		}

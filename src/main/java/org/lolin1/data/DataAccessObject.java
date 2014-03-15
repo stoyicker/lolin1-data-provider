@@ -67,7 +67,7 @@ public abstract class DataAccessObject {
 		return ret.toString();
 	}
 
-	public static final String getJSONChampions(String realm, String locale) {
+	public static final String getJSONList(String realm, String locale) {
 		StringBuffer ret;
 		try {
 			if (Arrays.asList(DataAccessObject.getSupportedRealms().get(realm))
@@ -78,7 +78,8 @@ public abstract class DataAccessObject {
 						ListManager.getChampionsListFileName()));
 				ret = new StringBuffer(champions);
 			} else {
-				ret = new StringBuffer(DataAccessObject.getResponseUnsupported());
+				ret = new StringBuffer(
+						DataAccessObject.getResponseUnsupported());
 			}
 		} catch (NullPointerException ex) {
 			ret = new StringBuffer(DataAccessObject.getResponseUnsupported());
@@ -100,6 +101,10 @@ public abstract class DataAccessObject {
 
 	public static String getResponseError() {
 		return DataAccessObject.RESPONSE_ERROR;
+	}
+
+	public static String getResponseUnsupported() {
+		return DataAccessObject.RESPONSE_UNSUPPORTED;
 	}
 
 	public static Map<String, String[]> getSupportedRealms() {
@@ -132,9 +137,5 @@ public abstract class DataAccessObject {
 	protected static final void setChampionsVersion(String realm,
 			String newVersion) {
 		DataAccessObject.CHAMPIONS_VERSION_MAP.put(realm, newVersion);
-	}
-
-	public static String getResponseUnsupported() {
-		return RESPONSE_UNSUPPORTED;
 	}
 }

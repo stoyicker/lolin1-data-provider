@@ -39,7 +39,7 @@ public class ListService {
 			return Response.status(409).build();
 		} else {
 			return Response
-					.ok(DataAccessObject.getJSONChampions(realm, locale))
+					.ok(DataAccessObject.getJSONList(realm, locale))
 					.build();
 		}
 	}

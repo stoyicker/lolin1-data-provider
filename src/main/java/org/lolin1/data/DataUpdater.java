@@ -39,7 +39,9 @@ public abstract class DataUpdater {
 			INFO_WRAPPER = "n", VERSION_KEY = "champion", CDN_KEY = "cdn";
 	private static final long RETRY_DELAY_MILLIS = 300000;
 
-	private static Boolean UPDATING = Boolean.FALSE;
+	private static Boolean UPDATING = Boolean.TRUE; // If it starts being TRUE,
+													// the server start-up is
+													// immediate
 
 	public static long getRetryDelayMillis() {
 		return DataUpdater.RETRY_DELAY_MILLIS;
@@ -59,7 +61,7 @@ public abstract class DataUpdater {
 	private static void performUpdate(final String realm, String locale,
 			String newVersion) {
 		DataUpdater.UPDATING = Boolean.TRUE;
-		ListManager.getInstance().createChampionListsDirectory(realm);
+		ListManager.getInstance().createChampionListsDirectory(realm, locale);
 		List<Champion> champions;
 		Map<String, Object> map;
 		try {
@@ -83,13 +85,11 @@ public abstract class DataUpdater {
 			final Champion thisChampion = new Champion(
 					(HashMap<String, Object>) map.get(key));
 			champions.add(thisChampion);
-			StringBuffer data = new StringBuffer(
-					"{\"status\":\"ok\", \"list\":");
-			data.append(DataAccessObject.formatChampionListAsJSON(champions));
-			data.append("}");
-			ListManager.getInstance().setChampions(realm, locale,
-					data.toString());
 		}
+		StringBuffer data = new StringBuffer("{\"status\":\"ok\", \"list\":");
+		data.append(DataAccessObject.formatChampionListAsJSON(champions));
+		data.append("}");
+		ListManager.getInstance().setChampions(realm, locale, data.toString());
 		DataAccessObject.setChampionsVersion(realm, newVersion);
 		DataUpdater.UPDATING = Boolean.FALSE;
 	}
