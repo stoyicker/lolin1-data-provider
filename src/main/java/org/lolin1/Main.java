@@ -34,7 +34,7 @@ import org.lolin1.data.DataUpdater;
  */
 public class Main {
 
-	private static final long UPDATE_PERIOD_SECONDS = 1000 * 60 * 60 * 6;
+	private static final long UPDATE_PERIOD_SECONDS = 60 * 60 * 6;
 
 	/**
 	 * @param args
