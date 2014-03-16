@@ -26,7 +26,7 @@ import org.lolin1.data.DataAccessObject;
 import org.lolin1.data.DataUpdater;
 
 @Path("/champions/cdn/{realm}")
-@Produces("application/json")
+@Produces("application/json; charset=UTF-8")
 public final class CDNService {
 
 	@GET

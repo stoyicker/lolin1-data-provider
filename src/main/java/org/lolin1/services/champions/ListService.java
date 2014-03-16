@@ -26,7 +26,7 @@ import org.lolin1.data.DataAccessObject;
 import org.lolin1.data.DataUpdater;
 
 @Path("/champions/list/{realm}/{locale}")
-@Produces("application/json")
+@Produces("application/json; charset=UTF-8")
 public class ListService {
 	@GET
 	public final Response get(@PathParam("realm") String realm,
@@ -38,8 +38,7 @@ public class ListService {
 		if (DataUpdater.isUpdating()) {
 			return Response.status(409).build();
 		} else {
-			return Response
-					.ok(DataAccessObject.getJSONList(realm, locale))
+			return Response.ok(DataAccessObject.getJSONList(realm, locale))
 					.build();
 		}
 	}
