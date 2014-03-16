@@ -16,6 +16,10 @@
  */
 package org.lolin1;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.lolin1.data.DataAccessObject;
@@ -29,6 +33,8 @@ import org.lolin1.data.DataUpdater;
  * 
  */
 public class Main {
+
+	private static final long UPDATE_PERIOD_SECONDS = 1000 * 60 * 60 * 6;
 
 	/**
 	 * @param args
@@ -65,7 +71,15 @@ public class Main {
 
 		server.start();
 
-		DataUpdater.updateData();
+		ScheduledExecutorService updateService = Executors
+				.newScheduledThreadPool(1);
+		updateService.scheduleAtFixedRate(new Runnable() {
+
+			@Override
+			public void run() {
+				DataUpdater.updateData();
+			}
+		}, 0, Main.UPDATE_PERIOD_SECONDS, TimeUnit.SECONDS);
 
 		server.join();
 	}
