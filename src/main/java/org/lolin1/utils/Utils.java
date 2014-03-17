@@ -35,7 +35,7 @@ import org.lolin1.data.DataUpdater;
 
 public abstract class Utils {
 
-	private static final String API_KEY = "",
+	private static final String API_KEY = "YOUR_API_KEY_HERE",
 			API_PARAM_NAME = "api_key";
 
 	public static boolean delete(String pathToFile) {
