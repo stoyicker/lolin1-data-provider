@@ -1,0 +1,12 @@
+target
+build
+.gradle
+.classpath
+.project
+.settings
+.env
+/images
+/champs
+system.properties
+Procfile
+apiKey
