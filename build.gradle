@@ -1,0 +1,23 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.7
+mainClassName = "Main"
+applicationName = "lolin1-data-provider"
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.3.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.3.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.3.0'
+    compile group: 'org.glassfish.jersey.core', name: 'jersey-client', version: '2.4.1'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.2.1'
+    compile 'org.eclipse.jetty:jetty-servlet:7.5.3.v20111011'
+    compile 'javax.servlet:servlet-api:2.5'
+}
+
+task stage(dependsOn: ['clean', 'installApp'])
