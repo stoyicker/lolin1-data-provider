@@ -8,6 +8,7 @@ build
 /images
 /champs
 *.iml
+out
 gradlew
 gradlew.bat
 Procfile
