@@ -15,7 +15,7 @@ import java.util.Map;
  * Created by Aaron Corley on 3/9/14.
  */
 public class LolStaticDataResourceImpl extends AbstractResourceImpl implements LolStaticDataResource {
-    private static final String RESOURCE_VERSION = "v1.1";
+    private static final String RESOURCE_VERSION = "v1.2";
     private static final String RESOURCE_PATH = "static-data";
     private static final String CHAMPION = "champion";
     private static final String ITEM = "item";
