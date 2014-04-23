@@ -7,6 +7,9 @@ build
 .env
 /images
 /champs
-system.properties
+*.iml
+gradlew
+gradlew.bat
 Procfile
 apiKey
+system.properties
