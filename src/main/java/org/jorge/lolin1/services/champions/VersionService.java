@@ -3,6 +3,7 @@ package org.jorge.lolin1.services.champions;
 import org.jorge.lolin1.data.DataAccessObject;
 import org.jorge.lolin1.data.DataUpdater;
 
+import javax.servlet.http.HttpServlet;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -28,7 +29,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/champions/version/{realm}")
 @Produces("application/json; charset=UTF-8")
-public final class VersionService {
+public final class VersionService extends HttpServlet {
 
     @GET
     public final Response get(@PathParam("realm") String realm) {
