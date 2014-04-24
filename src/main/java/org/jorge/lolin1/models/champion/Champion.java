@@ -1,16 +1,12 @@
 package org.jorge.lolin1.models.champion;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.eclipse.jetty.util.ajax.JSON;
+import lol4j.protocol.dto.lolstaticdata.*;
 import org.jorge.lolin1.models.champion.spells.ActiveSpell;
 import org.jorge.lolin1.models.champion.spells.ActiveSpellFactory;
 import org.jorge.lolin1.models.champion.spells.PassiveSpell;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.StringTokenizer;
+import java.util.List;
 
 /**
  * This file is part of lolin1-data-provider.
@@ -32,7 +28,7 @@ public class Champion {
 
     @SuppressWarnings("unused")
     // Used through reflection
-    private String key, name, title, attackrange, mpperlevel, mp, attackdamage,
+    private final String key, name, title, attackrange, mpperlevel, mp, attackdamage,
             hp, hpperlevel, attackdamageperlevel, armor, mpregenperlevel,
             hpregen, critperlevel, spellblockperlevel, mpregen,
             attackspeedperlevel, spellblock, movespeed, attackspeedoffset,
@@ -42,90 +38,133 @@ public class Champion {
     private final PassiveSpell passive;
     private String[] skins;
 
-    @SuppressWarnings("unchecked")
-    public Champion(HashMap<String, Object> parsedDescriptor) {
-        String _parsedSkins = JSON.toString(parsedDescriptor.get("skins"));
-        JSONArray skinsArray = null;
-        try {
-            skinsArray = new JSONArray(_parsedSkins);
-        } catch (JSONException e) {
-            e.printStackTrace(System.err);
+    public Champion(ChampionDto championDto) {
+        key = championDto.getKey();
+        name = championDto.getName();
+        title = championDto.getTitle();
+        lore = championDto.getLore();
+        imageName = championDto.getImage().getFull();
+        tags = (String[]) championDto.getTags().toArray();
+        List<SkinDto> rawSkins = championDto.getSkins();
+        skins = new String[rawSkins.size()];
+        for (int i = 0; i < skins.length; i++) {
+            String value = rawSkins.get(i).getName();
+            skins[i] = value.contentEquals("default") ? this.name : value;
         }
-        Field[] fields = this.getClass().getDeclaredFields();
-        for (Field x : fields) {
-            if (x.getName().contentEquals("key")
-                    || x.getName().contentEquals("name")
-                    || x.getName().contentEquals("title")
-                    || x.getName().contentEquals("lore")) {
-                String fieldName = x.getName();
-                x.setAccessible(Boolean.TRUE);
-                try {
-                    x.set(this, parsedDescriptor.get(fieldName).toString());
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    e.printStackTrace(System.err);
-                }
-                x.setAccessible(Boolean.FALSE);
-            } else if (x.getType() == String.class) {
-                x.setAccessible(Boolean.TRUE);
-                if (x.getName().contentEquals("imageName")) {
-                    try {
-                        x.set(this, ((HashMap<String, Object>) parsedDescriptor
-                                .get("image")).get("full"));
-                    } catch (IllegalArgumentException | IllegalAccessException e) {
-                        e.printStackTrace(System.err);
-                    }
-                } else {
-                    try {
-                        x.set(this,
-                                ((HashMap<String, Object>) parsedDescriptor
-                                        .get("stats")).get(x.getName()) + ""
-                        ); // Force
-                        // conversion
-                        // to
-                        // String
-                    } catch (IllegalArgumentException | IllegalAccessException e) {
-                        e.printStackTrace(System.err);
-                    }
-                }
-                x.setAccessible(Boolean.FALSE);
-            }
+        PassiveDto passiveDto = championDto.getPassive();
+        this.passive = new PassiveSpell(passiveDto);
+        List<ChampionSpellDto> spellDtos = championDto.getSpells();
+        this.spells = new ActiveSpell[spellDtos.size()];
+        for (int i = 0; i < spells.length; i++) {
+            spells[i] = ActiveSpellFactory.createActiveSpell(spellDtos.get(i));
         }
-        String _tags = JSON.toString(parsedDescriptor.get("tags"))
-                .replace("[", "").replace("]", "").replace("\"", "");
-        StringTokenizer tagsTokenizer = new StringTokenizer(_tags, ",");
-        this.tags = new String[tagsTokenizer.countTokens()];
-        for (int i = 0; i < this.tags.length; i++) {
-            this.tags[i] = tagsTokenizer.nextToken();
-        }
-        this.passive = new PassiveSpell(
-                (HashMap<String, Object>) parsedDescriptor.get("passive"));
-        this.skins = new String[skinsArray.length()];
-        for (int i = 0; i < skinsArray.length(); i++) {
-            try {
-                String value = ((JSONObject) skinsArray.get(i))
-                        .getString("name");
-                skins[i] = value.contentEquals("default") ? this.name : value;
-            } catch (JSONException e) {
-                e.printStackTrace(System.err);
-            }
-        }
-        String _parsedSpells = JSON.toString(parsedDescriptor.get("spells"));
-        JSONArray spellsArray = null;
-        try {
-            spellsArray = new JSONArray(_parsedSpells);
-        } catch (JSONException e) {
-            e.printStackTrace(System.err);
-        }
-        this.spells = new ActiveSpell[spellsArray.length()];
-        for (int i = 0; i < this.spells.length; i++) {
-            try {
-                this.spells[i] = ActiveSpellFactory
-                        .createActiveSpell((spellsArray.getJSONObject(i)));
-            } catch (JSONException e) {
-                e.printStackTrace(System.err);
-            }
-        }
+        StatsDto statsDto = championDto.getStats();
+        attackrange = statsDto.getAttackRange() + "";
+        mpperlevel = statsDto.getMpPerLevel() + "";
+        mp = statsDto.getMp() + "";
+        attackdamage = statsDto.getAttackDamage() + "";
+        hp = statsDto.getHp() + "";
+        hpperlevel = statsDto.getHpPerLevel() + "";
+        attackdamageperlevel = statsDto.getAttackDamagePerLevel() + "";
+        armor = statsDto.getArmor() + "";
+        mpregenperlevel = statsDto.getMpRegenPerLevel() + "";
+        hpregen = statsDto.getHpRegen() + "";
+        critperlevel = statsDto.getCritPerLevel() + "";
+        spellblockperlevel = statsDto.getSpellBlockPerLevel() + "";
+        mpregen = statsDto.getMpRegen() + "";
+        attackspeedperlevel = statsDto.getAttackSpeedPerLevel() + "";
+        spellblock = statsDto.getSpellBlock() + "";
+        movespeed = statsDto.getMoveSpeed() + "";
+        attackspeedoffset = statsDto.getAttackSpeedOffset() + "";
+        crit = statsDto.getCrit() + "";
+        hpregenperlevel = statsDto.getHpRegenPerLevel() + "";
+        armorperlevel = statsDto.getArmorPerLevel() + "";
     }
+//
+//    @SuppressWarnings("unchecked")
+//    public Champion(HashMap<String, Object> parsedDescriptor) {
+//        String _parsedSkins = JSON.toString(parsedDescriptor.get("skins"));
+//        JSONArray skinsArray = null;
+//        try {
+//            skinsArray = new JSONArray(_parsedSkins);
+//        } catch (JSONException e) {
+//            e.printStackTrace(System.err);
+//        }
+//        Field[] fields = this.getClass().getDeclaredFields();
+//        for (Field x : fields) {
+//            if (x.getName().contentEquals("key")
+//                    || x.getName().contentEquals("name")
+//                    || x.getName().contentEquals("title")
+//                    || x.getName().contentEquals("lore")) {
+//                String fieldName = x.getName();
+//                x.setAccessible(Boolean.TRUE);
+//                try {
+//                    x.set(this, parsedDescriptor.get(fieldName).toString());
+//                } catch (IllegalArgumentException | IllegalAccessException e) {
+//                    e.printStackTrace(System.err);
+//                }
+//                x.setAccessible(Boolean.FALSE);
+//            } else if (x.getType() == String.class) {
+//                x.setAccessible(Boolean.TRUE);
+//                if (x.getName().contentEquals("imageName")) {
+//                    try {
+//                        x.set(this, ((HashMap<String, Object>) parsedDescriptor
+//                                .get("image")).get("full"));
+//                    } catch (IllegalArgumentException | IllegalAccessException e) {
+//                        e.printStackTrace(System.err);
+//                    }
+//                } else {
+//                    try {
+//                        x.set(this,
+//                                ((HashMap<String, Object>) parsedDescriptor
+//                                        .get("stats")).get(x.getName()) + ""
+//                        ); // Force
+//                        // conversion
+//                        // to
+//                        // String
+//                    } catch (IllegalArgumentException | IllegalAccessException e) {
+//                        e.printStackTrace(System.err);
+//                    }
+//                }
+//                x.setAccessible(Boolean.FALSE);
+//            }
+//        }
+//        String _tags = JSON.toString(parsedDescriptor.get("tags"))
+//                .replace("[", "").replace("]", "").replace("\"", "");
+//        StringTokenizer tagsTokenizer = new StringTokenizer(_tags, ",");
+//        this.tags = new String[tagsTokenizer.countTokens()];
+//        for (int i = 0; i < this.tags.length; i++) {
+//            this.tags[i] = tagsTokenizer.nextToken();
+//        }
+//        this.passive = new PassiveSpell(
+//                (HashMap<String, Object>) parsedDescriptor.get("passive"));
+//        this.skins = new String[skinsArray.length()];
+//        for (int i = 0; i < skinsArray.length(); i++) {
+//            try {
+//                String value = ((JSONObject) skinsArray.get(i))
+//                        .getString("name");
+//                skins[i] = value.contentEquals("default") ? this.name : value;
+//            } catch (JSONException e) {
+//                e.printStackTrace(System.err);
+//            }
+//        }
+//        String _parsedSpells = JSON.toString(parsedDescriptor.get("spells"));
+//        JSONArray spellsArray = null;
+//        try {
+//            spellsArray = new JSONArray(_parsedSpells);
+//        } catch (JSONException e) {
+//            e.printStackTrace(System.err);
+//        }
+//        this.spells = new ActiveSpell[spellsArray.length()];
+//        for (int i = 0; i < this.spells.length; i++) {
+//            try {
+//                this.spells[i] = ActiveSpellFactory
+//                        .createActiveSpell((spellsArray.getJSONObject(i)));
+//            } catch (JSONException e) {
+//                e.printStackTrace(System.err);
+//            }
+//        }
+//    }
 
     public String getImageName() {
         return this.imageName;

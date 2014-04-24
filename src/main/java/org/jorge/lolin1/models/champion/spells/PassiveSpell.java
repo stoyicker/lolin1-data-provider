@@ -1,9 +1,10 @@
 package org.jorge.lolin1.models.champion.spells;
 
+import lol4j.protocol.dto.lolstaticdata.PassiveDto;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * This file is part of lolin1-data-provider.
@@ -25,16 +26,20 @@ public class PassiveSpell {
 
     @SuppressWarnings("unused")
     // Used through reflection
-    private String imageName, detail, name;
+    private final String imageName, detail, name;
+
+    public PassiveSpell(PassiveDto passiveDto) {
+        this(passiveDto.getName(), passiveDto.getDescription(), passiveDto.getImage().getFull());
+    }
 
     @SuppressWarnings("unchecked")
-    public PassiveSpell(HashMap<String, Object> passiveDescriptor) {
-        this(passiveDescriptor.get("name").toString(), passiveDescriptor.get(
-                        "description").toString(),
-                ((HashMap<String, String>) passiveDescriptor.get("image"))
-                        .get("full")
-        );
-    }
+//    public PassiveSpell(HashMap<String, Object> passiveDescriptor) {
+//        this(passiveDescriptor.get("name").toString(), passiveDescriptor.get(
+//                        "description").toString(),
+//                ((HashMap<String, String>) passiveDescriptor.get("image"))
+//                        .get("full")
+//        );
+//    }
 
     protected PassiveSpell(String _name, String _detail, String _imageName) {
         this.name = _name;

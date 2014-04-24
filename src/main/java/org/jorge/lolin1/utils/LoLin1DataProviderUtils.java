@@ -1,11 +1,6 @@
 package org.jorge.lolin1.utils;
 
-import org.jorge.lolin1.data.DataUpdater;
-
-import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -27,8 +22,8 @@ import java.nio.file.Paths;
  */
 public abstract class LoLin1DataProviderUtils {
 
-    private static final String API_KEY = "YOUR_API_KEY_HERE",
-            API_PARAM_NAME = "api_key";
+//    private static final String API_KEY = "YOUR_API_KEY_HERE",
+//            API_PARAM_NAME = "api_key";
 
     public static boolean delete(String pathToFile) {
         File file, fileAux;
@@ -51,51 +46,51 @@ public abstract class LoLin1DataProviderUtils {
         return false;
     }
 
-    public static final synchronized String performRiotGet(String url) {
-        StringBuilder ret = new StringBuilder();
-        URL obj = null;
-        try {
-            obj = new URL(url + ((url.contains("=")) ? "&" : "?")
-                    + LoLin1DataProviderUtils.API_PARAM_NAME + "=" + LoLin1DataProviderUtils.API_KEY);
-        } catch (MalformedURLException e) {
-            e.printStackTrace(System.err);
-        }
-
-        HttpsURLConnection con = null;
-        try {
-            con = (HttpsURLConnection) obj.openConnection();
-            con.setRequestMethod("GET");
-        } catch (IOException e) {
-            e.printStackTrace(System.err);
-        }
-
-        try {
-            if (con.getResponseCode() == 200) {
-
-                BufferedReader in = new BufferedReader(new InputStreamReader(
-                        con.getInputStream()));
-                String inputLine;
-                StringBuilder response = new StringBuilder();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-
-                ret.append(response.toString());
-            }
-        } catch (IOException e) {
-            e.printStackTrace(System.err);
-            try {
-                Thread.sleep(DataUpdater.getRetryDelayMillis());
-            } catch (InterruptedException e1) {
-                e1.printStackTrace(System.err);
-            }
-            return LoLin1DataProviderUtils.performRiotGet(url);
-        }
-
-        return ret.toString();
-    }
+//    public static final synchronized String performRiotGet(String url) {
+//        StringBuilder ret = new StringBuilder();
+//        URL obj = null;
+//        try {
+//            obj = new URL(url + ((url.contains("=")) ? "&" : "?")
+//                    + LoLin1DataProviderUtils.API_PARAM_NAME + "=" + LoLin1DataProviderUtils.API_KEY);
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace(System.err);
+//        }
+//
+//        HttpsURLConnection con = null;
+//        try {
+//            con = (HttpsURLConnection) obj.openConnection();
+//            con.setRequestMethod("GET");
+//        } catch (IOException e) {
+//            e.printStackTrace(System.err);
+//        }
+//
+//        try {
+//            if (con.getResponseCode() == 200) {
+//
+//                BufferedReader in = new BufferedReader(new InputStreamReader(
+//                        con.getInputStream()));
+//                String inputLine;
+//                StringBuilder response = new StringBuilder();
+//
+//                while ((inputLine = in.readLine()) != null) {
+//                    response.append(inputLine);
+//                }
+//                in.close();
+//
+//                ret.append(response.toString());
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace(System.err);
+//            try {
+//                Thread.sleep(DataUpdater.getRetryDelayMillis());
+//            } catch (InterruptedException e1) {
+//                e1.printStackTrace(System.err);
+//            }
+//            return LoLin1DataProviderUtils.performRiotGet(url);
+//        }
+//
+//        return ret.toString();
+//    }
 
     public static String readFile(Path path) {
         String pathToFile = path.toString(), line = "";
@@ -126,12 +121,12 @@ public abstract class LoLin1DataProviderUtils {
         }
     }
 
-    public static String toSystemJSON(String contentType, String content) {
-        StringBuilder ret = new StringBuilder("{\"status\":\"ok\"");
-        ret.append(",\"" + contentType + "\":\"" + content + "\"");
-        ret.append("}");
-        return ret.toString();
-    }
+//    public static String toSystemJSON(String contentType, String content) {
+//        StringBuilder ret = new StringBuilder("{\"status\":\"ok\"");
+//        ret.append(",\"" + contentType + "\":\"" + content + "\"");
+//        ret.append("}");
+//        return ret.toString();
+//    }
 
     public static void writeFile(Path path, String contents) {
         try (PrintWriter pw = new PrintWriter(new FileWriter(path.toString(),

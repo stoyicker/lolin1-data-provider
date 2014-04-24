@@ -1,9 +1,8 @@
-import lol4j.client.impl.Lol4JClientImpl;
-import lol4j.util.Region;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.jorge.lolin1.data.DataAccessObject;
+import org.jorge.lolin1.data.DataUpdater;
 
 import javax.servlet.http.HttpServlet;
 import java.util.concurrent.Executors;
@@ -29,12 +28,9 @@ import java.util.concurrent.TimeUnit;
 
 public class Main extends HttpServlet {
 
-    private static final long UPDATE_PERIOD_SECONDS = 60 * 60 * 6;
+    private static final long UPDATE_FREQUENCY_SECONDS = 60 * 60 * 6;
 
     public static void main(String[] args) throws Exception {
-        // The port that we should run on can be set into an environment
-        // variable
-        // Look for that variable and default to 8080 if it isn't there.
         String webPort = System.getenv("PORT");
         if ((webPort == null) || webPort.isEmpty()) {
             webPort = "8080";
@@ -56,10 +52,9 @@ public class Main extends HttpServlet {
 
             @Override
             public void run() {
-//                DataUpdater.updateData();
-                System.out.println(Lol4JClientImpl.getInstance().getRealm(Region.EUW).getDataTypeVersionMap().get("champion"));
+                DataUpdater.updateData();
             }
-        }, 0, Main.UPDATE_PERIOD_SECONDS, TimeUnit.SECONDS);
+        }, 0, Main.UPDATE_FREQUENCY_SECONDS, TimeUnit.SECONDS);
 
         server.join();
     }

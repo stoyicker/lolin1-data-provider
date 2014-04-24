@@ -1,15 +1,16 @@
 package org.jorge.lolin1.data;
 
+import lol4j.client.impl.Lol4JClientImpl;
+import lol4j.protocol.dto.lolstaticdata.ChampionDto;
+import lol4j.protocol.dto.lolstaticdata.ChampionListDto;
 import lol4j.util.Region;
+import lol4j.util.lolstaticdata.ChampData;
 import org.eclipse.jetty.util.ajax.JSON;
 import org.jorge.lolin1.control.ListManager;
 import org.jorge.lolin1.models.champion.Champion;
 import org.jorge.lolin1.utils.LoLin1DataProviderUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This file is part of lolin1-data-provider.
@@ -54,25 +55,22 @@ public abstract class DataUpdater {
     }
 
     @SuppressWarnings("unchecked")
-    /**
-     *
-     * @param realm {@link String} Riot sometimes deploys different images (or same one with different names) depending on the realm...BECAUSE YES!
-     * @param locale
-     * @param newVersion
-     */
     private static void performUpdate(final Region realm, String locale,
                                       String newVersion) {
         DataUpdater.UPDATING = Boolean.TRUE;
         ListManager.getInstance().createChampionListsDirectory(realm, locale);
-        List<Champion> champions;
-        Map<String, Object> map;
+        ChampionListDto rawChampions;
+        Collection<ChampionDto> champions;
+//        Map<String, Object> map;
         try {
-            champions = new ArrayList<>();
-            map = (Map<String, Object>) ((Map<String, Object>) JSON.parse(LoLin1DataProviderUtils
-                    .performRiotGet(DataUpdater.ALL_CHAMPIONS_URL.replace(
-                            DataUpdater.REALM_PLACE_HOLDER, realm.getName().toLowerCase()).replace(
-                            DataUpdater.LOCALE_PLACE_HOLDER, locale))))
-                    .get("data");
+            rawChampions = Lol4JClientImpl.getInstance().getChampionList(realm, locale, null, Arrays.asList(new ChampData[]{ChampData.ALL}));
+            champions = rawChampions.getData().values();
+//            champions = new ArrayList<>();
+//            map = (Map<String, Object>) ((Map<String, Object>) JSON.parse(LoLin1DataProviderUtils
+//                    .performRiotGet(DataUpdater.ALL_CHAMPIONS_URL.replace(
+//                            DataUpdater.REALM_PLACE_HOLDER, realm.getName().toLowerCase()).replace(
+//                            DataUpdater.LOCALE_PLACE_HOLDER, locale))))
+//                    .get("data");
         } catch (NullPointerException ex) {
             // No internet, so wait and retry
             try {
@@ -83,61 +81,57 @@ public abstract class DataUpdater {
             DataUpdater.performUpdate(realm, locale, newVersion);
             return;
         }
-        for (String key : map.keySet()) {
-            final Champion thisChampion = new Champion(
-                    (HashMap<String, Object>) map.get(key));
-            champions.add(thisChampion);
+        List<Champion> targetChampions = new ArrayList<>();
+        for (ChampionDto champion : champions) {
+            final Champion thisChampion = new Champion(champion);
+            targetChampions.add(thisChampion);
         }
         StringBuffer data = new StringBuffer("{\"status\":\"ok\", \"list\":");
-        data.append(DataAccessObject.formatChampionListAsJSON(champions));
+        data.append(DataAccessObject.formatChampionListAsJSON(targetChampions));
         data.append("}");
         ListManager.getInstance().setChampions(realm, locale, data.toString());
         DataAccessObject.setChampionsVersion(realm, newVersion);
         DataUpdater.UPDATING = Boolean.FALSE;
     }
-
-    @SuppressWarnings("unchecked")
-    private static String retrieveDragonMagicVersion(Region realm) {
-        String ret, wholeFile = LoLin1DataProviderUtils
-                .performRiotGet(DataUpdater.REALM_FILE_URL.replace(
-                        DataUpdater.REALM_PLACE_HOLDER, realm.getName().toLowerCase()));
-        Map<String, Object> realmJson = (Map<String, Object>) JSON
-                .parse(wholeFile);
-        String version;
-        try {
-            version = ((HashMap<String, String>) realmJson
-                    .get(DataUpdater.INFO_WRAPPER))
-                    .get(DataUpdater.VERSION_KEY);
-        } catch (NullPointerException ex) {
-            // There was trouble with the connection, so wait and retry
-            try {
-                Thread.sleep(DataUpdater.getRetryDelayMillis());
-            } catch (InterruptedException e) {
-                e.printStackTrace(System.err);
-            }
-            return DataUpdater.retrieveDragonMagicVersion(realm);
-        }
-        if (version != null) {
-            DataAccessObject.putCDN(realm, realmJson.get(DataUpdater.CDN_KEY)
-                    .toString());
-        }
-        ret = (version == null) ? "" : version;
-        return ret;
-    }
+//
+//    @SuppressWarnings("unchecked")
+//    private static String retrieveDragonMagicVersion(Region realm) {
+//        String ret, wholeFile = LoLin1DataProviderUtils
+//                .performRiotGet(DataUpdater.REALM_FILE_URL.replace(
+//                        DataUpdater.REALM_PLACE_HOLDER, realm.getName().toLowerCase()));
+//        Map<String, Object> realmJson = (Map<String, Object>) JSON
+//                .parse(wholeFile);
+//        String version;
+//        try {
+//            version = ((HashMap<String, String>) realmJson
+//                    .get(DataUpdater.INFO_WRAPPER))
+//                    .get(DataUpdater.VERSION_KEY);
+//        } catch (NullPointerException ex) {
+//            // There was trouble with the connection, so wait and retry
+//            try {
+//                Thread.sleep(DataUpdater.getRetryDelayMillis());
+//            } catch (InterruptedException e) {
+//                e.printStackTrace(System.err);
+//            }
+//            return DataUpdater.retrieveDragonMagicVersion(realm);
+//        }
+//        if (version != null) {
+//            DataAccessObject.putCDN(realm, realmJson.get(DataUpdater.CDN_KEY)
+//                    .toString());
+//        }
+//        ret = (version == null) ? "" : version;
+//        return ret;
+//    }
 
     public static void updateData() {
         for (Region realm : DataAccessObject.getSupportedRealms().keySet()) {
-            String newVersion;
+            String newVersion = Lol4JClientImpl.getInstance().getRealm(realm).getDataTypeVersionMap().get("champion");
             if (!DataAccessObject.getVersion(realm)
-                    .contentEquals(
-                            (newVersion = DataUpdater
-                                    .retrieveDragonMagicVersion(realm))
-                    )) {
+                    .contentEquals(newVersion)) {
                 for (String locale : DataAccessObject.getSupportedRealms().get(
                         realm)) {
                     DataUpdater.performUpdate(realm, locale, newVersion);
                 }
-                DataAccessObject.setChampionsVersion(realm, newVersion);
             }
         }
     }
