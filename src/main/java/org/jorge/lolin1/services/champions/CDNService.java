@@ -31,7 +31,7 @@ public final class CDNService extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String ret, realm = req.getParameter("realm");
-        if (realm.isEmpty()) {
+        if (realm == null || realm.isEmpty()) {
             ret = DataAccessObject.getResponseUnsupported();
         } else if (DataUpdater.isUpdating()) {
             resp.sendError(HttpServletResponse.SC_CONFLICT);
