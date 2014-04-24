@@ -77,7 +77,7 @@ public abstract class DataUpdater {
         }
         List<Champion> targetChampions = new ArrayList<>();
         for (ChampionDto champion : champions) {
-            final Champion thisChampion = new Champion(champion);
+            final Champion thisChampion = new Champion(champion, locale);
             targetChampions.add(thisChampion);
         }
         ListManager.getInstance().setChampions(realm, locale, "{\"status\":\"ok\", \"list\":" + DataAccessObject.formatChampionListAsJSON(targetChampions) + "}");

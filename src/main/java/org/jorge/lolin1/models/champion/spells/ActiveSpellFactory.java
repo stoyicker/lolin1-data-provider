@@ -1,6 +1,12 @@
 package org.jorge.lolin1.models.champion.spells;
 
 import lol4j.protocol.dto.lolstaticdata.ChampionSpellDto;
+import lol4j.protocol.dto.lolstaticdata.SpellVarsDto;
+import org.jorge.lolin1.utils.LoLin1DataProviderUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This file is part of lolin1-data-provider.
@@ -20,8 +26,61 @@ import lol4j.protocol.dto.lolstaticdata.ChampionSpellDto;
  */
 public class ActiveSpellFactory {
 
-    public static ActiveSpell createActiveSpell(ChampionSpellDto championSpellDto) {
-        //MAYBE Touch here for the values to be replaced?
-        return new ActiveSpell(championSpellDto.getName(), championSpellDto.getSanitizedDescription(), championSpellDto.getImage().getFull(), championSpellDto.getCooldownBurn(), championSpellDto.getRangeBurn(), championSpellDto.getCostBurn());
+    private static final Map<String, String> SPELL_DAMAGE_LOCALIZATION_MAP = new HashMap<>(), BONUS_ATTACK_DAMAGE_LOCALIZATION_MAP = new HashMap<>();
+
+    public static ActiveSpell createActiveSpell(ChampionSpellDto championSpellDto, String locale) {
+        String pureTooltip = championSpellDto.getSanitizedTooltip(), finalTooltip = pureTooltip;
+        if (pureTooltip != null && !pureTooltip.isEmpty()) {
+            List<SpellVarsDto> vars = championSpellDto.getVars();
+            for (SpellVarsDto var : vars) {
+                String firstPart = LoLin1DataProviderUtils.joinIfDifferent(LoLin1DataProviderUtils.doubleListAsStringList(var.getCoeff()), "/");
+                String secondPart = " " + stringifySpellScaling(var.getLink(), locale);
+                finalTooltip = finalTooltip.replace("{{ " + var.getKey() + " }}", firstPart + secondPart).replace(" + ", " ");
+            }
+            List<List<Integer>> effects = championSpellDto.getEffect();
+            for (int i = 1; i <= effects.size(); i++) {
+                finalTooltip = finalTooltip.replace("{{ e" + i + " }}", LoLin1DataProviderUtils.joinIfDifferent(LoLin1DataProviderUtils.integerListAsStringList(effects.get(i - 1)), "/"));
+            }
+        }
+        return new ActiveSpell(championSpellDto.getName(), finalTooltip, championSpellDto.getImage().getFull(), championSpellDto.getCooldownBurn(), championSpellDto.getRangeBurn(), championSpellDto.getCostBurn());
+    }
+
+    private static String stringifySpellScaling(String link, String locale) {
+        String ret;
+        switch (link) {
+            case "spelldamage":
+                ret = SPELL_DAMAGE_LOCALIZATION_MAP.get(locale);
+                break;
+            case "bonusattackdamage":
+            case "attackdamage":
+                ret = BONUS_ATTACK_DAMAGE_LOCALIZATION_MAP.get(locale);
+                break;
+            default:
+                return "";
+        }
+        return ret;
+    }
+
+    public static void initLocalizationMaps() {
+        BONUS_ATTACK_DAMAGE_LOCALIZATION_MAP.put("en_US", "AttackDamage");
+        BONUS_ATTACK_DAMAGE_LOCALIZATION_MAP.put("es_ES", "Daño de Ataque");
+        BONUS_ATTACK_DAMAGE_LOCALIZATION_MAP.put("it_IT", "attacco fisico");
+        BONUS_ATTACK_DAMAGE_LOCALIZATION_MAP.put("fr_FR", "des dégâts d'attaque");
+        BONUS_ATTACK_DAMAGE_LOCALIZATION_MAP.put("de_DE", "Angriffsschaden");
+        BONUS_ATTACK_DAMAGE_LOCALIZATION_MAP.put("el_GR", "Ζημιάς Επίθεσης");
+        BONUS_ATTACK_DAMAGE_LOCALIZATION_MAP.put("pl_PL", "obrażeń od ataku");
+        BONUS_ATTACK_DAMAGE_LOCALIZATION_MAP.put("ro_RO", "daune din atac");
+        BONUS_ATTACK_DAMAGE_LOCALIZATION_MAP.put("pt_PT", "de Dano de Ataque");
+        BONUS_ATTACK_DAMAGE_LOCALIZATION_MAP.put("tr_TR", "Saldırı Gücü");
+        SPELL_DAMAGE_LOCALIZATION_MAP.put("en_US", "Ability Power");
+        SPELL_DAMAGE_LOCALIZATION_MAP.put("es_ES", "Poder de Habilidad");
+        SPELL_DAMAGE_LOCALIZATION_MAP.put("it_IT", "potere magico");
+        SPELL_DAMAGE_LOCALIZATION_MAP.put("fr_FR", "de la puissance");
+        SPELL_DAMAGE_LOCALIZATION_MAP.put("de_DE", "Fähigkeitsstärke");
+        SPELL_DAMAGE_LOCALIZATION_MAP.put("el_GR", "Ισχύος Ικανότητας");
+        SPELL_DAMAGE_LOCALIZATION_MAP.put("pl_PL", "mocy umiejętności");
+        SPELL_DAMAGE_LOCALIZATION_MAP.put("ro_RO", "puterea abilităţilor");
+        SPELL_DAMAGE_LOCALIZATION_MAP.put("pt_PT", "de Poder de Habilidade");
+        SPELL_DAMAGE_LOCALIZATION_MAP.put("tr_TR", "Yetenek Gücü");
     }
 }

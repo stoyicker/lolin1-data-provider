@@ -38,7 +38,7 @@ public class Champion {
     private final PassiveSpell passive;
     private String[] skins;
 
-    public Champion(ChampionDto championDto) {
+    public Champion(ChampionDto championDto, String locale) {
         key = championDto.getKey();
         name = championDto.getName();
         title = championDto.getTitle();
@@ -59,7 +59,7 @@ public class Champion {
         List<ChampionSpellDto> spellDtos = championDto.getSpells();
         this.spells = new ActiveSpell[spellDtos.size()];
         for (int i = 0; i < spells.length; i++) {
-            spells[i] = ActiveSpellFactory.createActiveSpell(spellDtos.get(i));
+            spells[i] = ActiveSpellFactory.createActiveSpell(spellDtos.get(i), locale);
         }
         StatsDto statsDto = championDto.getStats();
         attackrange = statsDto.getAttackRange() + "";

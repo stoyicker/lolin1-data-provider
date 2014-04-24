@@ -4,6 +4,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.jorge.lolin1.data.DataAccessObject;
 import org.jorge.lolin1.data.DataUpdater;
 import org.jorge.lolin1.services.champions.CDNService;
+import org.jorge.lolin1.services.champions.ListService;
 import org.jorge.lolin1.services.champions.VersionService;
 
 import java.util.concurrent.Executors;
@@ -42,9 +43,9 @@ public class Main {
         context.setContextPath("/");
         server.setHandler(context);
         context.addServlet(new ServletHolder(new CDNService()), "/services/champions/cdn");
-//        context.addServlet(new ServletHolder(new ListService()), "/services/champions/list");
+        context.addServlet(new ServletHolder(new ListService()), "/services/champions/list");
         context.addServlet(new ServletHolder(new VersionService()), "/services/champions/version");
-        DataAccessObject.initRealms();
+        DataAccessObject.initStaticData();
 
         server.start();
 

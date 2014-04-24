@@ -4,6 +4,8 @@ package org.jorge.lolin1.data;
 import lol4j.util.Region;
 import org.jorge.lolin1.control.ListManager;
 import org.jorge.lolin1.models.champion.Champion;
+import org.jorge.lolin1.models.champion.spells.ActiveSpell;
+import org.jorge.lolin1.models.champion.spells.ActiveSpellFactory;
 import org.jorge.lolin1.utils.LoLin1DataProviderUtils;
 
 import java.nio.file.Paths;
@@ -104,7 +106,12 @@ public abstract class DataAccessObject {
         return DataAccessObject.CHAMPIONS_VERSION_MAP.get(realm);
     }
 
-    public static void initRealms() {
+    public static void initStaticData(){
+        initRealms();
+        ActiveSpellFactory.initLocalizationMaps();
+    }
+
+    private static void initRealms() {
         DataAccessObject.SUPPORTED_REALMS.put(Region.EUW, new String[]{"en_US",
                 "de_DE", "es_ES", "fr_FR", "it_IT"});
         DataAccessObject.SUPPORTED_REALMS.put(Region.EUNE, new String[]{"en_US",

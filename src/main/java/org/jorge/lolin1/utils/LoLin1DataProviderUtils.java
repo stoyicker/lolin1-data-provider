@@ -1,10 +1,14 @@
 package org.jorge.lolin1.utils;
 
 import lol4j.util.Region;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * This file is part of lolin1-data-provider.
@@ -43,6 +47,34 @@ public abstract class LoLin1DataProviderUtils {
             return file.delete();
         }
         return false;
+    }
+
+    public static List<String> doubleListAsStringList(List<Double> list) {
+        List<String> ret = new ArrayList<>();
+        for (Double x : list) {
+            ret.add(x + "");
+        }
+        return ret;
+    }
+
+    public static List<String> integerListAsStringList(List<Integer> list) {
+        List<String> ret = new ArrayList<>();
+        for (Integer x : list) {
+            ret.add(x + "");
+        }
+        return ret;
+    }
+
+
+    public static String joinIfDifferent(List<String> target, String joint) {
+        if (target == null || target.isEmpty())
+            return "";
+        HashSet<String> testForDuplicates = new HashSet<>(target);
+        if (testForDuplicates.size() != target.size())
+            return target.get(0);//Duplicates detected!
+        else {
+            return StringUtils.join(target, joint);
+        }
     }
 
     public static String readFile(Path path) {
