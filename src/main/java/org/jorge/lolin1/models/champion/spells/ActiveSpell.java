@@ -21,8 +21,8 @@ public class ActiveSpell extends PassiveSpell {
      * Passive spells are not considered by Riot to have a cooldownBurn nor a
      * rangeBurn
      */
-    @SuppressWarnings("unused")
     // Used in superclass's reflection
+    @SuppressWarnings("unused")
     private final String cooldownBurn, rangeBurn, costBurn;
 
     protected ActiveSpell(String _name, String _detail, String _imageName,

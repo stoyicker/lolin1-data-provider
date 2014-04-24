@@ -27,8 +27,7 @@ import java.util.*;
  */
 public abstract class DataAccessObject {
 
-    private final static String RESPONSE_UNSUPPORTED = "{\"status\":\"unsupported\"}",
-            RESPONSE_ERROR = "{\"status\":\"error\"}";
+    private final static String RESPONSE_UNSUPPORTED = "{\"status\":\"unsupported\"}";
     private static Map<Region, String> CHAMPIONS_VERSION_MAP = new HashMap<>(),
             CDN_MAP = new HashMap<>();
     private static final Map<Region, String[]> SUPPORTED_REALMS = new HashMap<>();
@@ -46,29 +45,25 @@ public abstract class DataAccessObject {
         return ret.append("]").toString();
     }
 
-    public static String getCDN(String realm) {
-        return DataAccessObject.CDN_MAP.get(realm);
-    }
-
     public static String getChampionsDirName() {
         return DataAccessObject.CHAMPIONS_DIR_NAME;
     }
 
-    public static final String getJSONCDN(String realm) {
+    public static String getJSONCDN(String realm) {
         StringBuffer ret;
-        if (!DataAccessObject.CHAMPIONS_VERSION_MAP.containsKey(realm)) {
+        if (!DataAccessObject.CHAMPIONS_VERSION_MAP.containsKey(LoLin1DataProviderUtils.regionalizeString(realm))) {
             ret = new StringBuffer(DataAccessObject.getResponseUnsupported());
         } else {
             ret = new StringBuffer("{\"status\":\"ok\", \"version\":\""
-                    + DataAccessObject.CDN_MAP.get(realm) + "\"}");
+                    + DataAccessObject.CDN_MAP.get(LoLin1DataProviderUtils.regionalizeString(realm)) + "\"}");
         }
         return ret.toString();
     }
 
-    public static final String getJSONList(String realm, String locale) {
+    public static String getJSONList(String realm, String locale) {
         StringBuffer ret;
         try {
-            if (Arrays.asList(DataAccessObject.getSupportedRealms().get(realm))
+            if (Arrays.asList(DataAccessObject.getSupportedRealms().get(LoLin1DataProviderUtils.regionalizeString(realm)))
                     .contains(locale)) {
                 String champions = LoLin1DataProviderUtils.readFile(Paths.get(
                         DataAccessObject.CHAMPIONS_DIR_NAME,
@@ -86,19 +81,15 @@ public abstract class DataAccessObject {
         return ret.toString();
     }
 
-    public static final String getJSONVersion(String realm) {
+    public static String getJSONVersion(String realm) {
         StringBuffer ret;
-        if (!DataAccessObject.CHAMPIONS_VERSION_MAP.containsKey(realm)) {
+        if (!DataAccessObject.CHAMPIONS_VERSION_MAP.containsKey(LoLin1DataProviderUtils.regionalizeString(realm))) {
             ret = new StringBuffer(DataAccessObject.getResponseUnsupported());
         } else {
             ret = new StringBuffer("{\"status\":\"ok\", \"version\":\""
-                    + DataAccessObject.CHAMPIONS_VERSION_MAP.get(realm) + "\"}");
+                    + DataAccessObject.CHAMPIONS_VERSION_MAP.get(LoLin1DataProviderUtils.regionalizeString(realm)) + "\"}");
         }
         return ret.toString();
-    }
-
-    public static String getResponseError() {
-        return DataAccessObject.RESPONSE_ERROR;
     }
 
     public static String getResponseUnsupported() {
@@ -109,11 +100,11 @@ public abstract class DataAccessObject {
         return DataAccessObject.SUPPORTED_REALMS;
     }
 
-    public static final String getVersion(Region realm) {
+    public static String getVersion(Region realm) {
         return DataAccessObject.CHAMPIONS_VERSION_MAP.get(realm);
     }
 
-    public static final void initRealms() {
+    public static void initRealms() {
         DataAccessObject.SUPPORTED_REALMS.put(Region.EUW, new String[]{"en_US",
                 "de_DE", "es_ES", "fr_FR", "it_IT"});
         DataAccessObject.SUPPORTED_REALMS.put(Region.EUNE, new String[]{"en_US",
@@ -132,8 +123,8 @@ public abstract class DataAccessObject {
         DataAccessObject.CDN_MAP.put(realm, url);
     }
 
-    protected static final void setChampionsVersion(Region realm,
-                                                    String newVersion) {
+    protected static void setChampionsVersion(Region realm,
+                                              String newVersion) {
         DataAccessObject.CHAMPIONS_VERSION_MAP.put(realm, newVersion);
     }
 }

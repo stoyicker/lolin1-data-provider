@@ -4,11 +4,8 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.jorge.lolin1.data.DataAccessObject;
 import org.jorge.lolin1.data.DataUpdater;
 import org.jorge.lolin1.services.champions.CDNService;
-import org.jorge.lolin1.services.champions.ListService;
 import org.jorge.lolin1.services.champions.VersionService;
-import sun.misc.Version;
 
-import javax.servlet.http.HttpServlet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * along with lolin1-data-provider.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Main extends HttpServlet {
+public class Main {
 
     private static final long UPDATE_FREQUENCY_SECONDS = 60 * 60 * 6;
 
@@ -44,9 +41,9 @@ public class Main extends HttpServlet {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         server.setHandler(context);
-        context.addServlet(CDNService.class, "/*");
-        context.addServlet(ListService.class, "/*");
-        context.addServlet(VersionService.class,"/*");
+        context.addServlet(new ServletHolder(new CDNService()), "/services/champions/cdn");
+//        context.addServlet(new ServletHolder(new ListService()), "/services/champions/list");
+        context.addServlet(new ServletHolder(new VersionService()), "/services/champions/version");
         DataAccessObject.initRealms();
 
         server.start();

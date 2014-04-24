@@ -32,29 +32,15 @@ public class PassiveSpell {
         this(passiveDto.getName(), passiveDto.getDescription(), passiveDto.getImage().getFull());
     }
 
-    @SuppressWarnings("unchecked")
-//    public PassiveSpell(HashMap<String, Object> passiveDescriptor) {
-//        this(passiveDescriptor.get("name").toString(), passiveDescriptor.get(
-//                        "description").toString(),
-//                ((HashMap<String, String>) passiveDescriptor.get("image"))
-//                        .get("full")
-//        );
-//    }
-
     protected PassiveSpell(String _name, String _detail, String _imageName) {
         this.name = _name;
         if (!(this instanceof ActiveSpell)) {
-            String newOne = _detail.replaceAll("=\"", "=\\\\\"").replaceAll(
+            this.detail = _detail.replaceAll("=\"", "=\\\\\"").replaceAll(
                     "\">", "\\\\\">");
-            this.detail = newOne;
         } else {
             this.detail = _detail;
         }
         this.imageName = _imageName;
-    }
-
-    public String getImageName() {
-        return this.imageName;
     }
 
     @Override
@@ -70,7 +56,7 @@ public class PassiveSpell {
             Field x = fields.get(i);
             x.setAccessible(Boolean.TRUE);
             try {
-                ret.append("\"" + x.getName() + "\":\"" + x.get(this) + "\"");
+                ret.append("\"").append(x.getName()).append("\":\"").append(x.get(this)).append("\"");
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 e.printStackTrace(System.err);
             }

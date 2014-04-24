@@ -5,12 +5,13 @@ import lol4j.protocol.dto.lolstaticdata.ChampionDto;
 import lol4j.protocol.dto.lolstaticdata.ChampionListDto;
 import lol4j.util.Region;
 import lol4j.util.lolstaticdata.ChampData;
-import org.eclipse.jetty.util.ajax.JSON;
 import org.jorge.lolin1.control.ListManager;
 import org.jorge.lolin1.models.champion.Champion;
-import org.jorge.lolin1.utils.LoLin1DataProviderUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * This file is part of lolin1-data-provider.
@@ -31,15 +32,15 @@ import java.util.*;
 
 public abstract class DataUpdater {
 
-    private static final String REALM_PLACE_HOLDER = "LOWERCASE_REALM_HERE",
-            LOCALE_PLACE_HOLDER = "LOCALE_MIXED_CASE_HERE",
-            REALM_FILE_URL = "https://prod.api.pvp.net/api/lol/static-data/"
-                    + DataUpdater.REALM_PLACE_HOLDER + "/v1/realm",
-            ALL_CHAMPIONS_URL = "https://prod.api.pvp.net/api/lol/static-data/"
-                    + DataUpdater.REALM_PLACE_HOLDER + "/v1/champion?locale="
-                    + DataUpdater.LOCALE_PLACE_HOLDER
-                    + "&champData=lore,tags,stats,spells,passive,image,skins",
-            INFO_WRAPPER = "n", VERSION_KEY = "champion", CDN_KEY = "cdn";
+    //    private static final String REALM_PLACE_HOLDER = "LOWERCASE_REALM_HERE",
+//            LOCALE_PLACE_HOLDER = "LOCALE_MIXED_CASE_HERE",
+//            REALM_FILE_URL = "https://prod.api.pvp.net/api/lol/static-data/"
+//                    + DataUpdater.REALM_PLACE_HOLDER + "/v1/realm",
+//            ALL_CHAMPIONS_URL = "https://prod.api.pvp.net/api/lol/static-data/"
+//                    + DataUpdater.REALM_PLACE_HOLDER + "/v1/champion?locale="
+//                    + DataUpdater.LOCALE_PLACE_HOLDER
+//                    + "&champData=lore,tags,stats,spells,passive,image,skins",
+//            INFO_WRAPPER = "n", VERSION_KEY = "champion", CDN_KEY = "cdn";
     private static final long RETRY_DELAY_MILLIS = 300000;
 
     private static Boolean UPDATING = Boolean.TRUE; // If it starts being TRUE,
@@ -61,16 +62,9 @@ public abstract class DataUpdater {
         ListManager.getInstance().createChampionListsDirectory(realm, locale);
         ChampionListDto rawChampions;
         Collection<ChampionDto> champions;
-//        Map<String, Object> map;
         try {
             rawChampions = Lol4JClientImpl.getInstance().getChampionList(realm, locale, null, Arrays.asList(new ChampData[]{ChampData.ALL}));
             champions = rawChampions.getData().values();
-//            champions = new ArrayList<>();
-//            map = (Map<String, Object>) ((Map<String, Object>) JSON.parse(LoLin1DataProviderUtils
-//                    .performRiotGet(DataUpdater.ALL_CHAMPIONS_URL.replace(
-//                            DataUpdater.REALM_PLACE_HOLDER, realm.getName().toLowerCase()).replace(
-//                            DataUpdater.LOCALE_PLACE_HOLDER, locale))))
-//                    .get("data");
         } catch (NullPointerException ex) {
             // No internet, so wait and retry
             try {
@@ -86,48 +80,17 @@ public abstract class DataUpdater {
             final Champion thisChampion = new Champion(champion);
             targetChampions.add(thisChampion);
         }
-        StringBuffer data = new StringBuffer("{\"status\":\"ok\", \"list\":");
-        data.append(DataAccessObject.formatChampionListAsJSON(targetChampions));
-        data.append("}");
-        ListManager.getInstance().setChampions(realm, locale, data.toString());
+        ListManager.getInstance().setChampions(realm, locale, "{\"status\":\"ok\", \"list\":" + DataAccessObject.formatChampionListAsJSON(targetChampions) + "}");
         DataAccessObject.setChampionsVersion(realm, newVersion);
         DataUpdater.UPDATING = Boolean.FALSE;
     }
-//
-//    @SuppressWarnings("unchecked")
-//    private static String retrieveDragonMagicVersion(Region realm) {
-//        String ret, wholeFile = LoLin1DataProviderUtils
-//                .performRiotGet(DataUpdater.REALM_FILE_URL.replace(
-//                        DataUpdater.REALM_PLACE_HOLDER, realm.getName().toLowerCase()));
-//        Map<String, Object> realmJson = (Map<String, Object>) JSON
-//                .parse(wholeFile);
-//        String version;
-//        try {
-//            version = ((HashMap<String, String>) realmJson
-//                    .get(DataUpdater.INFO_WRAPPER))
-//                    .get(DataUpdater.VERSION_KEY);
-//        } catch (NullPointerException ex) {
-//            // There was trouble with the connection, so wait and retry
-//            try {
-//                Thread.sleep(DataUpdater.getRetryDelayMillis());
-//            } catch (InterruptedException e) {
-//                e.printStackTrace(System.err);
-//            }
-//            return DataUpdater.retrieveDragonMagicVersion(realm);
-//        }
-//        if (version != null) {
-//            DataAccessObject.putCDN(realm, realmJson.get(DataUpdater.CDN_KEY)
-//                    .toString());
-//        }
-//        ret = (version == null) ? "" : version;
-//        return ret;
-//    }
 
     public static void updateData() {
         for (Region realm : DataAccessObject.getSupportedRealms().keySet()) {
             String newVersion = Lol4JClientImpl.getInstance().getRealm(realm).getDataTypeVersionMap().get("champion");
             if (!DataAccessObject.getVersion(realm)
                     .contentEquals(newVersion)) {
+                DataAccessObject.putCDN(realm, Lol4JClientImpl.getInstance().getRealm(realm).getCdnBaseUrl());
                 for (String locale : DataAccessObject.getSupportedRealms().get(
                         realm)) {
                     DataUpdater.performUpdate(realm, locale, newVersion);

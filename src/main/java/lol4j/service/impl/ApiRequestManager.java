@@ -107,12 +107,17 @@ public class ApiRequestManager {
         }
 
         if (response.getStatus() != 200) {
-            switch(response.getStatus()) {
-                case 400: throw new BadRequestException();
-                case 401: throw new NotAuthorizedException("Unauthorized: bad api key or bad request uri");
-                case 404: throw new NotFoundException();
-                case 429: throw new TooManyRequestsException();
-                case 500: throw new InternalServerErrorException();
+            switch (response.getStatus()) {
+                case 400:
+                    throw new BadRequestException();
+                case 401:
+                    throw new NotAuthorizedException("Unauthorized: bad api key or bad request uri");
+                case 404:
+                    throw new NotFoundException();
+                case 429:
+                    throw new TooManyRequestsException();
+                case 500:
+                    throw new InternalServerErrorException();
             }
         }
 
@@ -144,8 +149,7 @@ public class ApiRequestManager {
                 perMinutesBucket.put(new Token(TEN_MINUTES, true));
             }
             usingRateLimiter = true;
-        }
-        else {
+        } else {
             throw new IllegalStateException("Can't set rate limit after it has already been set");
         }
     }
@@ -163,7 +167,7 @@ public class ApiRequestManager {
 
         @Override
         public long getDelay(TimeUnit unit) {
-           return initial ? 0 : unit.convert(delay - (System.currentTimeMillis() - origin), TimeUnit.MILLISECONDS);
+            return initial ? 0 : unit.convert(delay - (System.currentTimeMillis() - origin), TimeUnit.MILLISECONDS);
         }
 
         @Override

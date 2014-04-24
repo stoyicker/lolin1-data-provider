@@ -3,12 +3,11 @@ package org.jorge.lolin1.services.champions;
 import org.jorge.lolin1.data.DataAccessObject;
 import org.jorge.lolin1.data.DataUpdater;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * This file is part of lolin1-data-provider.
@@ -27,20 +26,19 @@ import javax.ws.rs.core.Response;
  * along with lolin1-data-provider.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@Path("/champions/cdn/{realm}")
-@Produces("application/json; charset=UTF-8")
 public final class CDNService extends HttpServlet {
 
-    @GET
-    public final Response get(@PathParam("realm") String realm) {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String ret, realm = req.getParameter("realm");
         if (realm.isEmpty()) {
-            return Response.ok(DataAccessObject.getResponseUnsupported())
-                    .build();
-        }
-        if (DataUpdater.isUpdating()) {
-            return Response.status(409).build();
+            ret = DataAccessObject.getResponseUnsupported();
+        } else if (DataUpdater.isUpdating()) {
+            resp.sendError(HttpServletResponse.SC_CONFLICT);
+            return;
         } else {
-            return Response.ok(DataAccessObject.getJSONCDN(realm)).build();
+            ret = DataAccessObject.getJSONCDN(realm);
         }
+        resp.getWriter().print(ret);
     }
 }

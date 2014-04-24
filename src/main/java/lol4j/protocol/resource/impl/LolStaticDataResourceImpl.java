@@ -56,7 +56,6 @@ public class LolStaticDataResourceImpl extends AbstractResourceImpl implements L
             }
             queryParams.put("champData", StringUtils.join(list, ","));
         }
-
         return getApiRequestManager().get(path, queryParams, true, ChampionListDto.class);
     }
 
