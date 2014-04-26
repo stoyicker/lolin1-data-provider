@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
 
-    private static final long UPDATE_FREQUENCY_SECONDS = 60 * 60 * 6;
+    private static final long UPDATE_FREQUENCY_SECONDS = 60 * 60 * 1;
 
     public static void main(String[] args) throws Exception {
         String webPort = System.getenv("PORT");
