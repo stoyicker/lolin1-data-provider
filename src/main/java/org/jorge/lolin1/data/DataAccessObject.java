@@ -4,10 +4,10 @@ package org.jorge.lolin1.data;
 import lol4j.util.Region;
 import org.jorge.lolin1.control.ListManager;
 import org.jorge.lolin1.models.champion.Champion;
-import org.jorge.lolin1.models.champion.spells.ActiveSpell;
 import org.jorge.lolin1.models.champion.spells.ActiveSpellFactory;
 import org.jorge.lolin1.utils.LoLin1DataProviderUtils;
 
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -35,6 +35,20 @@ public abstract class DataAccessObject {
     private static final Map<Region, String[]> SUPPORTED_REALMS = new HashMap<>();
 
     public final static String CHAMPIONS_DIR_NAME = "champs";
+    private static final Map<String, Charset> charsetMap = new HashMap<>();
+
+    public static void initCharsetMap() {
+        charsetMap.put("tr_TR", Charset.forName("ISO-8859-3"));
+        charsetMap.put("en_US", Charset.forName("UTF-8"));
+        charsetMap.put("es_ES", Charset.forName("ISO-8859-1"));
+        charsetMap.put("de_DE", Charset.forName("ISO-8859-2"));
+        charsetMap.put("fr_FR", Charset.forName("UTF-8"));
+        charsetMap.put("it_IT", Charset.forName("ISO-8859-3"));
+        charsetMap.put("pt_PT", Charset.forName("ISO-8859-1"));
+        charsetMap.put("el_GR", Charset.forName("Windows-1253"));
+        charsetMap.put("pl_PL", Charset.forName("Windows-1250"));
+        charsetMap.put("ro_RO", Charset.forName("Windows-1250"));
+    }
 
     public static String formatChampionListAsJSON(List<Champion> champions) {
         StringBuilder ret = new StringBuilder("[");
@@ -106,9 +120,15 @@ public abstract class DataAccessObject {
         return DataAccessObject.CHAMPIONS_VERSION_MAP.get(realm);
     }
 
-    public static void initStaticData(){
+    public static void initStaticData() {
         initRealms();
+        initCharsetMap();
         ActiveSpellFactory.initLocalizationMaps();
+    }
+
+    public static Charset getLocaleCharset(String locale) {
+        return charsetMap.containsKey(locale) ? charsetMap.get(locale) :
+                Charset.forName(locale);
     }
 
     private static void initRealms() {

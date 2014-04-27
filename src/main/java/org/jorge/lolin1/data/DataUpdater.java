@@ -55,7 +55,6 @@ public abstract class DataUpdater {
         return DataUpdater.UPDATING;
     }
 
-    @SuppressWarnings("unchecked")
     private static void performUpdate(final Region realm, String locale,
                                       String newVersion) {
         DataUpdater.UPDATING = Boolean.TRUE;
@@ -63,7 +62,7 @@ public abstract class DataUpdater {
         ChampionListDto rawChampions;
         Collection<ChampionDto> champions;
         try {
-            rawChampions = Lol4JClientImpl.getInstance().getChampionList(realm, locale, null, Arrays.asList(new ChampData[]{ChampData.ALL}));
+            rawChampions = Lol4JClientImpl.getInstance().getChampionList(realm, locale, null, Arrays.asList(ChampData.ALL));
             champions = rawChampions.getData().values();
         } catch (NullPointerException ex) {
             // No internet, so wait and retry

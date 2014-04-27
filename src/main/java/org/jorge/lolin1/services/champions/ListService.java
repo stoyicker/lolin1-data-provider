@@ -38,6 +38,7 @@ public class ListService extends HttpServlet {
             return;
         } else
             ret = DataAccessObject.getJSONList(realm, locale);
+        resp.setCharacterEncoding(DataAccessObject.getLocaleCharset(locale).name());
         resp.getWriter().print(ret);
     }
 }
