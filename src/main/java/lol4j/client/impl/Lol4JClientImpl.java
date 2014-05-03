@@ -31,7 +31,7 @@ import java.util.Map;
  * Created by Aaron Corley on 12/10/13.
  */
 public class Lol4JClientImpl implements Lol4JClient {
-    private static final String LOL_BASE = "https://prod.api.pvp.net/api/lol";
+    private static final String DEFAULT_BASE = "https://prod.api.pvp.net/api/lol", EU_BASE = "http://eu.api.pvp.net/api/lol";
     private static final String PATH_TO_API_KEY_FILE = "apiKey";
     private ChampionResource championResource;
     private GameResource gameResource;
@@ -41,22 +41,25 @@ public class Lol4JClientImpl implements Lol4JClient {
     private TeamResource teamResource;
     private LolStaticDataResource lolStaticDataResource;
     private ApiRequestManager apiRequestManager;
-    private static Lol4JClientImpl singleton;
 
-    public static Lol4JClientImpl getInstance() {
-        if (singleton == null)
-            singleton = new Lol4JClientImpl();
-        return singleton;
-    }
-
-    private Lol4JClientImpl() {
+    public Lol4JClientImpl(Region realm) {
         String apiKey = null;
         try {
             apiKey = new String(Files.readAllBytes(Paths.get(PATH_TO_API_KEY_FILE)), Charset.forName("UTF-8"));
         } catch (IOException e) {
             e.printStackTrace(System.err);
         }
-        apiRequestManager = new ApiRequestManager(apiKey, LOL_BASE);
+        String baseUri;
+        switch (realm) {
+            case TR:
+            case RU:
+                baseUri = EU_BASE;
+                break;
+            default:
+                baseUri = DEFAULT_BASE;
+                break;
+        }
+        apiRequestManager = new ApiRequestManager(apiKey, baseUri);
         ResourceFactory resourceFactory = new ResourceFactory(apiRequestManager);
 
         championResource = resourceFactory.createChampionResource();
