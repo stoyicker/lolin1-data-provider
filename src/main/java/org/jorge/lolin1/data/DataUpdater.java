@@ -1,6 +1,5 @@
 package org.jorge.lolin1.data;
 
-import lol4j.client.Lol4JClient;
 import lol4j.client.impl.Lol4JClientImpl;
 import lol4j.protocol.dto.lolstaticdata.ChampionDto;
 import lol4j.protocol.dto.lolstaticdata.ChampionListDto;
@@ -42,7 +41,6 @@ public abstract class DataUpdater {
 //                    + DataUpdater.LOCALE_PLACE_HOLDER
 //                    + "&champData=lore,tags,stats,spells,passive,image,skins",
 //            INFO_WRAPPER = "n", VERSION_KEY = "champion", CDN_KEY = "cdn";
-    private static Lol4JClient client;
     private static final long RETRY_DELAY_MILLIS = 300000;
 
     private static Boolean UPDATING = Boolean.TRUE; // If it starts being TRUE,
@@ -64,7 +62,7 @@ public abstract class DataUpdater {
         ChampionListDto rawChampions;
         Collection<ChampionDto> champions;
         try {
-            rawChampions = client.getChampionList(realm, locale, null, Arrays.asList(ChampData.ALL));
+            rawChampions = Lol4JClientImpl.getInstance().getChampionList(realm, locale, null, Arrays.asList(ChampData.ALL));
             champions = rawChampions.getData().values();
         } catch (NullPointerException ex) {
             // No internet, so wait and retry
@@ -88,11 +86,10 @@ public abstract class DataUpdater {
 
     public static void updateData() {
         for (Region realm : DataAccessObject.getSupportedRealms().keySet()) {
-            client = new Lol4JClientImpl(realm);
-            String newVersion = client.getRealm(realm).getDataTypeVersionMap().get("champion");
+            String newVersion = Lol4JClientImpl.getInstance().getRealm(realm).getDataTypeVersionMap().get("champion");
             if (!DataAccessObject.getVersion(realm)
                     .contentEquals(newVersion)) {
-                DataAccessObject.putCDN(realm, client.getRealm(realm).getCdnBaseUrl());
+                DataAccessObject.putCDN(realm, Lol4JClientImpl.getInstance().getRealm(realm).getCdnBaseUrl());
                 for (String locale : DataAccessObject.getSupportedRealms().get(
                         realm)) {
                     DataUpdater.performUpdate(realm, locale, newVersion);
