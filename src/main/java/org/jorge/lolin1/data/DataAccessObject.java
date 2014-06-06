@@ -125,6 +125,7 @@ public abstract class DataAccessObject {
         initRealms();
         initCharsetMap();
         Lol4JClientImpl.initEndPoints();
+        Lol4JClientImpl.initStaticEndPoints();
         ActiveSpellFactory.initLocalizationMaps();
     }
 

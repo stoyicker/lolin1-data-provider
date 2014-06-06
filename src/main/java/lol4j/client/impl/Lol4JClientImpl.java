@@ -35,6 +35,7 @@ public class Lol4JClientImpl implements Lol4JClient {
 
     private static final String PATH_TO_API_KEY_FILE = "apiKey";
     private static final Map<Region, String> END_POINTS = new LinkedHashMap();
+    private static final Map<Region, String> STATIC_END_POINTS = new LinkedHashMap();
     private ChampionResource championResource;
     private GameResource gameResource;
     private LeagueResource leagueResource;
@@ -64,6 +65,19 @@ public class Lol4JClientImpl implements Lol4JClient {
         END_POINTS.put(Region.RU, "https://ru.api.pvp.net/api/lol");
     }
 
+    public static void initStaticEndPoints() {
+        STATIC_END_POINTS.put(Region.BR, "https://br.api.pvp.net/api/lol/");
+        STATIC_END_POINTS.put(Region.EUNE, "https://eune.api.pvp.net/api/lol/");
+        STATIC_END_POINTS.put(Region.EUW, "https://euw.api.pvp.net/api/lol/");
+        STATIC_END_POINTS.put(Region.KR, "https://prod.api.pvp.net/api/lol/");
+        STATIC_END_POINTS.put(Region.LAS, "https://las.api.pvp.net/api/lol/");
+        STATIC_END_POINTS.put(Region.LAN, "https://lan.api.pvp.net/api/lol/");
+        STATIC_END_POINTS.put(Region.NA, "https://na.api.pvp.net/api/lol/");
+        STATIC_END_POINTS.put(Region.OCE, "https://oce.api.pvp.net/api/lol/");
+        STATIC_END_POINTS.put(Region.TR, "https://prod.api.pvp.net/api/lol/");
+        STATIC_END_POINTS.put(Region.RU, "https://prod.api.pvp.net/api/lol/");
+    }
+
     private Lol4JClientImpl(Region realm) {
         String apiKey = null;
         try {
@@ -71,7 +85,7 @@ public class Lol4JClientImpl implements Lol4JClient {
         } catch (IOException e) {
             e.printStackTrace(System.err);
         }
-        apiRequestManager = new ApiRequestManager(apiKey, getBaseEndPoint(realm));
+        apiRequestManager = new ApiRequestManager(apiKey, getBaseEndPoint(realm), getStaticEndPoint(realm));
         ResourceFactory resourceFactory = new ResourceFactory(apiRequestManager);
 
         championResource = resourceFactory.createChampionResource();
@@ -85,6 +99,10 @@ public class Lol4JClientImpl implements Lol4JClient {
 
     private String getBaseEndPoint(Region realm) {
         return END_POINTS.get(realm);
+    }
+
+    private String getStaticEndPoint(Region realm) {
+        return STATIC_END_POINTS.get(realm);
     }
 
     @Override
@@ -198,6 +216,11 @@ public class Lol4JClientImpl implements Lol4JClient {
     }
 
     @Override
+    public lol4j.protocol.dto.lolstaticdata.ChampionListDto getChampionList(boolean isStaticQuery, Region region, String locale, String version, List<ChampData> requestedData) {
+        return lolStaticDataResource.getChampionList(isStaticQuery, region, locale, version, requestedData);
+    }
+
+    @Override
     public ChampionDto getChampion(String id, Region region, String locale, String version, List<ChampData> requestedData) {
         return lolStaticDataResource.getChampion(id, region, locale, version, requestedData);
     }
@@ -225,6 +248,11 @@ public class Lol4JClientImpl implements Lol4JClient {
     @Override
     public RealmDto getRealm(Region region) {
         return lolStaticDataResource.getRealm(region);
+    }
+
+    @Override
+    public RealmDto getRealm(boolean isStaticQuery, Region region) {
+        return lolStaticDataResource.getRealm(isStaticQuery, region);
     }
 
     @Override

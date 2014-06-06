@@ -60,6 +60,27 @@ public class LolStaticDataResourceImpl extends AbstractResourceImpl implements L
     }
 
     @Override
+    public ChampionListDto getChampionList(boolean isStaticQuery, Region region, String locale, String version, List<ChampData> requestedData) {
+        doSupportedRegionCheck(region);
+        String path = RESOURCE_PATH + SLASH + region.getName() + SLASH + RESOURCE_VERSION + SLASH + CHAMPION;
+        Map<String, Object> queryParams = new HashMap<>();
+        if (locale != null && !locale.isEmpty()) {
+            queryParams.put("locale", locale);
+        }
+        if (version != null && !version.isEmpty()) {
+            queryParams.put("version", version);
+        }
+        if (requestedData != null) {
+            List<String> list = new ArrayList<>();
+            for (ChampData data : requestedData) {
+                list.add(data.getChampData());
+            }
+            queryParams.put("champData", StringUtils.join(list, ","));
+        }
+        return getApiRequestManager().get(isStaticQuery, path, queryParams, true, ChampionListDto.class);
+    }
+
+    @Override
     public ChampionDto getChampion(String id, Region region, String locale, String version, List<ChampData> requestedData) {
         doSupportedRegionCheck(region);
         if (id == null || id.isEmpty()) {
@@ -184,10 +205,24 @@ public class LolStaticDataResourceImpl extends AbstractResourceImpl implements L
 
     @Override
     public RealmDto getRealm(Region region) {
+        System.out.println("Getting realm...");
         doSupportedRegionCheck(region);
-        String path = RESOURCE_PATH + SLASH + region.getName() + SLASH + RESOURCE_VERSION + SLASH + REALM;
 
+        System.out.println("Realm " + region + " supported");
+        String path = RESOURCE_PATH + SLASH + region.getName() + SLASH + RESOURCE_VERSION + SLASH + REALM;
+        System.out.println("Path: " + path);
         return getApiRequestManager().get(path, null, true, RealmDto.class);
+    }
+
+    @Override
+    public RealmDto getRealm(boolean isStaticQuery, Region region) {
+        System.out.println("Getting realm...");
+        doSupportedRegionCheck(region);
+
+        System.out.println("Realm " + region + " supported");
+        String path = RESOURCE_PATH + SLASH + region.getName() + SLASH + RESOURCE_VERSION + SLASH + REALM;
+        System.out.println("Path: " + path);
+        return getApiRequestManager().get(isStaticQuery, path, null, true, RealmDto.class);
     }
 
     @Override

@@ -12,6 +12,8 @@ import java.util.List;
 public interface LolStaticDataResource {
     ChampionListDto getChampionList(Region region, String locale, String version, List<ChampData> requestedData);
 
+    ChampionListDto getChampionList(boolean isStaticQuery, Region region, String locale, String version, List<ChampData> requestedData);
+
     ChampionDto getChampion(String id, Region region, String locale, String version, List<ChampData> requestedData);
 
     BasicDataDto getItem(String id, Region region, String locale, String version, List<ItemData> requestedData);
@@ -23,6 +25,8 @@ public interface LolStaticDataResource {
     MasteryListDto getMasteryList(Region region, String locale, String version, List<MasteryData> requestedData);
 
     RealmDto getRealm(Region region);
+
+    RealmDto getRealm(boolean isStaticQuery, Region region);
 
     RuneListDto getRuneList(Region region, String locale, String version, List<RuneData> requestedData);
 

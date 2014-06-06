@@ -45,9 +45,13 @@ public class Main {
         context.addServlet(new ServletHolder(new CDNService()), "/services/champions/cdn");
         context.addServlet(new ServletHolder(new ListService()), "/services/champions/list");
         context.addServlet(new ServletHolder(new VersionService()), "/services/champions/version");
+        System.out.print("\nInitializing static data...");
         DataAccessObject.initStaticData();
+        System.out.println("done");
 
+        System.out.print("Requesting server start...");
         server.start();
+        System.out.println("done.");
 
         ScheduledExecutorService updateService = Executors
                 .newScheduledThreadPool(1);

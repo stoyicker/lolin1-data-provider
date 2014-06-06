@@ -47,12 +47,17 @@ public abstract class DataUpdater {
 
     private static void performUpdate(final Region realm, String locale,
                                       String newVersion) {
+        System.out.println("Beginning");
         DataUpdater.UPDATING = Boolean.TRUE;
+        System.out.println("Creating dir");
         ListManager.getInstance().createChampionListsDirectory(realm, locale);
+        System.out.println("Dir created");
         ChampionListDto rawChampions;
         Collection<ChampionDto> champions;
         try {
-            rawChampions = Lol4JClientImpl.getInstance(realm).getChampionList(realm, locale, null, Arrays.asList(ChampData.ALL));
+            System.out.println("Before getting rawChampions");
+            rawChampions = Lol4JClientImpl.getInstance(realm).getChampionList(true, realm, locale, null, Arrays.asList(ChampData.ALL));
+            System.out.println("After getting rawChampions");
             champions = rawChampions.getData().values();
         } catch (NullPointerException ex) {
             // No internet, so wait and retry
@@ -66,6 +71,7 @@ public abstract class DataUpdater {
         }
         List<Champion> targetChampions = new ArrayList<>();
         for (ChampionDto champion : champions) {
+            System.out.println("Champion " + champion.getName());
             final Champion thisChampion = new Champion(champion, locale);
             targetChampions.add(thisChampion);
         }
@@ -75,16 +81,23 @@ public abstract class DataUpdater {
     }
 
     public static void updateData() {
+        System.out.println("\nData update commenced");
         for (Region realm : DataAccessObject.getSupportedRealms().keySet()) {
-            String newVersion = Lol4JClientImpl.getInstance(realm).getRealm(realm).getDataTypeVersionMap().get("champion");
+            System.out.println("\nUpdating realm " + realm);
+            Lol4JClientImpl.getInstance(realm);
+            String newVersion = Lol4JClientImpl.getInstance(realm).getRealm(true, realm).getDataTypeVersionMap().get("champion");
+            System.out.println("Retrieved version is " + newVersion);
             if (!DataAccessObject.getVersion(realm)
                     .contentEquals(newVersion)) {
-                DataAccessObject.putCDN(realm, Lol4JClientImpl.getInstance(realm).getRealm(realm).getCdnBaseUrl());
+                DataAccessObject.putCDN(realm, Lol4JClientImpl.getInstance(realm).getRealm(true, realm).getCdnBaseUrl());
                 for (String locale : DataAccessObject.getSupportedRealms().get(
                         realm)) {
+                    System.out.println("\nUpdating realm " + realm + " locale " + locale);
                     DataUpdater.performUpdate(realm, locale, newVersion);
                 }
             }
+            System.out.println("\nUpdated realm " + realm);
         }
+        System.out.println("\nData update finished");
     }
 }

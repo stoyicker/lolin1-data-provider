@@ -28,6 +28,7 @@ public class ApiRequestManager {
     public static final String ENCODING = "UTF-8";
     private static final int TEN_SECONDS = 10000;
     private static final int TEN_MINUTES = 600000;
+    private final String staticUri;
     private String apiKey;
     private Client client;
     private ObjectMapper objectMapper;
@@ -36,15 +37,29 @@ public class ApiRequestManager {
     private boolean usingRateLimiter = false;
     private String baseUri;
 
-    public ApiRequestManager(String apiKey, String baseUri) {
+    public ApiRequestManager(String apiKey, String baseUri, String staticUri) {
         this.apiKey = apiKey;
         this.baseUri = baseUri;
+        this.staticUri = staticUri;
         client = ClientBuilder.newClient();
         objectMapper = new ObjectMapper();
     }
 
     public <T> T get(String path, Map<String, Object> queryParams, boolean ignoreRateLimiter, Class<T> clazz) {
         String json = doRequest(path, queryParams, ignoreRateLimiter);
+        T returnObj = null;
+
+        try {
+            returnObj = objectMapper.readValue(json, clazz);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return returnObj;
+    }
+
+    public <T> T get(boolean isStaticQuery, String path, Map<String, Object> queryParams, boolean ignoreRateLimiter, Class<T> clazz) {
+        String json = doRequest(isStaticQuery, path, queryParams, ignoreRateLimiter);
         T returnObj = null;
 
         try {
@@ -93,6 +108,47 @@ public class ApiRequestManager {
             }
         }
         WebTarget webTarget = client.target(baseUri).path(path).queryParam("api_key", apiKey);
+        if (queryParams != null) {
+            for (Map.Entry<String, Object> queryParam : queryParams.entrySet()) {
+                webTarget = webTarget.queryParam(queryParam.getKey(), queryParam.getValue());
+            }
+        }
+        Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON).acceptEncoding(ENCODING);
+        Response response = invocationBuilder.get();
+
+        if (usingRateLimiter && !ignoreRateLimiter) {
+            perSecondsBucket.put(new Token(TEN_SECONDS, false));
+            perMinutesBucket.put(new Token(TEN_MINUTES, false));
+        }
+
+        if (response.getStatus() != 200) {
+            switch (response.getStatus()) {
+                case 400:
+                    throw new BadRequestException();
+                case 401:
+                    throw new NotAuthorizedException("Unauthorized: bad api key or bad request uri");
+                case 404:
+                    throw new NotFoundException();
+                case 429:
+                    throw new TooManyRequestsException();
+                case 500:
+                    throw new InternalServerErrorException();
+            }
+        }
+
+        return response.readEntity(String.class);
+    }
+
+    private String doRequest(boolean isStaticQuery, String path, Map<String, Object> queryParams, boolean ignoreRateLimiter) {
+        if (usingRateLimiter && !ignoreRateLimiter) {
+            try {
+                perSecondsBucket.take();
+                perMinutesBucket.take();
+            } catch (InterruptedException e) {
+            }
+        }
+        WebTarget webTarget = client.target(isStaticQuery ? staticUri : baseUri).path(path).queryParam("api_key", apiKey);
+        System.out.println(webTarget.getUri().toString());
         if (queryParams != null) {
             for (Map.Entry<String, Object> queryParam : queryParams.entrySet()) {
                 webTarget = webTarget.queryParam(queryParam.getKey(), queryParam.getValue());
