@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +32,8 @@ import java.util.Map;
  * Created by Aaron Corley on 12/10/13.
  */
 public class Lol4JClientImpl implements Lol4JClient {
-    private static final String LOL_BASE_ENDPOINT = "https://prod.api.pvp.net/api/lol";
     private static final String PATH_TO_API_KEY_FILE = "apiKey";
+    private static final Map<Region, String> END_POINTS = new LinkedHashMap();
     private ChampionResource championResource;
     private GameResource gameResource;
     private LeagueResource leagueResource;
@@ -41,22 +42,35 @@ public class Lol4JClientImpl implements Lol4JClient {
     private TeamResource teamResource;
     private LolStaticDataResource lolStaticDataResource;
     private ApiRequestManager apiRequestManager;
-    private static Lol4JClient instance;
+    private static final Map<Region, Lol4JClient> instances = new LinkedHashMap();
 
-    public static Lol4JClient getInstance() {
-        if (instance == null)
-            instance = new Lol4JClientImpl();
-        return instance;
+    public static Lol4JClient getInstance(Region realm) {
+        if (instances.get(realm) == null)
+            instances.put(realm, new Lol4JClientImpl(realm));
+        return instances.get(realm);
     }
 
-    private Lol4JClientImpl() {
+    public static void initEndPoints() {
+        END_POINTS.put(Region.BR, "https://br.api.pvp.net/api/lol");
+        END_POINTS.put(Region.EUNE, "https://eune.api.pvp.net/api/lol");
+        END_POINTS.put(Region.EUW, "https://euw.api.pvp.net/api/lol");
+        END_POINTS.put(Region.KR, "https://kr.api.pvp.net/api/lol");
+        END_POINTS.put(Region.LAS, "https://las.api.pvp.net/api/lol");
+        END_POINTS.put(Region.LAN, "https://lan.api.pvp.net/api/lol");
+        END_POINTS.put(Region.NA, "https://na.api.pvp.net/api/lol");
+        END_POINTS.put(Region.OCE, "https://oce.api.pvp.net/api/lol");
+        END_POINTS.put(Region.TR, "https://tr.api.pvp.net/api/lol");
+        END_POINTS.put(Region.RU, "https://ru.api.pvp.net/api/lol");
+    }
+
+    private Lol4JClientImpl(Region realm) {
         String apiKey = null;
         try {
             apiKey = new String(Files.readAllBytes(Paths.get(PATH_TO_API_KEY_FILE)), Charset.forName("UTF-8"));
         } catch (IOException e) {
             e.printStackTrace(System.err);
         }
-        apiRequestManager = new ApiRequestManager(apiKey, LOL_BASE_ENDPOINT);
+        apiRequestManager = new ApiRequestManager(apiKey, getBaseEndPoint(realm));
         ResourceFactory resourceFactory = new ResourceFactory(apiRequestManager);
 
         championResource = resourceFactory.createChampionResource();
@@ -66,6 +80,10 @@ public class Lol4JClientImpl implements Lol4JClient {
         summonerResource = resourceFactory.createSummonerResource();
         teamResource = resourceFactory.createTeamResource();
         lolStaticDataResource = resourceFactory.createLolStaticDataResource();
+    }
+
+    private String getBaseEndPoint(Region realm) {
+        return END_POINTS.get(realm);
     }
 
     @Override

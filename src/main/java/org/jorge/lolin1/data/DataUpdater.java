@@ -31,16 +31,6 @@ import java.util.List;
  */
 
 public abstract class DataUpdater {
-
-    //    private static final String REALM_PLACE_HOLDER = "LOWERCASE_REALM_HERE",
-//            LOCALE_PLACE_HOLDER = "LOCALE_MIXED_CASE_HERE",
-//            REALM_FILE_URL = "https://prod.api.pvp.net/api/lol/static-data/"
-//                    + DataUpdater.REALM_PLACE_HOLDER + "/v1/realm",
-//            ALL_CHAMPIONS_URL = "https://prod.api.pvp.net/api/lol/static-data/"
-//                    + DataUpdater.REALM_PLACE_HOLDER + "/v1/champion?locale="
-//                    + DataUpdater.LOCALE_PLACE_HOLDER
-//                    + "&champData=lore,tags,stats,spells,passive,image,skins",
-//            INFO_WRAPPER = "n", VERSION_KEY = "champion", CDN_KEY = "cdn";
     private static final long RETRY_DELAY_MILLIS = 300000;
 
     private static Boolean UPDATING = Boolean.TRUE; // If it starts being TRUE,
@@ -62,7 +52,7 @@ public abstract class DataUpdater {
         ChampionListDto rawChampions;
         Collection<ChampionDto> champions;
         try {
-            rawChampions = Lol4JClientImpl.getInstance().getChampionList(realm, locale, null, Arrays.asList(ChampData.ALL));
+            rawChampions = Lol4JClientImpl.getInstance(realm).getChampionList(realm, locale, null, Arrays.asList(ChampData.ALL));
             champions = rawChampions.getData().values();
         } catch (NullPointerException ex) {
             // No internet, so wait and retry
@@ -86,10 +76,10 @@ public abstract class DataUpdater {
 
     public static void updateData() {
         for (Region realm : DataAccessObject.getSupportedRealms().keySet()) {
-            String newVersion = Lol4JClientImpl.getInstance().getRealm(realm).getDataTypeVersionMap().get("champion");
+            String newVersion = Lol4JClientImpl.getInstance(realm).getRealm(realm).getDataTypeVersionMap().get("champion");
             if (!DataAccessObject.getVersion(realm)
                     .contentEquals(newVersion)) {
-                DataAccessObject.putCDN(realm, Lol4JClientImpl.getInstance().getRealm(realm).getCdnBaseUrl());
+                DataAccessObject.putCDN(realm, Lol4JClientImpl.getInstance(realm).getRealm(realm).getCdnBaseUrl());
                 for (String locale : DataAccessObject.getSupportedRealms().get(
                         realm)) {
                     DataUpdater.performUpdate(realm, locale, newVersion);

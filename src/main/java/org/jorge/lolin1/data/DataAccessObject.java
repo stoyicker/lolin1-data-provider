@@ -1,6 +1,7 @@
 package org.jorge.lolin1.data;
 
 
+import lol4j.client.impl.Lol4JClientImpl;
 import lol4j.util.Region;
 import org.jorge.lolin1.control.ListManager;
 import org.jorge.lolin1.models.champion.Champion;
@@ -123,6 +124,7 @@ public abstract class DataAccessObject {
     public static void initStaticData() {
         initRealms();
         initCharsetMap();
+        Lol4JClientImpl.initEndPoints();
         ActiveSpellFactory.initLocalizationMaps();
     }
 
