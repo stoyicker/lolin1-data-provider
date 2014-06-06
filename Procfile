@@ -1,1 +1,0 @@
-web: ./build/install/lolin1-data-provider/bin/lolin1-data-provider
