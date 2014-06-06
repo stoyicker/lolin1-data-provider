@@ -32,6 +32,7 @@ import java.util.Map;
  * Created by Aaron Corley on 12/10/13.
  */
 public class Lol4JClientImpl implements Lol4JClient {
+
     private static final String PATH_TO_API_KEY_FILE = "apiKey";
     private static final Map<Region, String> END_POINTS = new LinkedHashMap();
     private ChampionResource championResource;
