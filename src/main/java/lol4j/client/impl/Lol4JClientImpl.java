@@ -33,9 +33,9 @@ import java.util.Map;
  */
 public class Lol4JClientImpl implements Lol4JClient {
 
-    private static final String PATH_TO_API_KEY_FILE = "apiKey";
+    private static final String PATH_TO_API_KEY_FILE = "apiKey", STATIC_END_POINT = "https://global.api.pvp.net/api/lol";
     private static final Map<Region, String> END_POINTS = new LinkedHashMap();
-    private static final Map<Region, String> STATIC_END_POINTS = new LinkedHashMap();
+    //    private static final Map<Region, String> STATIC_END_POINTS = new LinkedHashMap();
     private ChampionResource championResource;
     private GameResource gameResource;
     private LeagueResource leagueResource;
@@ -64,19 +64,19 @@ public class Lol4JClientImpl implements Lol4JClient {
         END_POINTS.put(Region.TR, "https://tr.api.pvp.net/api/lol");
         END_POINTS.put(Region.RU, "https://ru.api.pvp.net/api/lol");
     }
-
-    public static void initStaticEndPoints() {
-        STATIC_END_POINTS.put(Region.BR, "https://br.api.pvp.net/api/lol/");
-        STATIC_END_POINTS.put(Region.EUNE, "https://eune.api.pvp.net/api/lol/");
-        STATIC_END_POINTS.put(Region.EUW, "https://euw.api.pvp.net/api/lol/");
-        STATIC_END_POINTS.put(Region.KR, "https://prod.api.pvp.net/api/lol/");
-        STATIC_END_POINTS.put(Region.LAS, "https://las.api.pvp.net/api/lol/");
-        STATIC_END_POINTS.put(Region.LAN, "https://lan.api.pvp.net/api/lol/");
-        STATIC_END_POINTS.put(Region.NA, "https://na.api.pvp.net/api/lol/");
-        STATIC_END_POINTS.put(Region.OCE, "https://oce.api.pvp.net/api/lol/");
-        STATIC_END_POINTS.put(Region.TR, "https://prod.api.pvp.net/api/lol/");
-        STATIC_END_POINTS.put(Region.RU, "https://prod.api.pvp.net/api/lol/");
-    }
+//      This was necessary when the static api was having different endpoints for each region
+//    public static void initStaticEndPoints() {
+//        STATIC_END_POINTS.put(Region.BR, "https://br.api.pvp.net/api/lol/");
+//        STATIC_END_POINTS.put(Region.EUNE, "https://eune.api.pvp.net/api/lol/");
+//        STATIC_END_POINTS.put(Region.EUW, "https://euw.api.pvp.net/api/lol/");
+//        STATIC_END_POINTS.put(Region.KR, "https://prod.api.pvp.net/api/lol/");
+//        STATIC_END_POINTS.put(Region.LAS, "https://las.api.pvp.net/api/lol/");
+//        STATIC_END_POINTS.put(Region.LAN, "https://lan.api.pvp.net/api/lol/");
+//        STATIC_END_POINTS.put(Region.NA, "https://na.api.pvp.net/api/lol/");
+//        STATIC_END_POINTS.put(Region.OCE, "https://oce.api.pvp.net/api/lol/");
+//        STATIC_END_POINTS.put(Region.TR, "https://prod.api.pvp.net/api/lol/");
+//        STATIC_END_POINTS.put(Region.RU, "https://prod.api.pvp.net/api/lol/");
+//    }
 
     private Lol4JClientImpl(Region realm) {
         String apiKey = null;
@@ -85,7 +85,7 @@ public class Lol4JClientImpl implements Lol4JClient {
         } catch (IOException e) {
             e.printStackTrace(System.err);
         }
-        apiRequestManager = new ApiRequestManager(apiKey, getBaseEndPoint(realm), getStaticEndPoint(realm));
+        apiRequestManager = new ApiRequestManager(apiKey, getBaseEndPoint(realm), STATIC_END_POINT);
         ResourceFactory resourceFactory = new ResourceFactory(apiRequestManager);
 
         championResource = resourceFactory.createChampionResource();
@@ -101,9 +101,9 @@ public class Lol4JClientImpl implements Lol4JClient {
         return END_POINTS.get(realm);
     }
 
-    private String getStaticEndPoint(Region realm) {
-        return STATIC_END_POINTS.get(realm);
-    }
+//    private String getStaticEndPoint(Region realm) {
+//        return STATIC_END_POINTS.get(realm);
+//    }
 
     @Override
     public ChampionListDto getAllChampions(Region region, boolean freeToPlay) {
