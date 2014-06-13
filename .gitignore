@@ -17,3 +17,4 @@ settings.gradle
 Procfile
 apiKey
 system.properties
+keep-alive
