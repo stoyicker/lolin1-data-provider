@@ -49,6 +49,10 @@ public abstract class DataAccessObject {
         charsetMap.put("el_GR", Charset.forName("UTF-8"));
         charsetMap.put("pl_PL", Charset.forName("UTF-8"));
         charsetMap.put("ro_RO", Charset.forName("UTF-8"));
+        charsetMap.put("ru_RU", Charset.forName("UTF-8"));
+        charsetMap.put("hu_HU", Charset.forName("UTF-8"));
+        charsetMap.put("cs_CZ", Charset.forName("UTF-8"));
+        charsetMap.put("ko_KR", Charset.forName("UTF-8"));
     }
 
     public static String formatChampionListAsJSON(List<Champion> champions) {
@@ -138,10 +142,15 @@ public abstract class DataAccessObject {
         DataAccessObject.SUPPORTED_REALMS.put(Region.EUW, new String[]{"en_US",
                 "de_DE", "es_ES", "fr_FR", "it_IT"});
         DataAccessObject.SUPPORTED_REALMS.put(Region.EUNE, new String[]{"en_US",
-                "el_GR", "pl_PL", "ro_RO"});
+                "el_GR", "pl_PL", "ro_RO", "cs_CZ", "hu_HU"});
         DataAccessObject.SUPPORTED_REALMS.put(Region.NA, new String[]{"en_US"});
         DataAccessObject.SUPPORTED_REALMS.put(Region.TR, new String[]{"tr_TR"});
         DataAccessObject.SUPPORTED_REALMS.put(Region.BR, new String[]{"pt_PT"});
+        DataAccessObject.SUPPORTED_REALMS.put(Region.RU, new String[]{"ru_RU"});
+        DataAccessObject.SUPPORTED_REALMS.put(Region.LAN, new String[]{"es_ES"});
+        DataAccessObject.SUPPORTED_REALMS.put(Region.LAS, new String[]{"es_ES"});
+        DataAccessObject.SUPPORTED_REALMS.put(Region.OCE, new String[]{"en_US"});
+        DataAccessObject.SUPPORTED_REALMS.put(Region.KR, new String[]{"ko_KR"});
 
         for (Region realm : DataAccessObject.getSupportedRealms().keySet()) {
             DataAccessObject.CHAMPIONS_VERSION_MAP.put(realm, "");
