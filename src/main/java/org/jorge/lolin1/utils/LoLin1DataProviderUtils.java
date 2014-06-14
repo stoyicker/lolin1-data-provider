@@ -133,6 +133,21 @@ public abstract class LoLin1DataProviderUtils {
             case "tr":
                 ret = Region.TR;
                 break;
+            case "ru":
+                ret = Region.RU;
+                break;
+            case "kr":
+                ret = Region.KR;
+                break;
+            case "oce":
+                ret = Region.OCE;
+                break;
+            case "lan":
+                ret = Region.LAN;
+                break;
+            case "las":
+                ret = Region.LAS;
+                break;
             default:
                 ret = Region.UNKNOWN;
         }

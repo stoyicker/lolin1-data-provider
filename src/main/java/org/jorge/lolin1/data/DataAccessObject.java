@@ -153,6 +153,7 @@ public abstract class DataAccessObject {
         DataAccessObject.SUPPORTED_REALMS.put(Region.KR, new String[]{"ko_KR"});
 
         for (Region realm : DataAccessObject.getSupportedRealms().keySet()) {
+            System.out.println("Supported realm: " + realm.getName());
             DataAccessObject.CHAMPIONS_VERSION_MAP.put(realm, "");
             DataAccessObject.CDN_MAP.put(realm, "");
         }
