@@ -22,7 +22,7 @@ public class ActiveSpell extends PassiveSpell {
      * rangeBurn
      */
     // Used in superclass's reflection
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unused, FieldCanBeLocal")
     private final String cooldownBurn, rangeBurn, costBurn;
 
     protected ActiveSpell(String _name, String _detail, String _imageName,

@@ -67,12 +67,16 @@ public abstract class LoLin1DataProviderUtils {
 
 
     public static String joinIfDifferent(List<String> target, String joint) {
-        if (target == null || target.isEmpty())
+        if (target == null || target.isEmpty()) {
+            System.out.println("Target is null or empty");
             return "";
+        }
         HashSet<String> testForDuplicates = new HashSet<>(target);
-        if (testForDuplicates.size() != target.size())
+        if (testForDuplicates.size() != target.size()) {
+            System.out.println("Not joining");
             return target.get(0);//Duplicates detected!
-        else {
+        } else {
+            System.out.println("Joining");
             return StringUtils.join(target, joint);
         }
     }

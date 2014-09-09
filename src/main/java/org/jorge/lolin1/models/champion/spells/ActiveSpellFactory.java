@@ -29,7 +29,9 @@ public class ActiveSpellFactory {
     private static final Map<String, String> SPELL_DAMAGE_LOCALIZATION_MAP = new HashMap<>(), BONUS_ATTACK_DAMAGE_LOCALIZATION_MAP = new HashMap<>();
 
     public static ActiveSpell createActiveSpell(ChampionSpellDto championSpellDto, String locale) {
+        System.out.println("------------- START - createActiveSpell -----------");
         String pureTooltip = championSpellDto.getSanitizedTooltip(), finalTooltip = pureTooltip;
+        System.out.println("pureTooltip: " + pureTooltip);
         if (pureTooltip != null && !pureTooltip.isEmpty()) {
             List<SpellVarsDto> vars = championSpellDto.getVars();
             for (SpellVarsDto var : vars) {
@@ -38,11 +40,18 @@ public class ActiveSpellFactory {
                 finalTooltip = finalTooltip.replace("{{ " + var.getKey() + " }}", firstPart + secondPart).replace(" + ", " ");
             }
             List<List<Integer>> effects = championSpellDto.getEffect();
+            System.out.println("Effects size: " + effects);
             for (int i = 1; i <= effects.size(); i++) {
-                finalTooltip = finalTooltip.replace("{{ e" + i + " }}", LoLin1DataProviderUtils.joinIfDifferent(LoLin1DataProviderUtils.integerListAsStringList(effects.get(i - 1)), "/"));
+                System.out.println(finalTooltip);
+                final String replacement = LoLin1DataProviderUtils.joinIfDifferent(LoLin1DataProviderUtils.integerListAsStringList(effects.get(i - 1)), "/");
+                System.out.println(replacement);
+                finalTooltip = finalTooltip.replace("{{ e" + i + " }}", replacement);
             }
         }
-        return new ActiveSpell(championSpellDto.getName(), finalTooltip, championSpellDto.getImage().getFull(), championSpellDto.getCooldownBurn(), championSpellDto.getRangeBurn(), championSpellDto.getCostBurn());
+        System.out.println("------------- FINISH - createActiveSpell -----------");
+        ActiveSpell ret = new ActiveSpell(championSpellDto.getName(), finalTooltip, championSpellDto.getImage().getFull(), championSpellDto.getCooldownBurn(), championSpellDto.getRangeBurn(), championSpellDto.getCostBurn());
+        System.out.println("------------- Object to return created - createActiveSpell -----------");
+        return ret;
     }
 
     private static String stringifySpellScaling(String link, String locale) {

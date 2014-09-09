@@ -24,7 +24,7 @@ import java.util.Arrays;
  */
 public class PassiveSpell {
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unused, FieldCanBeLocal")
     // Used through reflection
     private final String imageName, detail, name;
 
@@ -41,6 +41,11 @@ public class PassiveSpell {
             this.detail = _detail;
         }
         this.imageName = _imageName;
+        System.out.println("Passive " + name + " built");
+    }
+
+    public final String getName() {
+        return name;
     }
 
     @Override

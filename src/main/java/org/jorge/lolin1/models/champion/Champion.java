@@ -6,6 +6,7 @@ import org.jorge.lolin1.models.champion.spells.ActiveSpellFactory;
 import org.jorge.lolin1.models.champion.spells.PassiveSpell;
 
 import java.lang.reflect.Field;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ import java.util.List;
  */
 public class Champion {
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unused, FieldCanBeLocal")
     // Used through reflection
     private final String key, name, title, attackrange, mpperlevel, mp, attackdamage,
             hp, hpperlevel, attackdamageperlevel, armor, mpregenperlevel,
@@ -52,6 +53,7 @@ public class Champion {
         skins = new String[rawSkins.size()];
         for (int i = 0; i < skins.length; i++) {
             String value = rawSkins.get(i).getName();
+            System.out.println("Skin " + value);
             skins[i] = value.contentEquals("default") ? this.name : value;
         }
         PassiveDto passiveDto = championDto.getPassive();
@@ -59,7 +61,14 @@ public class Champion {
         List<ChampionSpellDto> spellDtos = championDto.getSpells();
         this.spells = new ActiveSpell[spellDtos.size()];
         for (int i = 0; i < spells.length; i++) {
-            spells[i] = ActiveSpellFactory.createActiveSpell(spellDtos.get(i), locale);
+            ChampionSpellDto thisDto = spellDtos.get(i);
+            for (Iterator<List<Integer>> iterator = thisDto.getEffect().iterator(); iterator.hasNext(); ) {
+                List<Integer> theseEffects = iterator.next();
+                if (theseEffects == null || theseEffects.isEmpty())
+                    iterator.remove();
+            }
+            spells[i] = ActiveSpellFactory.createActiveSpell(thisDto, locale);
+            System.out.println("Spell " + spells[i].toString());
         }
         StatsDto statsDto = championDto.getStats();
         attackrange = statsDto.getAttackRange() + "";
@@ -82,6 +91,7 @@ public class Champion {
         crit = statsDto.getCrit() + "";
         hpregenperlevel = statsDto.getHpRegenPerLevel() + "";
         armorperlevel = statsDto.getArmorPerLevel() + "";
+        System.out.println("Champion construction completed");
     }
 
     @Override
