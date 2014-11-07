@@ -1,6 +1,6 @@
 # lolin1-data-provider
 
-REST API bridge to the League of Legends API in order to minimize the network consumption of [the LoLin1 app for Android](http://stoyicker.github.io/LoLin1/) on mobile devices.
+REST API bridge to the League of Legends API in order to minimize the network consumption of [the LoLin1 app for Android](http://github.com/Stoyicker/LoLin1_old/) on mobile devices.
 
 **Deployment instructions**
 
