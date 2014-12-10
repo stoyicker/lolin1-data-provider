@@ -1,8 +1,8 @@
 apply plugin: 'application'
 
 sourceCompatibility = 1.8
-mainClassName = "Main"
-applicationName = "lolin1-data-provider"
+mainClassName = "org.jorge.lolin1dp.Main"
+applicationName = "org.jorge.lolin1dp-data-provider"
 version = '2.0'
 
 repositories {
