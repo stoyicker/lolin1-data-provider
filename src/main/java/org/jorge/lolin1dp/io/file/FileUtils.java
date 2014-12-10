@@ -1,4 +1,4 @@
-package org.jorge.lolin1dp.utils;
+package org.jorge.lolin1dp.io.file;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -20,7 +20,7 @@ import java.nio.file.Paths;
  * You should have received a copy of the GNU General Public License
  * along with lolin1dp-data-provider. If not, see <http://www.gnu.org/licenses/>.
  */
-public abstract class FileUtil {
+public abstract class FileUtils {
 
     public static boolean delete(String pathToFile) {
         File file, fileAux;
@@ -33,7 +33,7 @@ public abstract class FileUtil {
                             return false;
                         }
                     } else {
-                        LoLin1DataProviderUtils.delete(Paths.get(pathToFile, target).toString());
+                        FileUtils.delete(Paths.get(pathToFile, target).toString());
                     }
                 }
             } catch (NullPointerException ex) {

@@ -1,4 +1,4 @@
-package org.jorge.lolin1.services.champions;
+package org.jorge.lolin1dp.services.champions;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,9 +22,14 @@ import java.io.IOException;
  * You should have received a copy of the GNU General Public License
  * along with lolin1dp-data-provider.  If not, see <http://www.gnu.org/licenses/>.
  */
-public final class CDNService extends HttpServlet {
+public final class NewsService extends HttpServlet {
 
-    @Override
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6604410253121443798L;
+
+	@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 }

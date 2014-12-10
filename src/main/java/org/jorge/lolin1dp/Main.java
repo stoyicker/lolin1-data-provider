@@ -3,11 +3,8 @@ package org.jorge.lolin1dp;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.jorge.lolin1.data.DataAccessObject;
-import org.jorge.lolin1.data.DataUpdater;
-import org.jorge.lolin1.services.champions.CDNService;
-import org.jorge.lolin1.services.champions.ListService;
-import org.jorge.lolin1.services.champions.VersionService;
+import org.jorge.lolin1dp.data.DataUpdater;
+import org.jorge.lolin1dp.services.champions.NewsService;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,16 +36,18 @@ public class Main {
             webPort = "8080";
         }
 
+        System.out.print("Initializing file structure...");
+        DataUpdater.initFileStructure();;
+        System.out.println("done.");
+        
         Server server = new Server(Integer.valueOf(webPort));
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         server.setHandler(context);
-        context.addServlet(new ServletHolder(new CDNService()), "/services/champions/cdn");
-        context.addServlet(new ServletHolder(new ListService()), "/services/champions/list");
-        context.addServlet(new ServletHolder(new VersionService()), "/services/champions/version");
-        System.out.print("\nInitializing static data...");
-        DataAccessObject.initStaticData();
-        System.out.println("done");
+        context.addServlet(new ServletHolder(new NewsService()), "/services/news/");
+//        TODO Uncomment this to export all services
+//        context.addServlet(new ServletHolder(new CommunityService()), "/services/community/");
+//        context.addServlet(new ServletHolder(new SchoolService()), "/services/school/");
 
         System.out.print("Requesting server start...");
         server.start();
