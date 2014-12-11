@@ -1,4 +1,4 @@
-package org.jorge.lolin1dp.services.champions;
+package org.jorge.lolin1dp.services;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

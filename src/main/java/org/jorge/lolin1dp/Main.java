@@ -4,7 +4,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.jorge.lolin1dp.data.DataUpdater;
-import org.jorge.lolin1dp.services.champions.NewsService;
+import org.jorge.lolin1dp.services.NewsService;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -38,7 +38,6 @@ public class Main {
 
 		System.out.print("Initializing file structure...");
 		DataUpdater.initFileStructure();
-		;
 		System.out.println("done.");
 
 		Server server = new Server(Integer.valueOf(webPort));
@@ -64,7 +63,9 @@ public class Main {
 
 			@Override
 			public void run() {
+				System.out.print("Requesting data update...");
 				DataUpdater.updateData();
+				System.out.println("done.");
 			}
 		}, 0, Main.UPDATE_FREQUENCY_SECONDS, TimeUnit.SECONDS);
 

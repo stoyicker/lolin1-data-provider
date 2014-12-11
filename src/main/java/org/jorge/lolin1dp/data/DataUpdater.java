@@ -4,17 +4,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.jorge.lolin1dp.datamodel.Realm;
+import org.jorge.lolin1dp.datamodel.Realm.RealmEnum;
 import org.jorge.lolin1dp.io.file.FileUtils;
+import org.jorge.lolin1dp.io.net.Internet;
 
 public abstract class DataUpdater {
 
-	private enum RealmEnum {
-		NA, EUW, EUNE, BR, LAN, LAS, TR, RU, OCE, KR
-	}
-
 	private static final Path FILES_PATH = Paths.get("files"),
-			COMMUNITY_PATH=Paths.get(FILES_PATH.toString(),"COMMUNITY"),
-			SCHOOL_PATH=Paths.get(FILES_PATH.toString(),"SCHOOL");
+			COMMUNITY_PATH = Paths.get(FILES_PATH.toString(), "COMMUNITY"),
+			SCHOOL_PATH = Paths.get(FILES_PATH.toString(), "SCHOOL");
 
 	public synchronized static void initFileStructure() {
 		// TODO initFileStructure
@@ -34,6 +33,6 @@ public abstract class DataUpdater {
 	}
 
 	public synchronized static void updateData() {
-		// TODO updateData
+		Internet.getNews(Realm.getNewsUrl(RealmEnum.NA));
 	}
 }
