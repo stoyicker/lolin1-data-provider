@@ -13,56 +13,61 @@ import java.util.concurrent.TimeUnit;
 /**
  * This file is part of lolin1dp-data-provider.
  * <p/>
- * lolin1dp-data-provider is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * lolin1dp-data-provider is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  * <p/>
- * lolin1dp-data-provider is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * lolin1dp-data-provider is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p/>
- * You should have received a copy of the GNU General Public License
- * along with lolin1dp-data-provider.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * lolin1dp-data-provider. If not, see <http://www.gnu.org/licenses/>.
  */
 public class Main {
 
-    private static final long UPDATE_FREQUENCY_SECONDS = 60 * 60 * 1;
+	private static final long UPDATE_FREQUENCY_SECONDS = 60 * 60 * 1;
 
-    public static void main(String[] args) throws Exception {
-        String webPort = System.getenv("PORT");
-        if ((webPort == null) || webPort.isEmpty()) {
-            webPort = "8080";
-        }
+	public static void main(String[] args) throws Exception {
+		String webPort = System.getenv("PORT");
+		if ((webPort == null) || webPort.isEmpty()) {
+			webPort = "8080";
+		}
 
-        System.out.print("Initializing file structure...");
-        DataUpdater.initFileStructure();;
-        System.out.println("done.");
-        
-        Server server = new Server(Integer.valueOf(webPort));
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath("/");
-        server.setHandler(context);
-        context.addServlet(new ServletHolder(new NewsService()), "/services/news/");
-//        TODO Uncomment this to export all services
-//        context.addServlet(new ServletHolder(new CommunityService()), "/services/community/");
-//        context.addServlet(new ServletHolder(new SchoolService()), "/services/school/");
+		System.out.print("Initializing file structure...");
+		DataUpdater.initFileStructure();
+		;
+		System.out.println("done.");
 
-        System.out.print("Requesting server start...");
-        server.start();
-        System.out.println("done.");
+		Server server = new Server(Integer.valueOf(webPort));
+		ServletContextHandler context = new ServletContextHandler(
+				ServletContextHandler.SESSIONS);
+		context.setContextPath("/");
+		server.setHandler(context);
+		context.addServlet(new ServletHolder(new NewsService()),
+				"/services/news/");
+		// TODO Uncomment this to export all services
+		// context.addServlet(new ServletHolder(new CommunityService()),
+		// "/services/community/");
+		// context.addServlet(new ServletHolder(new SchoolService()),
+		// "/services/school/");
 
-        ScheduledExecutorService updateService = Executors
-                .newScheduledThreadPool(1);
-        updateService.scheduleAtFixedRate(new Runnable() {
+		System.out.print("Requesting server start...");
+		server.start();
+		System.out.println("done.");
 
-            @Override
-            public void run() {
-                DataUpdater.updateData();
-            }
-        }, 0, Main.UPDATE_FREQUENCY_SECONDS, TimeUnit.SECONDS);
+		ScheduledExecutorService updateService = Executors
+				.newScheduledThreadPool(1);
+		updateService.scheduleAtFixedRate(new Runnable() {
 
-        server.join();
-    }
+			@Override
+			public void run() {
+				DataUpdater.updateData();
+			}
+		}, 0, Main.UPDATE_FREQUENCY_SECONDS, TimeUnit.SECONDS);
+
+		server.join();
+	}
 }
