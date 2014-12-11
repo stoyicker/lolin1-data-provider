@@ -33,6 +33,7 @@ public abstract class DataUpdater {
 	}
 
 	public synchronized static void updateData() {
-		Internet.getNews(Realm.getNewsUrl(RealmEnum.NA));
+		Internet.getNews(Realm.getBaseUrl(RealmEnum.NA),
+				Realm.getNewsUrl(RealmEnum.NA));
 	}
 }
