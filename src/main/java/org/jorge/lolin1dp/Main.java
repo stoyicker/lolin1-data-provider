@@ -46,12 +46,12 @@ public class Main {
 		context.setContextPath("/");
 		server.setHandler(context);
 		context.addServlet(new ServletHolder(new NewsService()),
-				"/services/news/");
+				"/services/news");
 		// TODO Uncomment this to export all services
 		// context.addServlet(new ServletHolder(new CommunityService()),
-		// "/services/community/");
+		// "/services/community");
 		// context.addServlet(new ServletHolder(new SchoolService()),
-		// "/services/school/");
+		// "/services/school");
 
 		System.out.print("Requesting server start...");
 		server.start();

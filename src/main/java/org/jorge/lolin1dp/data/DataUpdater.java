@@ -1,8 +1,6 @@
 package org.jorge.lolin1dp.data;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.jorge.lolin1dp.datamodel.ArticleWrapper;
@@ -12,16 +10,29 @@ import org.jorge.lolin1dp.io.file.FileUtils;
 import org.jorge.lolin1dp.io.net.Internet;
 import org.json.JSONArray;
 
+/**
+ * This file is part of lolin1dp-data-provider.
+ * <p/>
+ * lolin1dp-data-provider is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ * <p/>
+ * lolin1dp-data-provider is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * <p/>
+ * You should have received a copy of the GNU General Public License along with
+ * lolin1dp-data-provider. If not, see <http://www.gnu.org/licenses/>.
+ */
 public abstract class DataUpdater {
 
-	private static final Path FILES_PATH = Paths.get("files"),
-			COMMUNITY_PATH = Paths.get(FILES_PATH.toString(), "COMMUNITY"),
-			SCHOOL_PATH = Paths.get(FILES_PATH.toString(), "SCHOOL");
+	private static Boolean updating = Boolean.TRUE;
 
 	public synchronized static void initFileStructure() {
-		// TODO initFileStructure
-		if (!Files.exists(FILES_PATH)) {
-			if (!FILES_PATH.toFile().mkdirs())
+		if (!Files.exists(DataAccessObject.FILES_PATH)) {
+			if (!DataAccessObject.FILES_PATH.toFile().mkdirs())
 				throw new IllegalStateException("Could not create files folder");
 		}
 
@@ -29,15 +40,17 @@ public abstract class DataUpdater {
 		for (RealmEnum x : values) {
 			List<String> localesInThisRealm = Realm.getLocales(x);
 			for (String y : localesInThisRealm) {
-				FileUtils.createJSONFileIfNotExists(getRealmFilePath(x, y));
+				FileUtils.createJSONFileIfNotExists(DataAccessObject
+						.getRealmFilePath(x, y));
 			}
 		}
 
-		FileUtils.createJSONFileIfNotExists(COMMUNITY_PATH);
-		FileUtils.createJSONFileIfNotExists(SCHOOL_PATH);
+		FileUtils.createJSONFileIfNotExists(DataAccessObject.COMMUNITY_PATH);
+		FileUtils.createJSONFileIfNotExists(DataAccessObject.SCHOOL_PATH);
 	}
 
 	public synchronized static void updateData() {
+		updating = Boolean.TRUE;
 		final RealmEnum[] values = RealmEnum.values();
 		for (RealmEnum realm : values) {
 
@@ -53,14 +66,15 @@ public abstract class DataUpdater {
 				for (ArticleWrapper article : news)
 					array.put(article.toJSON());
 
-				FileUtils.writeFile(getRealmFilePath(realm, locale),
+				FileUtils.writeFile(
+						DataAccessObject.getRealmFilePath(realm, locale),
 						array.toString());
 			}
 		}
+		updating = Boolean.FALSE;
 	}
 
-	private static Path getRealmFilePath(RealmEnum realmId, String locale) {
-		return Paths.get(FILES_PATH.toString(), realmId.name() + "_"
-				+ (locale != null ? locale : "") + ".json");
+	public static Boolean isUpdating() {
+		return updating;
 	}
 }
