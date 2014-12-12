@@ -54,6 +54,7 @@ public abstract class DataUpdater {
 		updating = Boolean.TRUE;
 
 		final RealmEnum[] values = RealmEnum.values();
+		JSONArray array;
 		for (RealmEnum realm : values) {
 
 			List<ArticleWrapper> news;
@@ -63,7 +64,7 @@ public abstract class DataUpdater {
 				news = Internet.getNews(Realm.getBaseUrl(realm),
 						Realm.getNewsUrl(realm, locale));
 
-				JSONArray array = new JSONArray();
+				array = new JSONArray();
 
 				for (ArticleWrapper article : news)
 					array.put(article.toJSON());
@@ -74,8 +75,30 @@ public abstract class DataUpdater {
 			}
 		}
 
-		Internet.getSubrreditHot(OtherSources.getMaxAmountToPull(),
-				OtherSources.getCommunityUrl(), "hola");
+		List<ArticleWrapper> community = Internet.getSubrreditHot(
+				OtherSources.getMaxAmountToPull(),
+				OtherSources.getCommunityUrl(),
+				"http://a.thumbs.redditmedia.com/ailURefhvi5BnEOZ.png");
+
+		array = new JSONArray();
+
+		for (ArticleWrapper article : community)
+			array.put(article.toJSON());
+
+		FileUtils.writeFile(DataAccessObject.getCommunityFilePath(),
+				array.toString());
+
+		List<ArticleWrapper> school = Internet.getSubrreditHot(
+				OtherSources.getMaxAmountToPull(), OtherSources.getSchoolUrl(),
+				"http://a.thumbs.redditmedia.com/ailURefhvi5BnEOZ.png");
+
+		array = new JSONArray();
+
+		for (ArticleWrapper article : school)
+			array.put(article.toJSON());
+
+		FileUtils.writeFile(DataAccessObject.getSchoolFilePath(),
+				array.toString());
 
 		updating = Boolean.FALSE;
 	}

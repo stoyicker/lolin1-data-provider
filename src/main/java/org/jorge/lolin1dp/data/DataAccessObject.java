@@ -35,10 +35,32 @@ public abstract class DataAccessObject {
 						.toLowerCase());
 	}
 
+	static Path getCommunityFilePath() {
+		return COMMUNITY_PATH;
+	}
+
+	static Path getSchoolFilePath() {
+		return SCHOOL_PATH;
+	}
+
 	public static String getJSONNewsAsString(RealmEnum realm, String locale) {
 		System.out.println("File requested " + getRealmFilePath(realm, locale));
 		System.out.println("Responded: "
 				+ FileUtils.readFile(getRealmFilePath(realm, locale)));
 		return FileUtils.readFile(getRealmFilePath(realm, locale));
+	}
+
+	public static String getJSONCommunityAsString() {
+		System.out.println("File requested " + getCommunityFilePath());
+		System.out.println("Responded: "
+				+ FileUtils.readFile(getCommunityFilePath()));
+		return FileUtils.readFile(getCommunityFilePath());
+	}
+
+	public static String getJSONSchoolAsString() {
+		System.out.println("File requested " + getSchoolFilePath());
+		System.out.println("Responded: "
+				+ FileUtils.readFile(getSchoolFilePath()));
+		return FileUtils.readFile(getSchoolFilePath());
 	}
 }

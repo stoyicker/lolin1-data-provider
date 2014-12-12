@@ -75,19 +75,20 @@ public abstract class Internet {
 		return ret;
 	}
 
-	public static List<ArticleWrapper> getSubrreditHot(int top,
+	public static List<ArticleWrapper> getSubrreditHot(int howMany,
 			String subredditUrl, String defaultImgUrl) {
 		JSONArray array;
 		List<ArticleWrapper> ret = new ArrayList<>();
 
 		try {
 			System.out.println("Performing get on " + subredditUrl);
-			String response = doGet(subredditUrl);
+			String response = doGetAsString(subredditUrl);
 			System.out.println("Get performed on " + subredditUrl);
 			array = new JSONObject(response).getJSONObject("data")
 					.getJSONArray("children");
-			for (int i = 0; i < array.length() && i < top; i++) {
-				JSONObject object = array.getJSONObject(i).getJSONObject("data");
+			for (int i = 0; i < array.length() && ret.size() < howMany; i++) {
+				JSONObject object = array.getJSONObject(i)
+						.getJSONObject("data");
 				if (!object.getBoolean("stickied")) // We don't want sticky
 													// posts
 					ret.add(new ArticleWrapper(
@@ -101,14 +102,10 @@ public abstract class Internet {
 			return null;
 		}
 
-		for (ArticleWrapper x : ret) {
-			System.out.println(x.toString());
-		}
-
 		return ret;
 	}
 
-	private static String doGet(String url) throws IOException {
+	private static String doGetAsString(String url) throws IOException {
 		Request request = new Request.Builder().url(url).build();
 
 		Response response = client.newCall(request).execute();

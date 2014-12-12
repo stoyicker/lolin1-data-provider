@@ -4,7 +4,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.jorge.lolin1dp.data.DataUpdater;
+import org.jorge.lolin1dp.services.CommunityService;
 import org.jorge.lolin1dp.services.NewsService;
+import org.jorge.lolin1dp.services.SchoolService;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -47,11 +49,10 @@ public class Main {
 		server.setHandler(context);
 		context.addServlet(new ServletHolder(new NewsService()),
 				"/services/news");
-		// TODO Uncomment this to export all services
-		// context.addServlet(new ServletHolder(new CommunityService()),
-		// "/services/community");
-		// context.addServlet(new ServletHolder(new SchoolService()),
-		// "/services/school");
+		context.addServlet(new ServletHolder(new CommunityService()),
+				"/services/community");
+		context.addServlet(new ServletHolder(new SchoolService()),
+				"/services/school");
 
 		System.out.print("Requesting server start...");
 		server.start();
