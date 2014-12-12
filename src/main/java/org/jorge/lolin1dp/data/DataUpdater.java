@@ -3,11 +3,14 @@ package org.jorge.lolin1dp.data;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
+import org.jorge.lolin1dp.datamodel.ArticleWrapper;
 import org.jorge.lolin1dp.datamodel.Realm;
 import org.jorge.lolin1dp.datamodel.Realm.RealmEnum;
 import org.jorge.lolin1dp.io.file.FileUtils;
 import org.jorge.lolin1dp.io.net.Internet;
+import org.json.JSONArray;
 
 public abstract class DataUpdater {
 
@@ -24,16 +27,40 @@ public abstract class DataUpdater {
 
 		final RealmEnum[] values = RealmEnum.values();
 		for (RealmEnum x : values) {
-			FileUtils.createXMLFileIfNotExists(Paths.get(FILES_PATH.toString(),
-					x.name()));
+			List<String> localesInThisRealm = Realm.getLocales(x);
+			for (String y : localesInThisRealm) {
+				FileUtils.createJSONFileIfNotExists(getRealmFilePath(x, y));
+			}
 		}
 
-		FileUtils.createXMLFileIfNotExists(COMMUNITY_PATH);
-		FileUtils.createXMLFileIfNotExists(SCHOOL_PATH);
+		FileUtils.createJSONFileIfNotExists(COMMUNITY_PATH);
+		FileUtils.createJSONFileIfNotExists(SCHOOL_PATH);
 	}
 
 	public synchronized static void updateData() {
-		Internet.getNews(Realm.getBaseUrl(RealmEnum.NA),
-				Realm.getNewsUrl(RealmEnum.NA));
+		final RealmEnum[] values = RealmEnum.values();
+		for (RealmEnum realm : values) {
+
+			List<ArticleWrapper> news;
+			List<String> realmLocales = Realm.getLocales(realm);
+
+			for (String locale : realmLocales) {
+				news = Internet.getNews(Realm.getBaseUrl(realm),
+						Realm.getNewsUrl(realm, locale));
+
+				JSONArray array = new JSONArray();
+
+				for (ArticleWrapper article : news)
+					array.put(article.toJSON());
+
+				FileUtils.writeFile(getRealmFilePath(realm, locale),
+						array.toString());
+			}
+		}
+	}
+
+	private static Path getRealmFilePath(RealmEnum realmId, String locale) {
+		return Paths.get(FILES_PATH.toString(), realmId.name() + "_"
+				+ (locale != null ? locale : "") + ".json");
 	}
 }

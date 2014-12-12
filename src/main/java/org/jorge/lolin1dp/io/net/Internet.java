@@ -17,7 +17,9 @@ public abstract class Internet {
 	public static List<ArticleWrapper> getNews(String baseUrl, String url) {
 		Elements newsHeadLines;
 		try {
+			System.out.println("Performing get on " + url);
 			Document doc = Jsoup.connect(url).get();
+			System.out.println("Get performed on " + url);
 			newsHeadLines = doc.select("div.panelizer-view-mode")
 					.select("div.node").select("div.node-teaser")
 					.select("div.node-article").select("div.field")

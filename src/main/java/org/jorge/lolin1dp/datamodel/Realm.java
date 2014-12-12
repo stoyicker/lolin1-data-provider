@@ -1,13 +1,18 @@
 package org.jorge.lolin1dp.datamodel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Realm {
 
 	public enum RealmEnum {
 		NA, EUW, EUNE, BR, LAN, LAS, TR, RU, OCE
 	}
 
-	public static String getNewsUrl(RealmEnum realmId, String... locale) {
+	public static String getNewsUrl(RealmEnum realmId, String locale) {
 		StringBuilder realmUrl;
+
+		System.out.println("Getting news url for realm " + realmId.name());
 
 		switch (realmId) {
 		case NA:
@@ -18,13 +23,13 @@ public abstract class Realm {
 				throw new IllegalArgumentException("Locale required.");
 
 			realmUrl = new StringBuilder("http://euw.leagueoflegends.com/");
-			realmUrl.append(locale[0].toLowerCase().substring(0, 2));
+			realmUrl.append(locale.toLowerCase().substring(0, 2));
 			break;
 		case EUNE:
 			if (locale == null)
 				throw new IllegalArgumentException("Locale required.");
 			realmUrl = new StringBuilder("http://eune.leagueoflegends.com/");
-			realmUrl.append(locale[0].toLowerCase().substring(0, 2));
+			realmUrl.append(locale.toLowerCase().substring(0, 2));
 			break;
 		case BR:
 			realmUrl = new StringBuilder("http://br.leagueoflegends.com/pt");
@@ -47,6 +52,9 @@ public abstract class Realm {
 		default:
 			throw new IllegalStateException("Illegal RealmEnum");
 		}
+
+		System.out.println("Returning news url " + realmUrl.toString()
+				+ "/news/");
 
 		return realmUrl.append("/news/").toString();
 	}
@@ -87,5 +95,52 @@ public abstract class Realm {
 		}
 
 		return baseUrl.toString();
+	}
+
+	public static List<String> getLocales(RealmEnum realmId) {
+		List<String> ret = new ArrayList<>();
+
+		switch (realmId) {
+		case NA:
+			ret.add("en_US");
+			break;
+		case EUW:
+			ret.add("en_US");
+			ret.add("de_DE");
+			ret.add("es_ES");
+			ret.add("fr_FR");
+			ret.add("it_IT");
+			break;
+		case EUNE:
+			ret.add("en_US");
+			ret.add("pl_PL");
+			ret.add("el_GR");
+			ret.add("ro_RO");
+			ret.add("cs_CZ");
+			ret.add("hu_HU");
+			break;
+		case BR:
+			ret.add("pt_PT");
+			break;
+		case LAN:
+			ret.add("es_ES");
+			break;
+		case LAS:
+			ret.add("es_ES");
+			break;
+		case TR:
+			ret.add("tr_TR");
+			break;
+		case RU:
+			ret.add("ru_RU");
+			break;
+		case OCE:
+			ret.add("en_US");
+			break;
+		default:
+			throw new IllegalStateException("Illegal RealmEnum");
+		}
+
+		return ret;
 	}
 }

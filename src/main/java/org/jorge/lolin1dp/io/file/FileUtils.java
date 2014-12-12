@@ -83,7 +83,7 @@ public abstract class FileUtils {
 		}
 	}
 
-	public static void createXMLFileIfNotExists(Path path) {
+	public static void createJSONFileIfNotExists(Path path) {
 		if (!Files.exists(path)) {
 			try {
 				new File(path.toString()).createNewFile();
@@ -91,7 +91,6 @@ public abstract class FileUtils {
 				throw new IllegalStateException("File " + path.toAbsolutePath()
 						+ " could not be created.");
 			}
-			writeFile(path, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 		} else
 			System.out.println("File " + path.toString()
 					+ " already exists, so not recreated");
