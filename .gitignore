@@ -16,6 +16,4 @@ out
 gradlew
 gradlew.bat
 settings.gradle
-Procfile
-apiKey
 system.properties
