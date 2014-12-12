@@ -5,10 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jorge.lolin1dp.datamodel.ArticleWrapper;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 /**
  * This file is part of lolin1dp-data-provider.
@@ -29,6 +36,7 @@ import org.jsoup.select.Elements;
 public abstract class Internet {
 
 	public static final String ERROR = "ERROR";
+	private static final OkHttpClient client = new OkHttpClient();
 
 	public static List<ArticleWrapper> getNews(String baseUrl, String url) {
 		Elements newsHeadLines;
@@ -65,5 +73,45 @@ public abstract class Internet {
 		}
 
 		return ret;
+	}
+
+	public static List<ArticleWrapper> getSubrreditHot(int top,
+			String subredditUrl, String defaultImgUrl) {
+		JSONArray array;
+		List<ArticleWrapper> ret = new ArrayList<>();
+
+		try {
+			System.out.println("Performing get on " + subredditUrl);
+			String response = doGet(subredditUrl);
+			System.out.println("Get performed on " + subredditUrl);
+			array = new JSONObject(response).getJSONObject("data")
+					.getJSONArray("children");
+			for (int i = 0; i < array.length() && i < top; i++) {
+				JSONObject object = array.getJSONObject(i).getJSONObject("data");
+				if (!object.getBoolean("stickied")) // We don't want sticky
+													// posts
+					ret.add(new ArticleWrapper(
+							object.getString("title"),
+							object.getString("url"),
+							object.getString("thumbnail").contentEquals("self") ? defaultImgUrl
+									: object.getString("thumbnail")));
+			}
+		} catch (IOException | JSONException e) {
+			e.printStackTrace(System.out);
+			return null;
+		}
+
+		for (ArticleWrapper x : ret) {
+			System.out.println(x.toString());
+		}
+
+		return ret;
+	}
+
+	private static String doGet(String url) throws IOException {
+		Request request = new Request.Builder().url(url).build();
+
+		Response response = client.newCall(request).execute();
+		return response.body().string();
 	}
 }

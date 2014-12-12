@@ -55,4 +55,10 @@ public class ArticleWrapper {
 		}
 		return ret;
 	}
+
+	@Override
+	public String toString() {
+		return "Title: " + getTitle() + "--Content url: " + getContentUrl()
+				+ "--Image url: " + getImageUrl();
+	}
 }

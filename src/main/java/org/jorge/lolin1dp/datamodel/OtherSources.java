@@ -1,8 +1,5 @@
 package org.jorge.lolin1dp.datamodel;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 /**
  * This file is part of lolin1dp-data-provider.
  * <p/>
@@ -21,25 +18,20 @@ import java.net.URL;
  */
 public abstract class OtherSources {
 
-	private static final String COMMUNITY_URL = "http://www.reddit.com/r/leagueoflegends",
-			SCHOOL_URL = "http://www.reddit.com/r/summonerschool";
+	private static final String COMMUNITY_HOT_URL = "http://www.reddit.com/r/leagueoflegends/hot.json",
+			SCHOOL_HOT_URL = "http://www.reddit.com/r/summonerschool/hot.json";
+	private static final Integer MAX_AMOUNT_TO_PULL = 8;
 
-	public static URL getCommunityURL() {
-		try {
-			return new URL(COMMUNITY_URL);
-		} catch (MalformedURLException e) {
-			// Unused
-			throw new IllegalArgumentException("Unused");
-		}
+	public static String getCommunityUrl() {
+		return COMMUNITY_HOT_URL;
 	}
 
-	public static URL getSchoolURL() {
-		try {
-			return new URL(SCHOOL_URL);
-		} catch (MalformedURLException e) {
-			// Unused
-			throw new IllegalArgumentException("Unused");
-		}
+	public static String getSchoolUrl() {
+		return SCHOOL_HOT_URL;
+	}
+
+	public static Integer getMaxAmountToPull() {
+		return MAX_AMOUNT_TO_PULL;
 	}
 
 }

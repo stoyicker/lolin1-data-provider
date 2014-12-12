@@ -28,7 +28,8 @@ public abstract class Realm {
 	public static String getNewsUrl(RealmEnum realmId, String locale) {
 		StringBuilder realmUrl;
 
-		System.out.println("Getting news url for realm " + realmId.name());
+		System.out.println("Getting news url for realm " + realmId.name()
+				+ " and locale " + locale);
 
 		switch (realmId) {
 		case NA:

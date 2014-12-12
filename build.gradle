@@ -8,13 +8,14 @@ applicationName = "app"
 version = '2.0'
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
     compile 'org.eclipse.jetty:jetty-servlet:7.5.3.v20111011'
     compile 'org.jsoup:jsoup:1.7.2'
     compile 'org.json:json:20090211'
+    compile 'com.squareup.okhttp:okhttp:2.1.0'
 }
 
 task stage(dependsOn: ['clean', 'installApp'])

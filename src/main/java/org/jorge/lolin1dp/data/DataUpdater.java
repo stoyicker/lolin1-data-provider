@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.util.List;
 
 import org.jorge.lolin1dp.datamodel.ArticleWrapper;
+import org.jorge.lolin1dp.datamodel.OtherSources;
 import org.jorge.lolin1dp.datamodel.Realm;
 import org.jorge.lolin1dp.datamodel.Realm.RealmEnum;
 import org.jorge.lolin1dp.io.file.FileUtils;
@@ -51,6 +52,7 @@ public abstract class DataUpdater {
 
 	public synchronized static void updateData() {
 		updating = Boolean.TRUE;
+
 		final RealmEnum[] values = RealmEnum.values();
 		for (RealmEnum realm : values) {
 
@@ -71,6 +73,10 @@ public abstract class DataUpdater {
 						array.toString());
 			}
 		}
+
+		Internet.getSubrreditHot(OtherSources.getMaxAmountToPull(),
+				OtherSources.getCommunityUrl(), "hola");
+
 		updating = Boolean.FALSE;
 	}
 
