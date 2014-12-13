@@ -24,12 +24,15 @@ public class ArticleWrapper {
 	private static final String KEY_TITLE = "KEY_TITLE";
 	private static final String KEY_CONTENT_URL = "KEY_CONTENT_URL";
 	private static final String KEY_IMG_URL = "KEY_IMG_URL";
-	private final String title, contentUrl, imageUrl;
+	private static final String KEY_CONTENT = "KEY_CONTENT";
+	private final String title, contentUrl, imageUrl, content;
 
-	public ArticleWrapper(String _title, String _contentUrl, String _imageUrl) {
+	public ArticleWrapper(String _title, String _contentUrl, String _imageUrl,
+			String _content) {
 		title = _title;
 		contentUrl = _contentUrl;
 		imageUrl = _imageUrl;
+		content = _content;
 	}
 
 	public String getImageUrl() {
@@ -44,12 +47,17 @@ public class ArticleWrapper {
 		return title;
 	}
 
+	public String getContent() {
+		return content;
+	}
+
 	public JSONObject toJSON() {
 		JSONObject ret = new JSONObject();
 		try {
 			ret.put(KEY_TITLE, getTitle());
 			ret.put(KEY_CONTENT_URL, getContentUrl());
 			ret.put(KEY_IMG_URL, getImageUrl());
+			ret.put(KEY_CONTENT, content);
 		} catch (JSONException unused) {
 			// This only happens if the key is null, but it never is
 		}
@@ -59,6 +67,7 @@ public class ArticleWrapper {
 	@Override
 	public String toString() {
 		return "Title: " + getTitle() + "--Content url: " + getContentUrl()
-				+ "--Image url: " + getImageUrl();
+				+ "--Image url: " + getImageUrl() + "--Content: "
+				+ getContent();
 	}
 }

@@ -51,7 +51,7 @@ public abstract class Internet {
 					.select("div.field-type-file")
 					.select("div.field-label-hidden");
 		} catch (IOException e) {
-			e.printStackTrace(System.out);
+			e.printStackTrace(System.err);
 			return null;
 		}
 
@@ -65,7 +65,8 @@ public abstract class Internet {
 				final String title = linkElem.attr("title");
 				final String link = baseUrl + linkElem.attr("href");
 				final String imageLink = baseUrl + imageElem.attr("src");
-				ret.add(new ArticleWrapper(title, link, imageLink));
+				final String subtitle = baseUrl + elem.select("div.field-name-field-body-medium").text();
+				ret.add(new ArticleWrapper(title, link, imageLink, subtitle));
 				addThis = Boolean.FALSE;
 			} else {
 				addThis = Boolean.TRUE;
@@ -95,7 +96,8 @@ public abstract class Internet {
 							object.getString("title"),
 							object.getString("url"),
 							object.getString("thumbnail").contentEquals("self") ? defaultImgUrl
-									: object.getString("thumbnail")));
+									: object.getString("thumbnail"), object
+									.getString("selftext_html")));
 			}
 		} catch (IOException | JSONException e) {
 			e.printStackTrace(System.out);
