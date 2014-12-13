@@ -65,7 +65,7 @@ public abstract class Internet {
 				final String title = linkElem.attr("title");
 				final String link = baseUrl + linkElem.attr("href");
 				final String imageLink = baseUrl + imageElem.attr("src");
-				final String subtitle = baseUrl + elem.select("div.field-name-field-body-medium").text();
+				final String subtitle = elem.select("div.field-name-field-body-medium").text();
 				ret.add(new ArticleWrapper(title, link, imageLink, subtitle));
 				addThis = Boolean.FALSE;
 			} else {
