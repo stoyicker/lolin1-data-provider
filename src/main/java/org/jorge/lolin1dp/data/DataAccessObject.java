@@ -25,8 +25,8 @@ import org.jorge.lolin1dp.io.file.FileUtils;
 public abstract class DataAccessObject {
 
 	static final Path FILES_PATH = Paths.get("files"), COMMUNITY_PATH = Paths
-			.get(FILES_PATH.toString(), "COMMUNITY"), SCHOOL_PATH = Paths.get(
-			FILES_PATH.toString(), "SCHOOL");
+			.get(FILES_PATH.toString(), "COMMUNITY.json"), SCHOOL_PATH = Paths.get(
+			FILES_PATH.toString(), "SCHOOL.json");
 
 	static Path getRealmFilePath(RealmEnum realmId, String locale) {
 		return Paths

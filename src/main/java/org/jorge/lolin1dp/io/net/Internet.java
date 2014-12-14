@@ -39,7 +39,7 @@ public abstract class Internet {
 	private static final OkHttpClient client = new OkHttpClient();
 
 	public static List<ArticleWrapper> getNews(String baseUrl, String url) {
-		Elements newsHeadLines;
+		Elements newsHeadLines, newsSubTitles;
 		try {
 			System.out.println("Performing get on " + url);
 			Document doc = Jsoup.connect(url).get();
@@ -50,11 +50,15 @@ public abstract class Internet {
 					.select("div.field-name-field-article-media")
 					.select("div.field-type-file")
 					.select("div.field-label-hidden");
+			newsSubTitles = doc.select("div.field")
+					.select("div.field-name-field-body-medium")
+					.select("div.field-type-text-long")
+					.select("div.field-label-hidden");
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
 			return null;
 		}
-
+		
 		final List<ArticleWrapper> ret = new ArrayList<>();
 		Boolean addThis = Boolean.TRUE;
 		for (Element elem : newsHeadLines) {
@@ -65,7 +69,7 @@ public abstract class Internet {
 				final String title = linkElem.attr("title");
 				final String link = baseUrl + linkElem.attr("href");
 				final String imageLink = baseUrl + imageElem.attr("src");
-				final String subtitle = elem.select("div.field-name-field-body-medium").text();
+				final String subtitle = newsSubTitles.remove(0).text();
 				ret.add(new ArticleWrapper(title, link, imageLink, subtitle));
 				addThis = Boolean.FALSE;
 			} else {
