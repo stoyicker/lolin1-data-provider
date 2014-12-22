@@ -60,7 +60,7 @@ public abstract class FileUtils {
 			}
 		} catch (final IOException ex) {
 			if (ex instanceof FileNotFoundException) {
-				return null;
+				return "";
 			} else {
 				ex.printStackTrace(System.err);
 			}

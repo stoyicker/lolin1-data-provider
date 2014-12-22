@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jorge.lolin1dp.data.DataAccessObject;
-import org.jorge.lolin1dp.data.DataUpdater;
 import org.jorge.lolin1dp.datamodel.Realm;
 import org.jorge.lolin1dp.datamodel.Realm.RealmEnum;
 
@@ -39,10 +38,6 @@ public final class NewsService extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		if (DataUpdater.isUpdating()) {
-			resp.sendError(HttpServletResponse.SC_CONFLICT);
-			return;
-		}
 		String parameterRealm, parameterLocale;
 		try {
 			parameterRealm = req.getParameter("realm").toLowerCase();

@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jorge.lolin1dp.data.DataAccessObject;
-import org.jorge.lolin1dp.data.DataUpdater;
 
 import java.io.IOException;
 
@@ -36,11 +35,6 @@ public final class SchoolService extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		if (DataUpdater.isUpdating()) {
-			resp.sendError(HttpServletResponse.SC_CONFLICT);
-			return;
-		}
-
 		resp.getWriter().print(DataAccessObject.getJSONSchoolAsString());
 	}
 }

@@ -3,6 +3,7 @@ package org.jorge.lolin1dp.io.net;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.jorge.lolin1dp.datamodel.ArticleWrapper;
 import org.json.JSONArray;
@@ -36,13 +37,14 @@ import com.squareup.okhttp.Response;
 public abstract class Internet {
 
 	public static final String ERROR = "ERROR";
+	private static final Integer URL_TIMEOUT_MILLIS = 60000;
 	private static final OkHttpClient client = new OkHttpClient();
 
 	public static List<ArticleWrapper> getNews(String baseUrl, String url) {
-		Elements newsHeadLines, newsSubTitles;
+		Elements newsHeadLines, newsSubTitles, descVerification;
 		try {
 			System.out.println("Performing get on " + url);
-			Document doc = Jsoup.connect(url).get();
+			Document doc = Jsoup.connect(url).timeout(URL_TIMEOUT_MILLIS).get();
 			System.out.println("Get performed on " + url);
 			newsHeadLines = doc.select("div.panelizer-view-mode")
 					.select("div.node").select("div.node-teaser")
@@ -54,14 +56,17 @@ public abstract class Internet {
 					.select("div.field-name-field-body-medium")
 					.select("div.field-type-text-long")
 					.select("div.field-label-hidden");
+			descVerification = doc.select("div.default-2-3");
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
 			return new ArrayList<ArticleWrapper>();
 		}
-		
+
 		final List<ArticleWrapper> ret = new ArrayList<>();
 		Boolean addThis = Boolean.TRUE;
+		int i = 0;
 		for (Element elem : newsHeadLines) {
+
 			Element linkElem = elem.getElementsByTag("a").first(), imageElem = elem
 					.getElementsByTag("img").first();
 
@@ -69,9 +74,16 @@ public abstract class Internet {
 				final String title = linkElem.attr("title");
 				final String link = baseUrl + linkElem.attr("href");
 				final String imageLink = baseUrl + imageElem.attr("src");
-				final String subtitle = newsSubTitles.remove(0).text();
+				final String subtitle;
+				if (descVerification.get(i).select("div").size() < 7) {
+					subtitle = "";
+				} else {
+					Element removed = newsSubTitles.remove(0);
+					subtitle = removed.text();
+				}
 				ret.add(new ArticleWrapper(title, link, imageLink, subtitle));
 				addThis = Boolean.FALSE;
+				i++;
 			} else {
 				addThis = Boolean.TRUE;
 			}
@@ -112,6 +124,8 @@ public abstract class Internet {
 	}
 
 	private static String doGetAsString(String url) throws IOException {
+		client.setConnectTimeout(URL_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+
 		Request request = new Request.Builder().url(url).build();
 
 		Response response = client.newCall(request).execute();

@@ -29,8 +29,6 @@ import org.json.JSONArray;
  */
 public abstract class DataUpdater {
 
-	private static Boolean updating = Boolean.TRUE;
-
 	public synchronized static void initFileStructure() {
 		if (!Files.exists(DataAccessObject.FILES_PATH)) {
 			if (!DataAccessObject.FILES_PATH.toFile().mkdirs())
@@ -51,8 +49,6 @@ public abstract class DataUpdater {
 	}
 
 	public synchronized static void updateData() {
-		updating = Boolean.TRUE;
-
 		final RealmEnum[] values = RealmEnum.values();
 		JSONArray array;
 		for (RealmEnum realm : values) {
@@ -74,7 +70,7 @@ public abstract class DataUpdater {
 						array.toString());
 			}
 		}
-
+		
 		List<ArticleWrapper> community = Internet.getSubrreditHot(
 				OtherSources.getMaxAmountToPull(),
 				OtherSources.getCommunityUrl(),
@@ -99,11 +95,6 @@ public abstract class DataUpdater {
 
 		FileUtils.writeFile(DataAccessObject.getSchoolFilePath(),
 				array.toString());
-
-		updating = Boolean.FALSE;
 	}
 
-	public static Boolean isUpdating() {
-		return updating;
-	}
 }
