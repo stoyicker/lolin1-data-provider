@@ -56,7 +56,7 @@ public abstract class Internet {
 					.select("div.field-label-hidden");
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
-			return null;
+			return new ArrayList<ArticleWrapper>();
 		}
 		
 		final List<ArticleWrapper> ret = new ArrayList<>();
@@ -105,7 +105,7 @@ public abstract class Internet {
 			}
 		} catch (IOException | JSONException e) {
 			e.printStackTrace(System.out);
-			return null;
+			return new ArrayList<ArticleWrapper>();
 		}
 
 		return ret;
