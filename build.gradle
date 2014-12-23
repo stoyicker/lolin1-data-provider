@@ -16,6 +16,7 @@ dependencies {
     compile 'org.jsoup:jsoup:1.7.2'
     compile 'org.json:json:20090211'
     compile 'com.squareup.okhttp:okhttp:2.1.0'
+    compile 'javax.ws.rs:jsr311-api:0.11'
 }
 
 task stage(dependsOn: ['clean', 'installApp'])

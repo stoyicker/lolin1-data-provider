@@ -1,6 +1,7 @@
 package org.jorge.lolin1dp.services;
 
 import javax.servlet.ServletException;
+import javax.ws.rs.Produces;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +37,7 @@ public final class NewsService extends HttpServlet {
 	private static final long serialVersionUID = 6604410253121443798L;
 
 	@Override
+	@Produces("text/json")
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String parameterRealm, parameterLocale;
