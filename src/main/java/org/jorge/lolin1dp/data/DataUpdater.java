@@ -70,11 +70,11 @@ public abstract class DataUpdater {
 						array.toString());
 			}
 		}
-		
+
 		List<ArticleWrapper> community = Internet.getSubrreditHot(
 				OtherSources.getMaxAmountToPull(),
 				OtherSources.getCommunityUrl(),
-				"http://a.thumbs.redditmedia.com/ailURefhvi5BnEOZ.png");
+				"http://i.imgur.com/8skdf8G.png");
 
 		array = new JSONArray();
 
@@ -86,7 +86,7 @@ public abstract class DataUpdater {
 
 		List<ArticleWrapper> school = Internet.getSubrreditHot(
 				OtherSources.getMaxAmountToPull(), OtherSources.getSchoolUrl(),
-				"http://a.thumbs.redditmedia.com/ailURefhvi5BnEOZ.png");
+				"http://i.imgur.com/8skdf8G.png");
 
 		array = new JSONArray();
 
