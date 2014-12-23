@@ -56,6 +56,7 @@ public final class NewsService extends HttpServlet {
 			return;
 		}
 
+		resp.setCharacterEncoding("UTF-8");
 		resp.getWriter().print(
 				DataAccessObject.getJSONNewsAsString(realm, parameterLocale));
 	}

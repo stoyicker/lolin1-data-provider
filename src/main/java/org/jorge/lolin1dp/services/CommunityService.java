@@ -37,6 +37,7 @@ public final class CommunityService extends HttpServlet {
 	@Produces("text/json")
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		resp.setCharacterEncoding("UTF-8");
 		resp.getWriter().print(DataAccessObject.getJSONCommunityAsString());
 	}
 }
