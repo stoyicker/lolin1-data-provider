@@ -4,7 +4,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Produces;
 
 import org.jorge.lolin1dp.data.DataAccessObject;
 
@@ -34,7 +33,6 @@ public final class SchoolService extends HttpServlet {
 	private static final long serialVersionUID = -8391286236902795916L;
 
 	@Override
-	@Produces("text/json")
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		resp.setCharacterEncoding("UTF-8");

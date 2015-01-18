@@ -1,13 +1,11 @@
 package org.jorge.lolin1dp.services;
 
+import org.jorge.lolin1dp.data.DataAccessObject;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Produces;
-
-import org.jorge.lolin1dp.data.DataAccessObject;
-
 import java.io.IOException;
 
 /**
@@ -28,16 +26,15 @@ import java.io.IOException;
  */
 public final class CommunityService extends HttpServlet {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -9034267862516901563L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -9034267862516901563L;
 
-	@Override
-	@Produces("text/json")
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		resp.setCharacterEncoding("UTF-8");
-		resp.getWriter().print(DataAccessObject.getJSONCommunityAsString());
-	}
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        resp.setCharacterEncoding("UTF-8");
+        resp.getWriter().print(DataAccessObject.getJSONCommunityAsString());
+    }
 }

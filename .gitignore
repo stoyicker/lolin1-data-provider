@@ -2,7 +2,6 @@ target
 files
 build
 bin
-gradle
 .idea
 .gradle
 .classpath
@@ -13,7 +12,5 @@ gradle
 /champs
 *.iml
 out
-gradlew
-gradlew.bat
 settings.gradle
 system.properties
