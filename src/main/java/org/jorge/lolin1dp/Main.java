@@ -4,11 +4,13 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.jorge.lolin1dp.data.DataUpdater;
+import org.jorge.lolin1dp.io.file.FileUtils;
 import org.jorge.lolin1dp.services.CommunityService;
 import org.jorge.lolin1dp.services.NewsService;
 import org.jorge.lolin1dp.services.ProfileIconIdService;
 import org.jorge.lolin1dp.services.SchoolService;
 
+import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -39,9 +41,9 @@ public class Main {
         if ((webPort == null) || webPort.isEmpty()) {
             webPort = "8080";
         }
-        final String api_key = System.getenv("RIOT_GAMES_API_KEY");
+        final String api_key = FileUtils.readFile(Paths.get("apikey"));
 
-        System.out.print("Initializing file structure...");
+        System.out.print("Initializing file structure...\n");
         DataUpdater.initFileStructure();
         System.out.println("done.");
 

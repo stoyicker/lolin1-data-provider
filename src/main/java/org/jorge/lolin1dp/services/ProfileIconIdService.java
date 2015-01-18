@@ -50,7 +50,6 @@ public class ProfileIconIdService extends HttpServlet {
         final String url = String.format
                 (Locale.ENGLISH,
                         BASE_REQUEST_URL, realm, realm, username, mApiKey).toLowerCase(Locale.ENGLISH);
-        System.out.println("URL: " + url);
         final Response r = HTTPRequestsSingleton.getInstance().performRequest(new Request.Builder().url(url).get()
                 .build());
         resp.getWriter().print(r.body().string());
