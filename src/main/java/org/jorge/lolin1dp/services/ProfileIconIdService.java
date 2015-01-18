@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Locale;
 
 /**
@@ -52,7 +53,7 @@ public class ProfileIconIdService extends HttpServlet {
                         BASE_REQUEST_URL, realm, realm, username, mApiKey).toLowerCase(Locale.ENGLISH);
         final Response r = HTTPRequestsSingleton.getInstance().performRequest(new Request.Builder().url(url).get()
                 .build());
-        resp.getWriter().print(r.body().string());
+        resp.getOutputStream().write(r.body().string().getBytes(Charset.forName("UTF-8")));
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 }

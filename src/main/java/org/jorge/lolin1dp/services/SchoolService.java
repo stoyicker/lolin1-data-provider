@@ -1,41 +1,41 @@
 package org.jorge.lolin1dp.services;
 
+import org.jorge.lolin1dp.data.DataAccessObject;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.jorge.lolin1dp.data.DataAccessObject;
-
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 /**
  * This file is part of lolin1dp-data-provider.
- * <p/>
+ * <p>
  * lolin1dp-data-provider is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or (at your
  * option) any later version.
- * <p/>
+ * <p>
  * lolin1dp-data-provider is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * <p/>
+ * <p>
  * You should have received a copy of the GNU General Public License along with
  * lolin1dp-data-provider. If not, see <http://www.gnu.org/licenses/>.
  */
 public final class SchoolService extends HttpServlet {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8391286236902795916L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -8391286236902795916L;
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		resp.setCharacterEncoding("UTF-8");
-		resp.getWriter().print(DataAccessObject.getJSONSchoolAsString());
-	}
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        resp.setCharacterEncoding("UTF-8");
+        resp.getOutputStream().write(DataAccessObject.getJSONSchoolAsString().getBytes(Charset.forName("UTF-8")));
+    }
 }
