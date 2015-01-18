@@ -41,6 +41,8 @@ public class Main {
         if ((webPort == null) || webPort.isEmpty()) {
             webPort = "8080";
         }
+        FileUtils.delete(Paths.get("files").toString());
+
         final String api_key = FileUtils.readFile(Paths.get("apikey"));
 
         System.out.print("Initializing file structure...\n");
